@@ -2,12 +2,14 @@ package no.ntnu.pu.storage;
 
 public class Storage {
 	
-	public void read(){
+	public void read(String url){
 		
 	}
 	
 	
-	public void write(){
+	public void write(String url){
 		
 	}
+	
+	
 }
