@@ -6,5 +6,5 @@ public interface Participant {
     public void setEmail(String email);
 
     public String getName();
-    public Strig getEmail();
+    public String getEmail();
 }
