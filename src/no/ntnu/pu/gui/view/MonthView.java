@@ -1,5 +1,6 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.AppointmentControl;
 import sun.util.calendar.Gregorian;
 
 import javax.swing.*;
@@ -8,6 +9,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.GregorianCalendar;
 
 public class MonthView extends JPanel{
@@ -24,7 +27,9 @@ public class MonthView extends JPanel{
                         realMonth,
                         realDay,
                         currentYear,
-                        currentMonth;
+                        currentMonth,
+                        selectedRow = 10,
+                        selectedCol = 10;
 
     public MonthView() {
         try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
@@ -47,6 +52,19 @@ public class MonthView extends JPanel{
         calendarTable = new JTable(calendarTableModel);
         tableScrollPane = new JScrollPane(calendarTable);
 
+        calendarTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point p = e.getPoint();
+                selectedRow = calendarTable.rowAtPoint(p);
+                selectedCol = calendarTable.columnAtPoint(p);
+                refreshCalendar(currentMonth, currentYear);
+                if (e.getClickCount() == 2) {
+                    AppointmentControl.createAppointment();
+                }
+            }
+        });
+
         setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
 
         previousButton.addActionListener(new previous_Action());
@@ -61,8 +79,7 @@ public class MonthView extends JPanel{
         panelAdd(0.0, 0, 2, constraints, calendarTable);
         panelAdd(0.0, 0, 1, constraints, calendarTable.getTableHeader());
 
-
-        setBounds(0, 0, 320, 335);
+        setBounds(0, 0, 600, 450);
 
         GregorianCalendar cal = new GregorianCalendar();
         realDay = cal.get(GregorianCalendar.DAY_OF_MONTH);
@@ -92,9 +109,8 @@ public class MonthView extends JPanel{
 
     public void panelAdd(double weightx, int gridx, int gridy, GridBagConstraints c, Component comp){
         if(comp.equals(calendarTable) || comp.equals(calendarTable.getTableHeader())){
-            c.fill = GridBagConstraints.HORIZONTAL;
+            c.fill = GridBagConstraints.CENTER;
             c.gridwidth = 3;
-
         }
         else {
             c.weighty = 1.0;
@@ -145,7 +161,11 @@ public class MonthView extends JPanel{
     class calendarTableRenderer extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column) {
             super.getTableCellRendererComponent(table, value, selected, focused, row, column);
-            if (column == 6 || column == 5) {
+
+            if(column == selectedCol && row == selectedRow) {
+                setBackground(new Color(220, 255, 220));
+            }
+            else if (column == 6 || column == 5) {
                 setBackground(new Color(255, 220, 220));
             }
             else {
