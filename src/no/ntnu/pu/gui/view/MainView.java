@@ -8,18 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainView {
-    private GridBagConstraints GBC (GridBagConstraints c, int x, int y){
-        c.gridx = x;
-        c.gridy = y;
-        return c;
-    }
-
     private JPanel container, calendarView, appointmentView, meetingsView;
+
     private JButton newAppointmentButton, monthButton, weekButton;
     private ButtonGroup buttonGroup;
     private MonthView monthView;
     private WeekView weekView;
-
     public MainView(){
 
         JFrame frame = new JFrame();
@@ -77,6 +71,12 @@ public class MainView {
         monthView.setVisible(false);
         weekView.setVisible(true);
 
+    }
+
+    private GridBagConstraints GBC (GridBagConstraints c, int x, int y){
+        c.gridx = x;
+        c.gridy = y;
+        return c;
     }
 
     private class ButtonListener implements ActionListener {
