@@ -1,27 +1,54 @@
 package no.ntnu.pu.model;
 
-public class Person{
-	private String name;
-	private String email;
-	private String[] phoneNumbers;
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String[] getPhoneNumbers() {
-		return phoneNumbers;
-	}
-	public void setPhoneNumbers(String[] phoneNumbers) {
-		this.phoneNumbers = phoneNumbers;
-	}
-	
-	
+import java.util.ArrayList;
+import java.util.List;
+
+public class Person implements Participant{
+	private String name, email, title;
+	private List<String> phoneNumbers;
+
+    public Person(String Name){
+        name = Name;
+        phoneNumbers = new ArrayList<String>();
+    }
+
+    public void addPhoneNumber(String phoneNumber) {
+        this.phoneNumbers.add(phoneNumber);
+    }
+
+    public Boolean removePhoneNumber(String phoneNumber){
+        if(phoneNumbers.contains(phoneNumber)){
+            phoneNumbers.remove(phoneNumber);
+            return true;
+        }
+        return false;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public List<String> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }
