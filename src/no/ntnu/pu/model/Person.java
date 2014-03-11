@@ -1,11 +1,15 @@
 package no.ntnu.pu.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Person implements Participant{
 	private String name, email, title;
-	private String[] phoneNumbers;
+	private List<String> phoneNumbers;
 
     public Person(String Name){
         name = Name;
+        phoneNumbers = new ArrayList<String>();
     }
 
     public void addPhoneNumber(String phoneNumber) {
@@ -13,7 +17,7 @@ public class Person implements Participant{
     }
 
     public Boolean removePhoneNumber(String phoneNumber){
-        if(phoneNumbers.contain(phoneNumber)){
+        if(phoneNumbers.contains(phoneNumber)){
             phoneNumbers.remove(phoneNumber);
             return true;
         }
@@ -40,7 +44,7 @@ public class Person implements Participant{
         return email;
     }
 
-    public String[] getPhoneNumbers() {
+    public List<String> getPhoneNumbers() {
         return phoneNumbers;
     }
 
