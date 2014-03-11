@@ -15,9 +15,9 @@ public class Person implements Participant{
     public Boolean removePhoneNumber(String phoneNumber){
         if(phoneNumbers.contain(phoneNumber)){
             phoneNumbers.remove(phoneNumber);
-            return True;
+            return true;
         }
-        return False;
+        return false;
     }
 
     public void setName(String name) {
