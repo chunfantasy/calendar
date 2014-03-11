@@ -1,4 +1,10 @@
 *.class
+*.bin
+
+#IDE Files#
+.settings
+.idea
+calender.iml
 
 # Package Files #
 *.jar
