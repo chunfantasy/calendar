@@ -1,5 +1,7 @@
 package no.ntnu.pu.gui.view;
 
-public class MonthView {
+import javax.swing.*;
+
+public class MonthView extends JPanel{
 
 }
