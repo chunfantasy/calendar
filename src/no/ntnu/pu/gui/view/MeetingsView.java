@@ -2,6 +2,6 @@ package no.ntnu.pu.gui.view;
 
 import javax.swing.*;
 
-public class AppointmentView extends JPanel{
+public class MeetingsView extends JPanel{
 
 }
