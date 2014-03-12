@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.ArrayList;
 
 public class Appointment {
+	private int id;
 	private String title;
 	private Date startTime;
 	private Date endTime;
@@ -11,6 +12,14 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getTitle() {
 		return title;

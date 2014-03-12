@@ -2,9 +2,18 @@ package no.ntnu.pu.model;
 
 public class Group implements Participant{
 
+	private int id;
     private String name,email;
 
-    public Group(String name){
+    public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Group(String name){
         this.name = name;
     }
 
