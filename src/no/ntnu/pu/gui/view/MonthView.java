@@ -1,7 +1,6 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.AppointmentControl;
-import sun.util.calendar.Gregorian;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -28,10 +27,12 @@ public class MonthView extends JPanel{
                         realDay,
                         currentYear,
                         currentMonth,
-                        selectedRow = 10,
-                        selectedCol = 10;
+                        selectedRow,
+                        selectedCol;
 
     public MonthView() {
+
+        //Catch exceptions
         try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
         catch (ClassNotFoundException e) {}
         catch (InstantiationException e) {}
@@ -41,6 +42,7 @@ public class MonthView extends JPanel{
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
+        //Initialize components
         monthLabel = new JLabel("Januar");
         yearLabel = new JLabel("Endre år:");
         yearComboBox = new JComboBox();
@@ -52,6 +54,10 @@ public class MonthView extends JPanel{
         calendarTable = new JTable(calendarTableModel);
         tableScrollPane = new JScrollPane(calendarTable);
 
+        //Add listeners
+        previousButton.addActionListener(new previous_Action());
+        nextButton.addActionListener(new next_Action());
+        yearComboBox.addActionListener(new year_Action());
         calendarTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -60,17 +66,13 @@ public class MonthView extends JPanel{
                 selectedCol = calendarTable.columnAtPoint(p);
                 refreshCalendar(currentMonth, currentYear);
                 if (e.getClickCount() == 2) {
-                    AppointmentControl.createAppointment();
+                    System.out.println("Dobbelklikk");
+                    //AppointmentControl.createAppointment();
                 }
             }
         });
 
-        setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
-
-        previousButton.addActionListener(new previous_Action());
-        nextButton.addActionListener(new next_Action());
-        yearComboBox.addActionListener(new year_Action());
-
+        //Add components to panel
         panelAdd(0.5, 1, 0, constraints, monthLabel);
         panelAdd(0.5, 0, 3, constraints, yearLabel);
         panelAdd(0.5, 2, 3, constraints, yearComboBox);
@@ -79,7 +81,9 @@ public class MonthView extends JPanel{
         panelAdd(0.0, 0, 2, constraints, calendarTable);
         panelAdd(0.0, 0, 1, constraints, calendarTable.getTableHeader());
 
+        //Set bounds and border of panel
         setBounds(0, 0, 600, 450);
+        setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
 
         GregorianCalendar cal = new GregorianCalendar();
         realDay = cal.get(GregorianCalendar.DAY_OF_MONTH);
@@ -217,5 +221,4 @@ public class MonthView extends JPanel{
             }
         }
     }
-
 }
