@@ -1,6 +1,8 @@
 package no.ntnu.pu.model;
 
-public class Invitation {
-	private Person sender;
-	private Participant[] recipient;
+public class Invitation extends Notification {
+
+    public Invitation(Person[] recipient, Appointment appointment){
+        super(recipient, appointment);
+    }
 }
