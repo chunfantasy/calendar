@@ -7,14 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
+import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
-public class ServerStorage extends Storage {
+public class ServerStorage {
 	private Connection con;
 	private Statement stmt;
 	private PreparedStatement pstmt;
@@ -41,7 +43,9 @@ public class ServerStorage extends Storage {
 		stmt = con.createStatement();
 
 		//@formatter:off
-		// create table person
+		// create table person		
+		sql = "DROP TABLE IF EXISTS appointment_participant";
+		stmt.execute(sql);
 		sql = "DROP TABLE IF EXISTS person";
 		stmt.execute(sql);
 		sql = "DROP TABLE IF EXISTS appointment";
@@ -58,12 +62,20 @@ public class ServerStorage extends Storage {
 				+ "title varchar(10))";
 		stmt.execute(sql);
 
-		// create talbe meetingroom
+		// create table meetinggroup
+		sql = "CREATE TABLE meetinggroup (" 
+				+ "id int auto_increment primary key, "
+				+ "name varchar(15)," 
+				+ "email varchar(20))";
+		stmt.execute(sql);
+				
+		// create table meetingroom
 		sql = "CREATE TABLE meetingroom ("
 				+ "id int auto_increment primary key, "
 				+ "roomname varchar(15))";
 		stmt.execute(sql);
 
+		// create table appointment
 		sql = "CREATE TABLE appointment ("
 				+ "id int auto_increment primary key, " 
 				+ "title varchar(20), "
@@ -71,22 +83,29 @@ public class ServerStorage extends Storage {
 				+ "endtime datetime, "
 				+ "adress varchar(30), " 
 				+ "meetingroomid int, "
-				+ "foreign key(meetingroomid) references meetingroom(id), "
+				+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
 				+ "description varchar(50))";
 		stmt.execute(sql);
 
-		sql = "CREATE TABLE meetinggroup (" 
-				+ "id int auto_increment primary key, "
-				+ "name varchar(15)," 
-				+ "email varchar(20))";
+		// create table appointment_participant
+		sql = "CREATE TABLE appointment_participant ("
+				+ "id int auto_increment primary key, " 
+				+ "appointmentid int, "
+				+ "personid int null, "
+				+ "meetinggroupid int null, "
+				+ "foreign key(personid) references person(id) on delete set null on update cascade, "
+				+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
 		stmt.execute(sql);
+
+		
+		
 		
 		//@formatter:on
 		con.commit();
 	}
 
 	// Save an object in the database
-	public boolean insert(Object o) throws SQLException {
+	public Object insert(Object o) throws SQLException {
 		// table person
 		if (o instanceof Person) {
 			Person p = (Person) o;
@@ -96,15 +115,21 @@ public class ServerStorage extends Storage {
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
 			pstmt.executeUpdate();
+			p.setId(this.getLastId());
+			con.commit();
+			return p;
 		}
 
-		// talbe meetingroom
+		// table meetingroom
 		if (o instanceof Room) {
 			Room r = (Room) o;
 			sql = "INSERT INTO meetingroom(roomname) VALUES(?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, r.getRoomname());
 			pstmt.executeUpdate();
+			r.setId(this.getLastId());
+			con.commit();
+			return r;
 		}
 
 		// table appointment appointment_participant
@@ -120,9 +145,37 @@ public class ServerStorage extends Storage {
 			pstmt.setString(5, a.getDescription());
 			pstmt.setInt(6, a.getMeetingRoom().getId());
 			pstmt.executeUpdate();
+			a.setId(this.getLastId());
 
+			if (!a.getParticipants().isEmpty()) {
+				for (Participant participant : a.getParticipants()) {
+					if (participant instanceof Person) {
+						sql = "INSERT INTO appointment_participant (appointmentid, personid) "
+								+ "VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, ((Person) participant).getId());
+						pstmt.executeUpdate();
+					}
+
+					else if (participant instanceof Group) {
+						sql = "INSERT INTO appointment_participant (appointmentid, meetinggroupid) "
+								+ "VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, ((Group) participant).getId());
+						pstmt.executeUpdate();
+					}
+
+					else
+						continue;
+				}
+			}
+			con.commit();
+			return a;
 		}
 
+		// table group
 		else if (o instanceof Group) {
 			Group g = (Group) o;
 			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
@@ -130,12 +183,59 @@ public class ServerStorage extends Storage {
 			pstmt.setString(1, g.getEmail());
 			pstmt.setString(2, g.getName());
 			pstmt.executeUpdate();
-
+			g.setId(this.getLastId());
+			con.commit();
+			return g;
 		} else
+			return null;
+	}
+
+	public boolean delete(Object o) throws SQLException {
+		if (o instanceof Person) {
+			sql = "delete from person where id = " + ((Person) o).getId();
+			stmt.executeUpdate(sql);
+			con.commit();
+			return true;
+		}
+
+		else if (o instanceof Room) {
+			sql = "delete from meetingroom where id = " + ((Room) o).getId();
+			stmt.executeUpdate(sql);
+			con.commit();
+			return true;
+		}
+
+		else if (o instanceof Appointment) {
+			sql = "delete from appointment where id = "
+					+ ((Appointment) o).getId();
+			stmt.executeUpdate(sql);
+			con.commit();
+			return true;
+		}
+
+		else if (o instanceof Group) {
+			sql = "delete from meetinggroup where id = " + ((Group) o).getId();
+			stmt.executeUpdate(sql);
+			con.commit();
+			return true;
+		}
+
+		else
 			return false;
-		
-		con.commit();
-		return true;
+	}
+
+	public void close() throws SQLException {
+		this.con.close();
+	}
+
+	public int getLastId() throws SQLException {
+		this.rs = this.pstmt.executeQuery("select last_insert_id()");
+		if (this.rs.next()) {
+			int id = rs.getInt(1);
+			return id;
+		} else
+			return -1;
+
 	}
 
 	public static void main(String[] args) throws SQLException {
@@ -147,8 +247,10 @@ public class ServerStorage extends Storage {
 		Person p = new Person("a");
 		p.setEmail("email");
 		p.setTitle("title");
+		p = (Person) serverStorage.insert(p);
 
-		serverStorage.insert(p);
+		Group g = new Group("super group 12");
+		g = (Group) serverStorage.insert(g);
 
 		Room r = new Room("P15");
 		r.setId(1);
@@ -159,10 +261,14 @@ public class ServerStorage extends Storage {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
+		ArrayList<Participant> participants = new ArrayList<>();
+		participants.add(p);
+		participants.add(g);
+		a.setParticipants(participants);
 		serverStorage.insert(a);
 
-		Group g = new Group("super group 12");
-		serverStorage.insert(g);
+		serverStorage.delete(p);
+
 	}
 
 }
