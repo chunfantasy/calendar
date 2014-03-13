@@ -8,15 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainView {
-    private JPanel container, calendarView, appointmentView, meetingsView;
+    private JPanel container, calendarView, notificationView, meetingsView;
 
     private JButton newAppointmentButton, monthButton, weekButton;
     private ButtonGroup buttonGroup;
     private MonthView monthView;
     private WeekView weekView;
+
+
     public MainView(){
 
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame("Calendar");
+
         container = new JPanel(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -27,12 +30,13 @@ public class MainView {
         monthView = new MonthView();
         weekView = new WeekView();
 
-        appointmentView = new AppointmentView();
+        notificationView = new NotificationView();
         meetingsView = new MeetingsView();
 
         buttonGroup = new ButtonGroup();
 
         monthButton = new JButton("Month");
+        monthButton.setEnabled(false);
         weekButton = new JButton("Week");
         newAppointmentButton = new JButton("New Appointment");
 
@@ -48,15 +52,18 @@ public class MainView {
         buttonGroup.add(monthButton);
 
 
-        container.add(appointmentView,GBC(gbc,0,1));
-        container.add(meetingsView,GBC(gbc,0,2));
-        container.add(calendarView,GBC(gbc,1,1));
-        container.add(newAppointmentButton,GBC(gbc,1,0));
-        container.add(weekButton,GBC(gbc,3,0));
-        container.add(monthButton,GBC(gbc,4,0));
+        container.add(notificationView, GBC(gbc, 0, 1));
+        container.add(meetingsView, GBC(gbc, 0, 2));
+        container.add(newAppointmentButton, GBC(gbc, 1, 0));
+        container.add(weekButton, GBC(gbc, 2, 0));
+        container.add(monthButton, GBC(gbc, 3, 0));
+        GridBagConstraints c = GBC(gbc, 1, 1);
+        c.gridwidth=3;
+        c.gridheight=2;
+        container.add(calendarView, c);
 
         frame.getContentPane().add(container);
-
+        frame.setSize(1024, 768);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,8 +95,12 @@ public class MainView {
                 AppointmentControl.createAppointment();
             }else if(s.equals(monthButton)){
                 showMonth();
+                monthButton.setEnabled(false);
+                weekButton.setEnabled(true);
             }else if(s.equals(weekButton)){
                 showWeek();
+                weekButton.setEnabled(false);
+                monthButton.setEnabled(true);
             }
         }
 
