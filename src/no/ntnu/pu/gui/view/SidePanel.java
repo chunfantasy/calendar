@@ -13,10 +13,12 @@ public abstract class SidePanel extends JPanel {
 
     protected JList list;
 
+    protected DefaultListModel model;
+
     public SidePanel(){
         this.setPreferredSize(new Dimension(300,300));
-        DefaultListModel model = new DefaultListModel();
-        ListCellRenderer renderer = new DefaultListCellRenderer();
+        model = new DefaultListModel();
+        ListCellRenderer renderer = new SidePanelCellRenderer();
 
         model.ensureCapacity(10);
 
@@ -31,6 +33,10 @@ public abstract class SidePanel extends JPanel {
         }
 
         add(list);
+    }
+
+    protected void addElement(Object value){
+        model.addElement(value);
     }
 
 }

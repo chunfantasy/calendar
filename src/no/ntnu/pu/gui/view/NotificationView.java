@@ -18,5 +18,10 @@ public class NotificationView extends SidePanel{
         for (Notification n: notificationList){
             SidePanelCellRenderer.makeNotification(n);
         }*/
+        addElement("Hallo asdfasdf");
+    }
+
+    public void addNotification(Object value){
+        super.addElement(value);
     }
 }
