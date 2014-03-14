@@ -3,8 +3,6 @@ package no.ntnu.pu.gui.view;
 import no.ntnu.pu.control.AppointmentControl;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,122 +10,56 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.GregorianCalendar;
 
-public class MonthView extends JPanel{
-
-    private JLabel      monthLabel,
-                        yearLabel;
-    private JButton     previousButton,
-                        nextButton;
-    private JTable      calendarTable;
-    private JComboBox   yearComboBox;
-    private JScrollPane tableScrollPane;
-    private DefaultTableModel calendarTableModel;
-    private int         realYear,
-                        realMonth,
-                        realDay,
-                        currentYear,
-                        currentMonth,
-                        selectedRow,
-                        selectedCol;
+public class MonthView extends CalenderView{
 
     public MonthView() {
+        super();
 
-        //Catch exceptions
-        try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
-        catch (ClassNotFoundException e) {}
-        catch (InstantiationException e) {}
-        catch (IllegalAccessException e) {}
-        catch (UnsupportedLookAndFeelException e) {}
-
-        setLayout(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        //Initialize components
-        monthLabel = new JLabel("Januar");
-        yearLabel = new JLabel("Endre år:");
-        yearComboBox = new JComboBox();
-        previousButton = new JButton ("Forrige");
-        nextButton = new JButton ("Neste");
-        calendarTableModel = new DefaultTableModel(){
-            public boolean isCellEditable(int rowIndex, int mColIndex){return false;}
-        };
-        calendarTable = new JTable(calendarTableModel);
-        tableScrollPane = new JScrollPane(calendarTable);
-
-        //Add listeners
+        /**Add listeners**/
         previousButton.addActionListener(new previous_Action());
         nextButton.addActionListener(new next_Action());
         yearComboBox.addActionListener(new year_Action());
         calendarTable.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
-                Point p = e.getPoint();
-                selectedRow = calendarTable.rowAtPoint(p);
-                selectedCol = calendarTable.columnAtPoint(p);
-                refreshCalendar(currentMonth, currentYear);
                 if (e.getClickCount() == 2) {
-                    System.out.println("Dobbelklikk");
-                    //AppointmentControl.createAppointment();
+                    AppointmentControl.createAppointment();
                 }
             }
         });
 
-        //Add components to panel
-        panelAdd(0.5, 1, 0, constraints, monthLabel);
-        panelAdd(0.5, 0, 3, constraints, yearLabel);
-        panelAdd(0.5, 2, 3, constraints, yearComboBox);
-        panelAdd(0.5, 0, 0, constraints, previousButton);
-        panelAdd(0.5, 2, 0, constraints, nextButton);
-        panelAdd(0.0, 0, 2, constraints, calendarTable);
-        panelAdd(0.0, 0, 1, constraints, calendarTable.getTableHeader());
+        /**Add components to panel**/
+        panelAdd(1, 0.5, 1.0, 1, 0, monthLabel, GridBagConstraints.CENTER);
+        panelAdd(1, 0.5, 1.0, 1, 3, yearLabel, GridBagConstraints.EAST);
+        panelAdd(1, 0.5, 1.0, 2, 3, yearComboBox, GridBagConstraints.WEST);
+        panelAdd(1, 0.5, 1.0, 0, 0, previousButton, GridBagConstraints.CENTER);
+        panelAdd(1, 0.5, 1.0, 2, 0, nextButton, GridBagConstraints.CENTER);
+        panelAdd(3, 0.0, 0.0, 0, 2, calendarTable, GridBagConstraints.CENTER);
+        panelAdd(3, 0.0, 0.0, 0, 1, calendarTable.getTableHeader(), GridBagConstraints.CENTER);
 
-        //Set bounds and border of panel
-        setBounds(0, 0, 600, 450);
+        /**Set Border**/
         setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
-
-        GregorianCalendar cal = new GregorianCalendar();
-        realDay = cal.get(GregorianCalendar.DAY_OF_MONTH);
-        realMonth = cal.get(GregorianCalendar.MONTH);
-        realYear = cal.get(GregorianCalendar.YEAR);
-        currentMonth = realMonth;
-        currentYear = realYear;
 
         String[] headers = {"Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"};
         for (int i = 0; i<7; i++){
             calendarTableModel.addColumn(headers[i]);
         }
 
+        calendarTable.setColumnSelectionAllowed(true);
+        calendarTable.setRowSelectionAllowed(true);
+        calendarTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         calendarTable.getParent().setBackground(calendarTable.getBackground());
         calendarTable.getTableHeader().setResizingAllowed(false);
         calendarTable.getTableHeader().setReorderingAllowed(false);
-        calendarTable.setRowHeight(38);
-        calendarTableModel.setColumnCount(7);
-        calendarTableModel.setRowCount(6);
 
-        for(int i = 2000; i < realYear + 100; i++){
-            yearComboBox.addItem(String.valueOf(i));
-        }
+        calendarTable.setRowHeight(38);
+        calendarTableModel.setRowCount(6);
+        calendarTableModel.setColumnCount(7);
 
         refreshCalendar(realMonth, realYear);
     }
 
-    public void panelAdd(double weightx, int gridx, int gridy, GridBagConstraints c, Component comp){
-        if(comp.equals(calendarTable) || comp.equals(calendarTable.getTableHeader())){
-            c.fill = GridBagConstraints.CENTER;
-            c.gridwidth = 3;
-        }
-        else {
-            c.weighty = 1.0;
-        }
-        c.gridx = gridx;
-        c.gridy = gridy;
-        c.weightx = weightx;
-        add(comp, c);
-        c.weighty = 0.0;
-    }
-
     private void refreshCalendar(int month, int year){
-        String[] months = {"Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"};
         int numberOfDays, startOfMonth;
 
         previousButton.setEnabled(true);
@@ -140,7 +72,6 @@ public class MonthView extends JPanel{
         }
 
         monthLabel.setText(months[month]);
-        monthLabel.setBounds(160 - monthLabel.getPreferredSize().width/2, 25, 180, 25);
         yearComboBox.setSelectedItem(String.valueOf(year));
 
         for(int i = 0; i<6; i++) {
@@ -160,30 +91,6 @@ public class MonthView extends JPanel{
             calendarTableModel.setValueAt(i, row, column);
         }
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
-    }
-
-    class calendarTableRenderer extends DefaultTableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column) {
-            super.getTableCellRendererComponent(table, value, selected, focused, row, column);
-
-            if(column == selectedCol && row == selectedRow) {
-                setBackground(new Color(220, 255, 220));
-            }
-            else if (column == 6 || column == 5) {
-                setBackground(new Color(255, 220, 220));
-            }
-            else {
-                setBackground(new Color(255, 255, 255));
-            }
-            if (value != null) {
-                if (Integer.parseInt(value.toString()) == realDay && currentMonth == realMonth && currentYear == realYear){
-                    setBackground(new Color(220, 220, 255));
-                }
-            }
-            setBorder(null);
-            setForeground(Color.black);
-            return this;
-        }
     }
 
     class previous_Action implements ActionListener {
