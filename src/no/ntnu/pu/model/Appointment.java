@@ -7,12 +7,16 @@ public class Appointment {
 	private String title;
 	private Time startTime;
 	private Time endTime;
-	private String adress;
+	private String address;
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-	
-	public String getTitle() {
+
+    public Appointment(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
@@ -30,11 +34,11 @@ public class Appointment {
 	public void setEndTime(Time endTime) {
 		this.endTime = endTime;
 	}
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	public Room getMeetingRoom() {
 		return meetingRoom;
