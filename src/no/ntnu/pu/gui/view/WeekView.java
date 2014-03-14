@@ -12,8 +12,8 @@ import java.util.GregorianCalendar;
 
 public class WeekView extends CalenderView {
 
-    private boolean midweekChange = false;
-    private JLabel  weekLabel;
+    private boolean midweekChangeNext = false, midweekChangePrev = false, newYear = false;
+    private JLabel  weekLabel, dateSpanLabel;
     private int numberOfWeeksInMonth,
             realWeekOfMonth,
             currentWeekOfMonth,
@@ -26,6 +26,7 @@ public class WeekView extends CalenderView {
 
         /**Initialize subclass-specific components**/
         weekLabel = new JLabel("Uke 1");
+        dateSpanLabel = new JLabel("(01.01 - 07.01)");
 
         /**Add listeners**/
         previousButton.addActionListener(new previous_Action());
@@ -42,12 +43,13 @@ public class WeekView extends CalenderView {
         /**Add components to panel**/
         panelAdd(1, 0.5, 1.0, 2, 0, monthLabel, GridBagConstraints.CENTER);
         panelAdd(1, 0.5, 1.0, 1, 0, weekLabel, GridBagConstraints.CENTER);
-        panelAdd(1, 0.5, 1.0, 2, 3, yearLabel, GridBagConstraints.EAST);
+        panelAdd(1, 0.5, 1.0, 3, 3, yearLabel, GridBagConstraints.EAST);
+        panelAdd(1, 0.5, 1.0, 3, 0, dateSpanLabel, GridBagConstraints.CENTER);
         panelAdd(1, 0.5, 1.0, 0, 0, previousButton, GridBagConstraints.CENTER);
-        panelAdd(1, 0.5, 1.0, 3, 0, nextButton, GridBagConstraints.CENTER);
-        panelAdd(1, 0.5, 1.0, 3, 3, yearComboBox, GridBagConstraints.WEST);
-        panelAdd(4, 1.0, 1.0, 0, 2, tableScrollPane, GridBagConstraints.CENTER);
-        panelAdd(4, 0.0, 0.0, 0, 2, calendarTable.getTableHeader(), GridBagConstraints.CENTER);
+        panelAdd(1, 0.5, 1.0, 4, 0, nextButton, GridBagConstraints.CENTER);
+        panelAdd(1, 0.5, 1.0, 4, 3, yearComboBox, GridBagConstraints.WEST);
+        panelAdd(5, 1.0, 1.0, 0, 2, tableScrollPane, GridBagConstraints.CENTER);
+        panelAdd(5, 0.0, 0.0, 0, 2, calendarTable.getTableHeader(), GridBagConstraints.CENTER);
 
         /**Set border**/
         setBorder(BorderFactory.createTitledBorder("Ukevisning"));
@@ -79,8 +81,19 @@ public class WeekView extends CalenderView {
             nextButton.setEnabled(false);
         }
 
-        if(midweekChange){
-            if(month != 0){
+        if(midweekChangeNext){
+            if(month != 11){
+                dateSpanLabel.setText("(" +currentDay+ "." +currentMonth+ " - " +(currentDay+6)+ "." +(currentMonth+1)+ ")");
+                monthLabel.setText(months[month]+"/"+months[month+1]);
+            }
+            else{
+                monthLabel.setText(months[11]+"/"+months[0]);
+                dateSpanLabel.setText("(" +currentDay+ "." +currentMonth+ " - " +(currentDay+1)+ "." +(currentMonth+1)+ ")");
+
+            }
+        }
+        else if(midweekChangePrev) {
+            if(month != 0) {
                 monthLabel.setText(months[month-1]+"/"+months[month]);
             }
             else{
@@ -88,6 +101,7 @@ public class WeekView extends CalenderView {
             }
         }
         else{
+            dateSpanLabel.setText("(" + currentDay + "." + (currentMonth+1) + " - " + (currentDay+6) + "." + (currentMonth+1) + ")");
             monthLabel.setText(months[month]);
         }
         weekLabel.setText("Uke " + week);
@@ -107,63 +121,62 @@ public class WeekView extends CalenderView {
         numberOfWeeksInMonth = gregCal.getActualMaximum(GregorianCalendar.WEEK_OF_MONTH);
         numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
         startOfMonth = gregCal.get(GregorianCalendar.DAY_OF_WEEK);
-        System.out.println(numberOfWeeksInMonth);
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
     class previous_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            gregCal.roll(GregorianCalendar.WEEK_OF_YEAR, -1);
-            currentWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
-            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
-            gregCal.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, 1);
+
+            gregCal.add(GregorianCalendar.WEEK_OF_YEAR, -1);
+
+            while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.SUNDAY){
+                gregCal.add(GregorianCalendar.DATE, +1);
+            }
+
             currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
-            for(int i = 0; i < 7; i++) {
-                if(currentDay - i < 1){
-                    System.out.println("MIDWEEKCHANGE");
-                    midweekChange = true;
-                    if(currentMonth == 0) {
-                        currentMonth = 11;
-                        gregCal.roll(GregorianCalendar.YEAR, -1);
-                        currentYear = gregCal.get(GregorianCalendar.YEAR);
-                    }
-                    else{
-                        currentMonth -= 1;
-                    }
-                    break;
+            currentYear = gregCal.get(GregorianCalendar.YEAR);
+            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+            currentMonth = gregCal.get(GregorianCalendar.MONTH);
+
+            for(int i = 0; i < 7; i++){
+                if(currentDay - i < 0){
+                    midweekChangePrev = true;
                 }
                 else{
-                    midweekChange = false;
+                    midweekChangePrev = false;
                 }
+
             }
+
             refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
         }
     }
 
     class next_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            gregCal.roll(GregorianCalendar.WEEK_OF_YEAR, true);
-            currentWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
-            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+
+            gregCal.add(GregorianCalendar.WEEK_OF_YEAR, 1);
+
+            while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.MONDAY){
+                gregCal.add(GregorianCalendar.DATE, -1);
+            }
+
             currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
-            for(int i = 0; i < 7; i++) {
+            currentYear = gregCal.get(GregorianCalendar.YEAR);
+            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+            currentMonth = gregCal.get(GregorianCalendar.MONTH);
+
+            for(int i = 0; i < 7; i++){
                 if(currentDay + i >= numberOfDays){
-                    midweekChange = true;
-                    if (currentMonth == 11){
-                        currentMonth = 0;
-                        gregCal.roll(GregorianCalendar.YEAR, true);
-                        currentYear = gregCal.get(GregorianCalendar.YEAR);
-                    }
-                    else {
-                        currentMonth += 1;
-                    }
-                    break;
+                    midweekChangeNext = true;
                 }
                 else{
-                    midweekChange = false;
+                    midweekChangeNext = false;
                 }
+
             }
+
             refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
         }
     }

@@ -59,10 +59,16 @@ public class CalenderView extends JPanel {
 
         /**Create calendar**/
         gregCal = new GregorianCalendar();
+
         realDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
         realWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
         realMonth = gregCal.get(GregorianCalendar.MONTH);
         realYear = gregCal.get(GregorianCalendar.YEAR);
+
+        while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.MONDAY){
+            gregCal.add(GregorianCalendar.DATE, -1);
+        }
+
         currentDay = realDay;
         currentWeek = realWeek;
         currentMonth = realMonth;
