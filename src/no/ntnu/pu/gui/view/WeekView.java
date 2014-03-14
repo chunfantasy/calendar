@@ -12,9 +12,13 @@ import java.util.GregorianCalendar;
 
 public class WeekView extends CalenderView {
 
+    private boolean midweekChange = false;
     private JLabel  weekLabel;
     private int numberOfWeeksInMonth,
+            realWeekOfMonth,
+            currentWeekOfMonth,
             numberOfDays,
+            lastDayOfWeek,
             numberOfWeeksInYear;
 
     public WeekView(){
@@ -57,10 +61,13 @@ public class WeekView extends CalenderView {
         calendarTableModel.setRowCount(24);
         calendarTableModel.setColumnCount(8);
 
-        refreshCalendar(realWeek, realMonth,realYear);
+        realWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
+        currentWeekOfMonth = realWeekOfMonth;
+
+        refreshCalendar(realDay, realWeek, realWeekOfMonth, realMonth,realYear);
     }
 
-    private void refreshCalendar(int week, int month, int year) {
+    private void refreshCalendar(int day, int week, int weekOfMonth, int month, int year) {
         int startOfMonth;
 
         previousButton.setEnabled(true);
@@ -72,7 +79,17 @@ public class WeekView extends CalenderView {
             nextButton.setEnabled(false);
         }
 
-        monthLabel.setText(months[month]);
+        if(midweekChange){
+            if(month != 0){
+                monthLabel.setText(months[month-1]+"/"+months[month]);
+            }
+            else{
+                monthLabel.setText(months[11]+"/"+months[0]);
+            }
+        }
+        else{
+            monthLabel.setText(months[month]);
+        }
         weekLabel.setText("Uke " + week);
         yearComboBox.setSelectedItem(String.valueOf(year));
 
@@ -86,54 +103,68 @@ public class WeekView extends CalenderView {
             calendarTableModel.setValueAt(String.valueOf(i) + ":00", i, 0);
 
         }
-        gregCal = new GregorianCalendar(year,month, 1);
         numberOfWeeksInYear = gregCal.getActualMaximum(GregorianCalendar.WEEK_OF_YEAR);
         numberOfWeeksInMonth = gregCal.getActualMaximum(GregorianCalendar.WEEK_OF_MONTH);
         numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
         startOfMonth = gregCal.get(GregorianCalendar.DAY_OF_WEEK);
-        startOfMonth = (startOfMonth == 1) ? 7 : startOfMonth - 1;
+        System.out.println(numberOfWeeksInMonth);
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
     class previous_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(currentWeek % 4 == 1){
-                if (currentWeek == 1) {
-                    currentWeek = 52;
-                    currentYear -= 1;
-                    currentMonth = 11;
+            gregCal.roll(GregorianCalendar.WEEK_OF_YEAR, -1);
+            currentWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
+            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+            gregCal.set(GregorianCalendar.DAY_OF_WEEK_IN_MONTH, 1);
+            currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
+            for(int i = 0; i < 7; i++) {
+                if(currentDay - i < 1){
+                    System.out.println("MIDWEEKCHANGE");
+                    midweekChange = true;
+                    if(currentMonth == 0) {
+                        currentMonth = 11;
+                        gregCal.roll(GregorianCalendar.YEAR, -1);
+                        currentYear = gregCal.get(GregorianCalendar.YEAR);
+                    }
+                    else{
+                        currentMonth -= 1;
+                    }
+                    break;
                 }
-                else {
-                    currentMonth -= 1;
-                    currentWeek -= 1;
+                else{
+                    midweekChange = false;
                 }
             }
-            else {
-                currentWeek -= 1;
-            }
-            refreshCalendar(currentWeek, currentMonth, currentYear);
+            refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
         }
     }
 
     class next_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if(currentWeek % 4 == 0){
-
-                if (currentWeek == 52){
-                    currentWeek = 1;
-                    currentYear += 1;
-                    currentMonth = 0;
+            gregCal.roll(GregorianCalendar.WEEK_OF_YEAR, true);
+            currentWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
+            currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+            currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
+            for(int i = 0; i < 7; i++) {
+                if(currentDay + i >= numberOfDays){
+                    midweekChange = true;
+                    if (currentMonth == 11){
+                        currentMonth = 0;
+                        gregCal.roll(GregorianCalendar.YEAR, true);
+                        currentYear = gregCal.get(GregorianCalendar.YEAR);
+                    }
+                    else {
+                        currentMonth += 1;
+                    }
+                    break;
                 }
-                else {
-                    currentMonth += 1;
-                    currentWeek += 1;
+                else{
+                    midweekChange = false;
                 }
             }
-            else {
-                currentWeek += 1;
-            }
-            refreshCalendar(currentWeek, currentMonth, currentYear);
+            refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
         }
     }
     class year_Action implements ActionListener {
@@ -141,7 +172,7 @@ public class WeekView extends CalenderView {
             if (yearComboBox.getSelectedItem() != null) {
                 String y = yearComboBox.getSelectedItem().toString();
                 currentYear = Integer.parseInt(y);
-                refreshCalendar(currentWeek, currentMonth,currentYear);
+                refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth,currentYear);
             }
         }
     }
