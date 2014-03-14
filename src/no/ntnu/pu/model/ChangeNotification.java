@@ -3,7 +3,7 @@ package no.ntnu.pu.model;
 public class ChangeNotification extends Notification {
 	private String[] changedProperties;
 
-    public ChangeNotification(String[] changedProperties, Person[] recipient, Appointment appointment){
+    public ChangeNotification(String[] changedProperties, Person recipient, Appointment appointment){
         super(recipient, appointment);
         this.changedProperties = changedProperties;
     }
