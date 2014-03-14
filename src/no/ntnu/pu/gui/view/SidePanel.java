@@ -28,15 +28,16 @@ public abstract class SidePanel extends JPanel {
 
         list.setBackground(super.getBackground());
 
-        for(int i =0; i<10;i++){
-            model.addElement(Integer.toString(i));
-        }
-
+        list.setPreferredSize(new Dimension(280,270));
         add(list);
     }
 
     protected void addElement(Object value){
         model.addElement(value);
+    }
+
+    protected void removeElement(Object value){
+        model.removeElement(value);
     }
 
 }
