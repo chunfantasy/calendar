@@ -6,9 +6,9 @@ package no.ntnu.pu.model;
 
 public abstract class Notification {
     public Appointment appointment;
-    public Person[] recipient;
+    public Person recipient;
 
-    public Notification(Person[] recipient, Appointment appointment){
+    public Notification(Person recipient, Appointment appointment){
         this.appointment = appointment;
         this.recipient = recipient;
     }
@@ -21,11 +21,11 @@ public abstract class Notification {
         this.appointment = appointment;
     }
 
-    public Person[] getRecipient() {
+    public Person getRecipient() {
         return recipient;
     }
 
-    public void setRecipient(Person[] recipient) {
+    public void setRecipient(Person recipient) {
         this.recipient = recipient;
     }
 }

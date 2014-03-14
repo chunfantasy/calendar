@@ -6,7 +6,7 @@ import java.util.Date;
 public class Alarm extends Notification {
 	private Date time;
 
-    public Alarm(Date time, Person[] recipient, Appointment appointment){
+    public Alarm(Date time, Person recipient, Appointment appointment){
         super(recipient, appointment);
         this.time = time;
     }
