@@ -1,6 +1,7 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.model.Appointment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.GregorianCalendar;
 
 public class WeekView extends CalenderView {
 
-    private boolean midweekChangeNext = false, midweekChangePrev = false, newYear = false;
+    private boolean midweekChange = false, prev = false, next = false, newYear = false;
     private JLabel  weekLabel, dateSpanLabel;
     private int numberOfWeeksInMonth,
             realWeekOfMonth,
@@ -35,7 +36,7 @@ public class WeekView extends CalenderView {
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    AppointmentControl.createAppointment();
+                        AppointmentControl.createAppointment();
                 }
             }
         });
@@ -66,11 +67,10 @@ public class WeekView extends CalenderView {
         realWeekOfMonth = gregCal.get(GregorianCalendar.WEEK_OF_MONTH);
         currentWeekOfMonth = realWeekOfMonth;
 
-        refreshCalendar(realDay, realWeek, realWeekOfMonth, realMonth,realYear);
+        refreshCalendar(realWeek, realMonth,realYear);
     }
 
-    private void refreshCalendar(int day, int week, int weekOfMonth, int month, int year) {
-        int startOfMonth;
+    private void refreshCalendar( int week,  int month, int year) {
 
         previousButton.setEnabled(true);
         nextButton.setEnabled(true);
@@ -81,28 +81,46 @@ public class WeekView extends CalenderView {
             nextButton.setEnabled(false);
         }
 
-        if(midweekChangeNext){
-            if(month != 11){
-                dateSpanLabel.setText("(" +currentDay+ "." +currentMonth+ " - " +(currentDay+6)+ "." +(currentMonth+1)+ ")");
-                monthLabel.setText(months[month]+"/"+months[month+1]);
-            }
-            else{
-                monthLabel.setText(months[11]+"/"+months[0]);
-                dateSpanLabel.setText("(" +currentDay+ "." +currentMonth+ " - " +(currentDay+1)+ "." +(currentMonth+1)+ ")");
+        if(next){
+            int var = 6 - (gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH) - currentDay);
 
-            }
-        }
-        else if(midweekChangePrev) {
-            if(month != 0) {
-                monthLabel.setText(months[month-1]+"/"+months[month]);
+            if(midweekChange){
+                if(month != 11){
+                    dateSpanLabel.setText("(" +currentDay+ "." +(currentMonth+1)+ " - " + var + "." +(currentMonth+2)+ ")");
+                    monthLabel.setText(months[month]+"/"+months[month+1]);
+                }
+                else{
+                    monthLabel.setText(months[11]+"/"+months[0]);
+                    dateSpanLabel.setText("(" +currentDay+ "." +currentMonth+ " - " +(currentDay+1)+ "." +(currentMonth+1)+ ")");
+                }
             }
             else{
-                monthLabel.setText(months[11]+"/"+months[0]);
+                dateSpanLabel.setText("(" + currentDay + "." + (currentMonth+1) + " - " + (currentDay+6) + "." + (currentMonth+1) + ")");
+                monthLabel.setText(months[month]);
             }
         }
-        else{
-            dateSpanLabel.setText("(" + currentDay + "." + (currentMonth+1) + " - " + (currentDay+6) + "." + (currentMonth+1) + ")");
-            monthLabel.setText(months[month]);
+        else if(prev) {
+            gregCal.add(GregorianCalendar.MONTH, -1);
+            int varDay = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH) - (6 - currentDay);
+            int varMonth = gregCal.get(GregorianCalendar.MONTH)+1;
+            gregCal.add(GregorianCalendar.MONTH, 1);
+
+            if(midweekChange){
+                if(month != 0) {
+                    dateSpanLabel.setText("(" + varDay + "." +(currentMonth)+ " - " + currentDay + "." +(currentMonth+1)+ ")");
+                    monthLabel.setText(months[month-1]+"/"+months[month]);
+                }
+                else{
+
+                    dateSpanLabel.setText("(" + varDay + "." + varMonth + " - " + currentDay + "." +(currentMonth+1)+ ")");
+                    monthLabel.setText(months[11]+"/"+months[0]);
+                }
+            }
+            else {
+                dateSpanLabel.setText("(" + (currentDay-6) + "." + (currentMonth+1) + " - " + currentDay + "." + (currentMonth+1) + ")");
+                monthLabel.setText(months[month]);
+            }
+
         }
         weekLabel.setText("Uke " + week);
         yearComboBox.setSelectedItem(String.valueOf(year));
@@ -120,18 +138,18 @@ public class WeekView extends CalenderView {
         numberOfWeeksInYear = gregCal.getActualMaximum(GregorianCalendar.WEEK_OF_YEAR);
         numberOfWeeksInMonth = gregCal.getActualMaximum(GregorianCalendar.WEEK_OF_MONTH);
         numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
-        startOfMonth = gregCal.get(GregorianCalendar.DAY_OF_WEEK);
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
     class previous_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            prev = true;
 
             gregCal.add(GregorianCalendar.WEEK_OF_YEAR, -1);
 
             while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.SUNDAY){
-                gregCal.add(GregorianCalendar.DATE, +1);
+                gregCal.add(GregorianCalendar.DATE, 1);
             }
 
             currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
@@ -141,20 +159,21 @@ public class WeekView extends CalenderView {
 
             for(int i = 0; i < 7; i++){
                 if(currentDay - i < 0){
-                    midweekChangePrev = true;
+                    midweekChange = true;
                 }
                 else{
-                    midweekChangePrev = false;
+                    midweekChange = false;
                 }
-
             }
 
-            refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
+            refreshCalendar(currentWeek, currentMonth, currentYear);
+            prev = false;
         }
     }
 
     class next_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            next = true;
 
             gregCal.add(GregorianCalendar.WEEK_OF_YEAR, 1);
 
@@ -169,23 +188,36 @@ public class WeekView extends CalenderView {
 
             for(int i = 0; i < 7; i++){
                 if(currentDay + i >= numberOfDays){
-                    midweekChangeNext = true;
+                    midweekChange = true;
                 }
                 else{
-                    midweekChangeNext = false;
+                    midweekChange = false;
                 }
 
             }
 
-            refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth, currentYear);
+            refreshCalendar(currentWeek, currentMonth, currentYear);
+            next = false;
         }
     }
     class year_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (yearComboBox.getSelectedItem() != null) {
                 String y = yearComboBox.getSelectedItem().toString();
-                currentYear = Integer.parseInt(y);
-                refreshCalendar(currentDay, currentWeek, currentWeekOfMonth, currentMonth,currentYear);
+                int var = Integer.parseInt(y);
+                var = var - currentYear;
+                gregCal.add(GregorianCalendar.YEAR, var);
+
+                currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
+                currentYear = gregCal.get(GregorianCalendar.YEAR);
+                currentWeek = gregCal.get(GregorianCalendar.WEEK_OF_YEAR);
+                currentMonth = gregCal.get(GregorianCalendar.MONTH);
+
+                next = true;
+                prev = true;
+                refreshCalendar(currentWeek, currentMonth,currentYear);
+                next = false;
+                prev = false;
             }
         }
     }

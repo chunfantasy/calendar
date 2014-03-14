@@ -69,7 +69,7 @@ public class CalenderView extends JPanel {
             gregCal.add(GregorianCalendar.DATE, -1);
         }
 
-        currentDay = realDay;
+        currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
         currentWeek = realWeek;
         currentMonth = realMonth;
         currentYear = realYear;
