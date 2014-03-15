@@ -34,10 +34,10 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
             setText(a.getAppointment().getTitle()+" "+a.getTime());
             if(cellHasFocus){
                 this.setBorder(BorderFactory.createMatteBorder(
-                        4, 5, 4, 4, ALARM_COLOR));
+                        0, 6, 3, 0, ALARM_COLOR));
             }else{
                 this.setBorder(BorderFactory.createMatteBorder(
-                        3, 5, 3, 3, ALARM_COLOR));
+                        0, 8, 3, 0, ALARM_COLOR));
             }
 
         }else if(value instanceof ChangeNotification){
@@ -63,10 +63,15 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
     private void setCellBorder(Color c, Boolean focus){
         if(focus){
             this.setBorder(BorderFactory.createMatteBorder(
-                1, 5, 1, 1, c));
+                0, 4, 1, 0, c));
         }else{
             this.setBorder(BorderFactory.createMatteBorder(
-                    0, 5, 0, 0, c));
+                    0, 6, 1, 0, c));
         }
+    }
+
+    @Override
+    public void setText(String s){
+        super.setText(" "+s);
     }
 }

@@ -1,7 +1,15 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.gui.panel.MeetingPanel;
+import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Notification;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +36,8 @@ public abstract class SidePanel extends JPanel {
 
         list.setBackground(super.getBackground());
 
+        list.addMouseListener(new ListClickListener());
+
         list.setPreferredSize(new Dimension(280,270));
         add(list);
     }
@@ -40,4 +50,28 @@ public abstract class SidePanel extends JPanel {
         model.removeElement(value);
     }
 
+    class ListClickListener extends MouseAdapter{
+
+        @Override
+        public void mouseClicked(MouseEvent mouseEvent){
+            if(mouseEvent.getClickCount() == 2){
+                int index = list.locationToIndex(mouseEvent.getPoint());
+                if(index >= 0){
+                    Object o = list.getModel().getElementAt(index);
+
+                    //Open the MeetingPanel
+                    //TODO: Display the correct meeting.
+                    MeetingPanel mp = new MeetingPanel();
+                    if(o instanceof Appointment){
+                        System.out.println(((Appointment) o).getTitle());
+                        //mp.setModel(o);
+                    }else{
+                        //mp.setModel(((Notification) o).getAppointment());
+                        System.out.println(((Notification) o).getAppointment().getTitle());
+                    }
+                }
+            }
+        }
+
+    }
 }

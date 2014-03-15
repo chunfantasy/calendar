@@ -46,6 +46,7 @@ public class MainView {
 
         calendarView.add(monthView);
         calendarView.add(weekView);
+        showMonth();
 
 
         buttonGroup.add(weekButton);
