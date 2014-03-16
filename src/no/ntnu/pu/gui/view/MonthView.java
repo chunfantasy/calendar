@@ -34,7 +34,7 @@ public class MonthView extends CalenderView{
         panelAdd(1, 0.5, 1.0, 0, 0, previousButton, GridBagConstraints.CENTER);
         panelAdd(1, 0.5, 1.0, 2, 0, nextButton, GridBagConstraints.CENTER);
         panelAdd(3, 0.0, 0.0, 0, 2, calendarTable, GridBagConstraints.CENTER);
-        panelAdd(3, 0.0, 0.0, 0, 1, calendarTable.getTableHeader(), GridBagConstraints.CENTER);
+        panelAdd(3, 0.0, 0.0, 0, 1, calendarTableHeader, GridBagConstraints.CENTER);
 
         /**Set Border**/
         setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
@@ -44,17 +44,11 @@ public class MonthView extends CalenderView{
             calendarTableModel.addColumn(headers[i]);
         }
 
-        calendarTable.setColumnSelectionAllowed(true);
-        calendarTable.setRowSelectionAllowed(true);
-        calendarTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        calendarTable.getParent().setBackground(calendarTable.getBackground());
-        calendarTable.getTableHeader().setResizingAllowed(false);
-        calendarTable.getTableHeader().setReorderingAllowed(false);
-
         calendarTable.setRowHeight(38);
         calendarTableModel.setRowCount(6);
         calendarTableModel.setColumnCount(7);
+
+        calendarTable.setAutoCreateColumnsFromModel(false);
 
         refreshCalendar(realMonth, realYear);
     }

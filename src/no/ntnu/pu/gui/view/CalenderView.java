@@ -3,6 +3,7 @@ package no.ntnu.pu.gui.view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.GregorianCalendar;
 
@@ -14,6 +15,7 @@ public class CalenderView extends JPanel {
     protected JScrollPane         tableScrollPane;
     protected DefaultTableModel   calendarTableModel;
     protected JTable              calendarTable;
+    protected JTableHeader        calendarTableHeader;
     protected JLabel              yearLabel, monthLabel;
     protected JButton             previousButton, nextButton;
     protected JComboBox           yearComboBox;
@@ -51,6 +53,7 @@ public class CalenderView extends JPanel {
             public boolean isCellEditable(int rowIndex, int mColIndex){return false;}
         };
         calendarTable = new JTable(calendarTableModel);
+        calendarTableHeader = calendarTable.getTableHeader();
         tableScrollPane = new JScrollPane(calendarTable);
         tableScrollPane.setPreferredSize(new Dimension(200, 200));
 
@@ -79,10 +82,10 @@ public class CalenderView extends JPanel {
         calendarTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         calendarTable.getParent().setBackground(calendarTable.getBackground());
-        calendarTable.getTableHeader().setResizingAllowed(false);
-        calendarTable.getTableHeader().setReorderingAllowed(false);
+        calendarTableHeader.setResizingAllowed(false);
+        calendarTableHeader.setReorderingAllowed(false);
 
-        for(int i = 2000; i < realYear + 100; i++){
+        for(int i = realYear - 10; i <= realYear + 100; i++){
             yearComboBox.addItem(String.valueOf(i));
         }
     }
@@ -105,7 +108,7 @@ public class CalenderView extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean selected, boolean focused, int row, int column) {
             super.getTableCellRendererComponent(table, value, selected, focused, row, column);
 
-            if (column == 6 || column == 7) {
+            if (calendarTable.getColumnCount() - column == 1 || calendarTable.getColumnCount() - column == 2) {
                 setBackground(new Color(255, 220, 220));
             }
             else{
