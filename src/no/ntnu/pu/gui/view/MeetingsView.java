@@ -2,10 +2,12 @@ package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.AppointmentControl;
 import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Notification;
 
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import java.beans.PropertyChangeEvent;
 
 public class MeetingsView extends SidePanel{
 
@@ -26,5 +28,18 @@ public class MeetingsView extends SidePanel{
 
     public void removeMeeting(Appointment meeting){
         model.removeElement(meeting);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch (evt.getPropertyName()){
+            case Calendar.APPOINTMENT_PROPERTY:
+                if(evt.getNewValue() instanceof Notification){
+                    addMeeting(evt.getNewValue());
+                }else{
+                    removeMeeting(evt.getOldValue());
+                }
+
+        }
     }
 }
