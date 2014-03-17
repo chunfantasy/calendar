@@ -15,6 +15,7 @@ public class Appointment {
 
 	public Appointment(String title) {
 		this.title = title;
+		this.participants = new ArrayList<>();
 	}
 
 	public int getId() {
