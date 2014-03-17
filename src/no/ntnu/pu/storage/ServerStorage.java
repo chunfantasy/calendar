@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,7 +82,7 @@ public class ServerStorage implements Storage {
 				+ "title varchar(20), "
 				+ "starttime datetime, " 
 				+ "endtime datetime, "
-				+ "adress varchar(30), " 
+				+ "address varchar(30), " 
 				+ "meetingroomid int, "
 				+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
 				+ "description varchar(50))";
@@ -180,11 +181,12 @@ public class ServerStorage implements Storage {
 	}
 
 	private Appointment setAppointment(ResultSet rs) throws SQLException {
-		Appointment a = new Appointment();
+		Appointment a = new Appointment("");
 		a.setId(rs.getInt("id"));
-		a.setAdress(rs.getString(""));
+		a.setAddress(rs.getString(""));
 		return a;
 	}
+
 	public static void main(String[] args) throws SQLException {
 		// TODO Auto-generated method stub
 		ServerStorage serverStorage = new ServerStorage();
@@ -203,7 +205,7 @@ public class ServerStorage implements Storage {
 		r.setId(1);
 		serverStorage.insertRoom(r);
 
-		Appointment a = new Appointment();
+		Appointment a = new Appointment("");
 		a.setTitle("gogogo");
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
@@ -214,7 +216,7 @@ public class ServerStorage implements Storage {
 		a.setParticipants(participants);
 		serverStorage.insertAppointment(a);
 
-		System.out.println(serverStorage.deletePersonByEmail("email"));
+		System.out.println();
 
 	}
 
@@ -399,13 +401,13 @@ public class ServerStorage implements Storage {
 	@Override
 	public Appointment insertAppointment(Appointment a) {
 		try {
-			sql = "INSERT INTO appointment(title, starttime, endtime, adress, description, meetingroomid) "
+			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid) "
 					+ "VALUES(?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, a.getTitle());
 			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
 			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
-			pstmt.setString(4, a.getAdress());
+			pstmt.setString(4, a.getAddress());
 			pstmt.setString(5, a.getDescription());
 			pstmt.setInt(6, a.getMeetingRoom().getId());
 			pstmt.executeUpdate();

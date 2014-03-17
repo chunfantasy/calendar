@@ -2,24 +2,20 @@ package no.ntnu.pu.model;
 
 import java.util.Date;
 
-public class Alarm {
+
+public class Alarm extends Notification {
 	private Date time;
-	private Participant[] recipient;
 
-	public Date getTime() {
-		return time;
-	}
+    public Alarm(Date time, Person recipient, Appointment appointment){
+        super(recipient, appointment);
+        this.time = time;
+    }
 
-	public void setTime(Date time) {
-		this.time = time;
-	}
+    public Date getTime() {
+        return time;
+    }
 
-	public Participant[] getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(Participant[] recipient) {
-		this.recipient = recipient;
-	}
-
+    public void setTime(Date time) {
+        this.time = time;
+    }
 }
