@@ -141,7 +141,7 @@ public class ServerStorage implements Storage {
 			pstmt.setString(1, a.getTitle());
 			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
 			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
-			pstmt.setString(4, a.getAdress());
+			pstmt.setString(4, a.getAddress());
 			pstmt.setString(5, a.getDescription());
 			pstmt.setInt(6, a.getMeetingRoom().getId());
 			pstmt.executeUpdate();
@@ -256,7 +256,7 @@ public class ServerStorage implements Storage {
 		r.setId(1);
 		serverStorage.insert(r);
 
-		Appointment a = new Appointment();
+		Appointment a = new Appointment("");
 		a.setTitle("gogogo");
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());

@@ -8,10 +8,14 @@ public class Appointment {
 	private String title;
 	private Date startTime;
 	private Date endTime;
-	private String adress;
+	private String address;
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
+
+	public Appointment(String title) {
+		this.title = title;
+	}
 
 	public int getId() {
 		return id;
@@ -45,12 +49,12 @@ public class Appointment {
 		this.endTime = endTime;
 	}
 
-	public String getAdress() {
-		return adress;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setAdress(String adress) {
-		this.adress = adress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public Room getMeetingRoom() {
