@@ -11,6 +11,7 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
+    private boolean roomChosen;
 	
 	public String getTitle() {
 		return title;
