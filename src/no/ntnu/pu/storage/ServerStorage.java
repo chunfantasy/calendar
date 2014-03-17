@@ -247,7 +247,7 @@ public class ServerStorage implements Storage {
 
 		g = serverStorage.getGroupById(1);
 
-		System.out.println(g.getPersons().get(2).getEmail());
+		System.out.println(g.getPersons().get(1).getEmail());
 		Room r = new Room("P15");
 		r.setId(1);
 		serverStorage.insertRoom(r);
