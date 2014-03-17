@@ -3,52 +3,61 @@ package no.ntnu.pu.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Person implements Participant{
+public class Person implements Participant {
+	private int id;
 	private String name, email, title;
 	private List<String> phoneNumbers;
 
-    public Person(String Name){
-        name = Name;
-        phoneNumbers = new ArrayList<String>();
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void addPhoneNumber(String phoneNumber) {
-        this.phoneNumbers.add(phoneNumber);
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Boolean removePhoneNumber(String phoneNumber){
-        if(phoneNumbers.contains(phoneNumber)){
-            phoneNumbers.remove(phoneNumber);
-            return true;
-        }
-        return false;
-    }
+	public Person(String Name) {
+		name = Name;
+		phoneNumbers = new ArrayList<String>();
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void addPhoneNumber(String phoneNumber) {
+		this.phoneNumbers.add(phoneNumber);
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public Boolean removePhoneNumber(String phoneNumber) {
+		if (phoneNumbers.contains(phoneNumber)) {
+			phoneNumbers.remove(phoneNumber);
+			return true;
+		}
+		return false;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public List<String> getPhoneNumbers() {
-        return phoneNumbers;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getEmail() {
+		return email;
+	}
+
+	public List<String> getPhoneNumbers() {
+		return phoneNumbers;
+	}
+
+	public String getTitle() {
+		return title;
+	}
 }

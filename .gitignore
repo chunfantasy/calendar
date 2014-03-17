@@ -3,6 +3,7 @@
 
 #IDE Files#
 .settings
+.settings/*
 .idea
 calender.iml
 
