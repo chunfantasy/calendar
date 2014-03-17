@@ -27,11 +27,14 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private final String DATETEXT = "dd.mm.yy", TIMETEXT = "hh:mm";
     private static final String EDITINGTITLE = "Endre avtale", NEWTITLE = "Legg til ny avtale";
     private Appointment model;
-    public boolean roomChosen = false;
     private JPanel totalGUI;
 
     public JPanel createContentPane(boolean editing){
         totalGUI = new JPanel();
+
+        // Appointment
+        model = new Appointment();
+
         // GridBag
         GridBagConstraints gbc;
         totalGUI.setLayout(new GridBagLayout());
@@ -182,15 +185,10 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         totalGUI.add(comp, c);
     }
 
-    public void setRoomChosen(boolean chosen){
-        this.roomChosen = chosen;
-    }
-
-
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addRoomButton){
-            AddRoom.createAndShowGUI();
+            AddRoom.createAndShowGUI(model);
         }
         if (e.getSource() == addParticipantButton){
             AddParticipant.createAndShowGUI();
@@ -213,7 +211,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             placeField.setText("");
         }
         if (e.getSource() == saveButton){
-            if ()
             model.setAdress(null);
         }
 
