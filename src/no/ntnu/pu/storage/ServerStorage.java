@@ -269,7 +269,6 @@ public class ServerStorage implements Storage {
 		serverStorage.insert(a);
 
 		System.out.println();
-		
 
 	}
 
@@ -317,6 +316,18 @@ public class ServerStorage implements Storage {
 	}
 
 	@Override
+	public Group insertGroup(Group g) throws SQLException {
+		sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
+		pstmt = con.prepareStatement(sql);
+		pstmt.setString(1, g.getEmail());
+		pstmt.setString(2, g.getName());
+		pstmt.executeUpdate();
+		g.setId(this.getLastId());
+		con.commit();
+		return g;
+	}
+
+	@Override
 	public boolean deletePersonByEmail(String email) throws SQLException {
 		try {
 			sql = "DELETE FROM person WHERE email = " + email;
@@ -330,12 +341,6 @@ public class ServerStorage implements Storage {
 
 	@Override
 	public Group getGroupByEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Group insertGroup(Group g) {
 		// TODO Auto-generated method stub
 		return null;
 	}
