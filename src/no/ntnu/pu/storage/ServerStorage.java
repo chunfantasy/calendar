@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,8 +43,10 @@ public class ServerStorage implements Storage {
 		stmt = con.createStatement();
 
 		//@formatter:off
-		// create table person		
+		// create table person
 		sql = "DROP TABLE IF EXISTS appointment_participant";
+		stmt.execute(sql);
+		sql = "DROP TABLE IF EXISTS group_person";
 		stmt.execute(sql);
 		sql = "DROP TABLE IF EXISTS person";
 		stmt.execute(sql);
@@ -56,6 +57,8 @@ public class ServerStorage implements Storage {
 		sql = "DROP TABLE IF EXISTS meetinggroup";
 		stmt.execute(sql);
 
+
+		// create table person
 		sql = "CREATE TABLE person (" 
 				+ "id int auto_increment primary key, "
 				+ "email varchar(20), " 
@@ -69,6 +72,15 @@ public class ServerStorage implements Storage {
 				+ "name varchar(15)," 
 				+ "email varchar(20))";
 		stmt.execute(sql);
+		
+		// create table group_person
+		sql = "CREATE TABLE group_person (" 
+				+ "id int auto_increment primary key, "
+				+ "groupid int, " 
+				+ "personid int, "
+				+ "foreign key (groupid) references meetinggroup(id) on delete set null on update cascade, "
+				+ "foreign key (personid) references person(id) on delete set null on update cascade)";
+		stmt.execute(sql);		
 				
 		// create table meetingroom
 		sql = "CREATE TABLE meetingroom ("
@@ -170,6 +182,27 @@ public class ServerStorage implements Storage {
 		g.setId(rs.getInt("id"));
 		g.setEmail(rs.getString("email"));
 		g.setName(rs.getString("name"));
+
+		try {
+			sql = "SELECT * FROM group_person WHERE groupid = " + g.getId();
+			rs = stmt.executeQuery(sql);
+			ArrayList<Integer> listId = new ArrayList<>();
+			while (rs.next()) {
+				listId.add(rs.getInt("personid"));
+			}
+			ArrayList<Person> list = new ArrayList<>();
+			for (int id : listId) {
+				sql = "SELECT * FROM person WHERE id = " + id;
+				rs = stmt.executeQuery(sql);
+				if (rs.next()) {
+					list.add(setPerson(rs));
+				}
+			}
+			g.setPersons(list);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return g;
 	}
 
@@ -183,7 +216,6 @@ public class ServerStorage implements Storage {
 	private Appointment setAppointment(ResultSet rs) throws SQLException {
 		Appointment a = new Appointment("");
 		a.setId(rs.getInt("id"));
-		a.setAddress(rs.getString(""));
 		return a;
 	}
 
@@ -193,14 +225,29 @@ public class ServerStorage implements Storage {
 		serverStorage.connect();
 		serverStorage.initiate();
 
-		Person p = new Person("a");
-		p.setEmail("email");
-		p.setTitle("title");
-		p = (Person) serverStorage.insertPerson(p);
+		Person p1 = new Person("a");
+		p1.setEmail("email1");
+		p1.setTitle("title1");
+		p1 = serverStorage.insertPerson(p1);
 
+		Person p2 = new Person("b");
+		p2.setEmail("email2");
+		p2.setTitle("title2");
+		p2 = serverStorage.insertPerson(p2);
+		
+		Person p3 = new Person("c");
+		p3.setEmail("email3");
+		p3.setTitle("title3");
+		p3 = serverStorage.insertPerson(p3);
+		
 		Group g = new Group("super group 12");
-		g = (Group) serverStorage.insertGroup(g);
+		g.addPerson(p1);
+		g.addPerson(p3);
+		g = serverStorage.insertGroup(g);
 
+		g = serverStorage.getGroupById(1);
+
+		System.out.println(g.getPersons().get(2).getEmail());
 		Room r = new Room("P15");
 		r.setId(1);
 		serverStorage.insertRoom(r);
@@ -211,12 +258,14 @@ public class ServerStorage implements Storage {
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
 		ArrayList<Participant> participants = new ArrayList<>();
-		participants.add(p);
+		participants.add(p2);
+		participants.add(p3);
 		participants.add(g);
 		a.setParticipants(participants);
 		serverStorage.insertAppointment(a);
 
-		System.out.println();
+		serverStorage.getAppointmentByTime(new Date(), new Date());
+		System.out.println(new Date());
 
 	}
 
@@ -319,6 +368,17 @@ public class ServerStorage implements Storage {
 			pstmt.setString(2, g.getName());
 			pstmt.executeUpdate();
 			g.setId(this.getLastId());
+
+			if (!g.getPersons().isEmpty()) {
+				for (Person person : g.getPersons()) {
+					sql = "INSERT INTO group_person (groupid, personid) "
+							+ "VALUES(?, ?)";
+					pstmt = con.prepareStatement(sql);
+					pstmt.setInt(1, g.getId());
+					pstmt.setInt(2, person.getId());
+					pstmt.executeUpdate();
+				}
+			}
 			con.commit();
 			return g;
 		} catch (SQLException e) {
@@ -462,8 +522,9 @@ public class ServerStorage implements Storage {
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime) {
 		try {
-			sql = "SELECT * FROM appointment WHERE starttime >= " + startTime
-					+ " AND endtime <= " + endTime;
+			sql = "SELECT * FROM appointment WHERE starttime >= '"
+					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
+					+ new Timestamp(endTime.getTime()) + "'";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList<>();
 			while (rs.next()) {
