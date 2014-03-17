@@ -16,7 +16,7 @@ import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
-public class ServerStorage {
+public class ServerStorage implements Storage {
 	private Connection con;
 	private Statement stmt;
 	private PreparedStatement pstmt;
@@ -192,21 +192,21 @@ public class ServerStorage {
 
 	public boolean delete(Object o) throws SQLException {
 		if (o instanceof Person) {
-			sql = "delete from person where id = " + ((Person) o).getId();
+			sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
 			stmt.executeUpdate(sql);
 			con.commit();
 			return true;
 		}
 
 		else if (o instanceof Room) {
-			sql = "delete from meetingroom where id = " + ((Room) o).getId();
+			sql = "DELETE FROM meetingroom WHERE id = " + ((Room) o).getId();
 			stmt.executeUpdate(sql);
 			con.commit();
 			return true;
 		}
 
 		else if (o instanceof Appointment) {
-			sql = "delete from appointment where id = "
+			sql = "DELETE FROM appointment WHERE id = "
 					+ ((Appointment) o).getId();
 			stmt.executeUpdate(sql);
 			con.commit();
@@ -214,7 +214,7 @@ public class ServerStorage {
 		}
 
 		else if (o instanceof Group) {
-			sql = "delete from meetinggroup where id = " + ((Group) o).getId();
+			sql = "DELETE FROM meetinggroup WHERE id = " + ((Group) o).getId();
 			stmt.executeUpdate(sql);
 			con.commit();
 			return true;
@@ -267,8 +267,94 @@ public class ServerStorage {
 		a.setParticipants(participants);
 		serverStorage.insert(a);
 
-		serverStorage.delete(p);
+		System.out.println(serverStorage.deletePersonByEmail("email"));
 
+	}
+
+	@Override
+	public Person getPersonByEmail(String email) throws SQLException {
+		sql = "SELECT * FROM person WHERE email = " + email;
+		rs = stmt.executeQuery(sql);
+		Person p = new Person("");
+		if (rs.next()) {
+			p.setId(rs.getInt("id"));
+			p.setEmail(rs.getString("email"));
+			p.setName(rs.getString("name"));
+			p.setTitle(rs.getString("title"));
+		}
+		return p;
+	}
+
+	@Override
+	public ArrayList<Person> getPersonByName(String email) throws SQLException {
+		sql = "SELECT * FROM PERSON WHERE email = " + email;
+		rs = stmt.executeQuery(sql);
+		Person p = new Person("");
+		ArrayList<Person> list = new ArrayList<>();
+		while (rs.next()) {
+			p.setId(rs.getInt("id"));
+			p.setEmail(rs.getString("email"));
+			p.setName(rs.getString("name"));
+			p.setTitle(rs.getString("title"));
+			list.add(p);
+		}
+		return list;
+	}
+
+	@Override
+	public Person insertPerson(Person p) throws SQLException {
+		sql = "INSERT INTO person(email, name, title) VALUES(?, ?, ?)";
+		pstmt = con.prepareStatement(sql);
+		pstmt.setString(1, p.getEmail());
+		pstmt.setString(2, p.getName());
+		pstmt.setString(3, p.getTitle());
+		pstmt.executeUpdate();
+		p.setId(this.getLastId());
+		con.commit();
+		return p;
+	}
+
+	@Override
+	public boolean deletePersonByEmail(String email) throws SQLException {
+		try {
+			sql = "DELETE FROM person WHERE email = " + email;
+			stmt.execute(sql);
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public Group getGroupByEmail(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Group insertGroup(Group g) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean deleteGroupByEmail(Group g) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
+			Date endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
