@@ -41,12 +41,12 @@ public class ClientStorage {
 	// Appointment
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime) {
-		ArrayList<Appointment> list = new ArrayList<>();
+		ArrayList<Appointment> list = new ArrayList<Appointment>();
 		return list;
 	}
 
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
-		ArrayList<Appointment> list = new ArrayList<>();
+		ArrayList<Appointment> list = new ArrayList<Appointment>();
 		return list;
 	}
 
