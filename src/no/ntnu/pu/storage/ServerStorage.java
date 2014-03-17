@@ -96,19 +96,131 @@ public class ServerStorage implements Storage {
 				+ "foreign key(personid) references person(id) on delete set null on update cascade, "
 				+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
 		stmt.execute(sql);
-
-		
-		
-		
 		//@formatter:on
 		con.commit();
 	}
 
-	// Save an object in the database
-	public Object insert(Object o) throws SQLException {
-		// table person
-		if (o instanceof Person) {
-			Person p = (Person) o;
+	public boolean delete(Object o) {
+		try {
+			if (o instanceof Person) {
+				sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				return true;
+			}
+
+			else if (o instanceof Room) {
+				sql = "DELETE FROM meetingroom WHERE id = "
+						+ ((Room) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				return true;
+			}
+
+			else if (o instanceof Appointment) {
+				sql = "DELETE FROM appointment WHERE id = "
+						+ ((Appointment) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				return true;
+			}
+
+			else if (o instanceof Group) {
+				sql = "DELETE FROM meetinggroup WHERE id = "
+						+ ((Group) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				return true;
+			}
+
+			else
+				return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public void close() throws SQLException {
+		this.con.close();
+	}
+
+	public int getLastId() throws SQLException {
+		this.rs = this.pstmt.executeQuery("select last_insert_id()");
+		if (this.rs.next()) {
+			int id = rs.getInt(1);
+			return id;
+		} else
+			return -1;
+
+	}
+
+	private Person setPerson(ResultSet rs) throws SQLException {
+		Person p = new Person("");
+		p.setId(rs.getInt("id"));
+		p.setEmail(rs.getString("email"));
+		p.setName(rs.getString("name"));
+		p.setTitle(rs.getString("title"));
+		return p;
+	}
+
+	private Group setGroup(ResultSet rs) throws SQLException {
+		Group g = new Group("");
+		g.setId(rs.getInt("id"));
+		g.setEmail(rs.getString("email"));
+		g.setName(rs.getString("name"));
+		return g;
+	}
+
+	private Room setRoom(ResultSet rs) throws SQLException {
+		Room r = new Room("");
+		r.setId(rs.getInt("id"));
+		r.setRoomname(rs.getString("roomname"));
+		return r;
+	}
+
+	private Appointment setAppointment(ResultSet rs) throws SQLException {
+		Appointment a = new Appointment();
+		a.setId(rs.getInt("id"));
+		a.setAdress(rs.getString(""));
+		return a;
+	}
+	public static void main(String[] args) throws SQLException {
+		// TODO Auto-generated method stub
+		ServerStorage serverStorage = new ServerStorage();
+		serverStorage.connect();
+		serverStorage.initiate();
+
+		Person p = new Person("a");
+		p.setEmail("email");
+		p.setTitle("title");
+		p = (Person) serverStorage.insertPerson(p);
+
+		Group g = new Group("super group 12");
+		g = (Group) serverStorage.insertGroup(g);
+
+		Room r = new Room("P15");
+		r.setId(1);
+		serverStorage.insertRoom(r);
+
+		Appointment a = new Appointment();
+		a.setTitle("gogogo");
+		a.setStartTime(new Date());
+		a.setEndTime(new Date());
+		a.setMeetingRoom(r);
+		ArrayList<Participant> participants = new ArrayList<>();
+		participants.add(p);
+		participants.add(g);
+		a.setParticipants(participants);
+		serverStorage.insertAppointment(a);
+
+		System.out.println(serverStorage.deletePersonByEmail("email"));
+
+	}
+
+	@Override
+	public Person insertPerson(Person p) {
+		try {
 			sql = "INSERT INTO person(email, name, title) VALUES(?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
@@ -118,23 +230,175 @@ public class ServerStorage implements Storage {
 			p.setId(this.getLastId());
 			con.commit();
 			return p;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
+	}
 
-		// table meetingroom
-		if (o instanceof Room) {
-			Room r = (Room) o;
-			sql = "INSERT INTO meetingroom(roomname) VALUES(?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
-			pstmt.executeUpdate();
-			r.setId(this.getLastId());
+	@Override
+	public boolean deletePersonById(int id) {
+		try {
+			sql = "DELETE FROM person WHERE id = " + id;
+			stmt.execute(sql);
 			con.commit();
-			return r;
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
+	}
 
-		// table appointment appointment_participant
-		else if (o instanceof Appointment) {
-			Appointment a = (Appointment) o;
+	@Override
+	public boolean deletePersonByEmail(String email) {
+		try {
+			sql = "DELETE FROM person WHERE email = " + email;
+			stmt.execute(sql);
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public Person getPersonById(int id) {
+		try {
+			sql = "SELECT * FROM person WHERE id = " + id;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setPerson(rs);
+			} else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public Person getPersonByEmail(String email) {
+		try {
+			sql = "SELECT * FROM person WHERE email = " + email;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setPerson(rs);
+			} else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public ArrayList<Person> getPersonByName(String name) {
+		try {
+			sql = "SELECT * FROM person WHERE name = " + name;
+			rs = stmt.executeQuery(sql);
+			ArrayList<Person> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(this.setPerson(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public Group insertGroup(Group g) {
+		try {
+			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, g.getEmail());
+			pstmt.setString(2, g.getName());
+			pstmt.executeUpdate();
+			g.setId(this.getLastId());
+			con.commit();
+			return g;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public boolean deleteGroupById(int id) {
+		try {
+			sql = "DELETE FROM meetinggroup WHERE id = " + id;
+			stmt.execute(sql);
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean deleteGroupByEmail(String email) {
+		try {
+			sql = "DELETE FROM meetinggroup WHERE email = " + email;
+			stmt.execute(sql);
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public Group getGroupById(int id) {
+		try {
+			sql = "SELECT * FROM meetinggroup WHERE id = " + id;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setGroup(rs);
+			} else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public Group getGroupByEmail(String email) {
+		try {
+			sql = "SELECT * FROM meetinggroup WHERE email = " + email;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setGroup(rs);
+			} else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ArrayList<Group> getGroupByName(String name) {
+		try {
+			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
+			rs = stmt.executeQuery(sql);
+			ArrayList<Group> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(this.setGroup(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public Appointment insertAppointment(Appointment a) {
+		try {
 			sql = "INSERT INTO appointment(title, starttime, endtime, adress, description, meetingroomid) "
 					+ "VALUES(?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
@@ -173,188 +437,91 @@ public class ServerStorage implements Storage {
 			}
 			con.commit();
 			return a;
-		}
-
-		// table group
-		else if (o instanceof Group) {
-			Group g = (Group) o;
-			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, g.getEmail());
-			pstmt.setString(2, g.getName());
-			pstmt.executeUpdate();
-			g.setId(this.getLastId());
-			con.commit();
-			return g;
-		} else
+		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
-	}
-
-	public boolean delete(Object o) throws SQLException {
-		if (o instanceof Person) {
-			sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
-			stmt.executeUpdate(sql);
-			con.commit();
-			return true;
 		}
-
-		else if (o instanceof Room) {
-			sql = "DELETE FROM meetingroom WHERE id = " + ((Room) o).getId();
-			stmt.executeUpdate(sql);
-			con.commit();
-			return true;
-		}
-
-		else if (o instanceof Appointment) {
-			sql = "DELETE FROM appointment WHERE id = "
-					+ ((Appointment) o).getId();
-			stmt.executeUpdate(sql);
-			con.commit();
-			return true;
-		}
-
-		else if (o instanceof Group) {
-			sql = "DELETE FROM meetinggroup WHERE id = " + ((Group) o).getId();
-			stmt.executeUpdate(sql);
-			con.commit();
-			return true;
-		}
-
-		else
-			return false;
-	}
-
-	public void close() throws SQLException {
-		this.con.close();
-	}
-
-	public int getLastId() throws SQLException {
-		this.rs = this.pstmt.executeQuery("select last_insert_id()");
-		if (this.rs.next()) {
-			int id = rs.getInt(1);
-			return id;
-		} else
-			return -1;
-
-	}
-
-	public static void main(String[] args) throws SQLException {
-		// TODO Auto-generated method stub
-		ServerStorage serverStorage = new ServerStorage();
-		serverStorage.connect();
-		serverStorage.initiate();
-
-		Person p = new Person("a");
-		p.setEmail("email");
-		p.setTitle("title");
-		p = (Person) serverStorage.insert(p);
-
-		Group g = new Group("super group 12");
-		g = (Group) serverStorage.insert(g);
-
-		Room r = new Room("P15");
-		r.setId(1);
-		serverStorage.insert(r);
-
-		Appointment a = new Appointment();
-		a.setTitle("gogogo");
-		a.setStartTime(new Date());
-		a.setEndTime(new Date());
-		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
-		participants.add(p);
-		participants.add(g);
-		a.setParticipants(participants);
-		serverStorage.insert(a);
-
-		System.out.println(serverStorage.deletePersonByEmail("email"));
-
 	}
 
 	@Override
-	public Person getPersonByEmail(String email) throws SQLException {
-		sql = "SELECT * FROM person WHERE email = " + email;
-		rs = stmt.executeQuery(sql);
-		Person p = new Person("");
-		if (rs.next()) {
-			p.setId(rs.getInt("id"));
-			p.setEmail(rs.getString("email"));
-			p.setName(rs.getString("name"));
-			p.setTitle(rs.getString("title"));
-		}
-		return p;
-	}
-
-	@Override
-	public ArrayList<Person> getPersonByName(String email) throws SQLException {
-		sql = "SELECT * FROM PERSON WHERE email = " + email;
-		rs = stmt.executeQuery(sql);
-		Person p = new Person("");
-		ArrayList<Person> list = new ArrayList<>();
-		while (rs.next()) {
-			p.setId(rs.getInt("id"));
-			p.setEmail(rs.getString("email"));
-			p.setName(rs.getString("name"));
-			p.setTitle(rs.getString("title"));
-			list.add(p);
-		}
-		return list;
-	}
-
-	@Override
-	public Person insertPerson(Person p) throws SQLException {
-		sql = "INSERT INTO person(email, name, title) VALUES(?, ?, ?)";
-		pstmt = con.prepareStatement(sql);
-		pstmt.setString(1, p.getEmail());
-		pstmt.setString(2, p.getName());
-		pstmt.setString(3, p.getTitle());
-		pstmt.executeUpdate();
-		p.setId(this.getLastId());
-		con.commit();
-		return p;
-	}
-
-	@Override
-	public boolean deletePersonByEmail(String email) throws SQLException {
+	public boolean deleteAppointmentById(int id) {
 		try {
-			sql = "DELETE FROM person WHERE email = " + email;
+			sql = "DELETE FROM appointment WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Override
-	public Group getGroupByEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Group insertGroup(Group g) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean deleteGroupByEmail(Group g) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			sql = "SELECT * FROM appointment WHERE starttime >= " + startTime
+					+ " AND endtime <= " + endTime;
+			rs = stmt.executeQuery(sql);
+			ArrayList<Appointment> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(this.setAppointment(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Room insertRoom(Room r) {
+		try {
+			sql = "INSERT INTO meetingroom(roomname) VALUES(?)";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, r.getRoomname());
+			pstmt.executeUpdate();
+			r.setId(this.getLastId());
+			con.commit();
+			return r;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public boolean deleteRoomById(int id) {
+		try {
+			sql = "DELETE FROM meetinggroup WHERE id = " + id;
+			stmt.execute(sql);
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public Room getRoomById(int id) {
+		try {
+			sql = "SELECT * FROM meetingroom WHERE id = " + id;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setRoom(rs);
+			} else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
