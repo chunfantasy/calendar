@@ -145,7 +145,7 @@ public class WeekView extends CalenderView {
                 calendarTableModel.setValueAt(null, i, j);
             }
         }
-        
+
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
