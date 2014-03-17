@@ -35,9 +35,9 @@ public class NotificationView extends SidePanel{
         switch (evt.getPropertyName()){
             case Calendar.NOTIFICATION_PROPERTY:
                 if(evt.getNewValue() instanceof Notification){
-                    addNotification(evt.getNewValue());
+                    addNotification((Notification) evt.getNewValue());
                 }else{
-                    removeNotification(evt.getOldValue());
+                    removeNotification((Notification) evt.getOldValue());
                 }
 
         }

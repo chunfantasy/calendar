@@ -35,9 +35,9 @@ public class MeetingsView extends SidePanel{
         switch (evt.getPropertyName()){
             case Calendar.APPOINTMENT_PROPERTY:
                 if(evt.getNewValue() instanceof Notification){
-                    addMeeting(evt.getNewValue());
+                    addMeeting((Appointment) evt.getNewValue());
                 }else{
-                    removeMeeting(evt.getOldValue());
+                    removeMeeting((Appointment) evt.getOldValue());
                 }
 
         }
