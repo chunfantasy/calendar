@@ -517,6 +517,11 @@ public class ServerStorage implements Storage {
 			return false;
 		}
 	}
+	@Override
+	public Appointment updateAppointment(Appointment a) {
+		//Todo
+		return a;
+	}
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,

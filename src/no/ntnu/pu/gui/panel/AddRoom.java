@@ -1,11 +1,5 @@
 package no.ntnu.pu.gui.panel;
 
-
-import javafx.scene.control.ColorPicker;
-import no.ntnu.pu.gui.view.AppointmentView;
-import no.ntnu.pu.model.Appointment;
-import no.ntnu.pu.model.Room;
-
 import java.awt.*;
 import java.awt.event.*;
 
