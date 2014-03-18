@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.ArrayList;
 
 public class Appointment {
-
 	private int id;
 	private String title;
 	private Date startTime;
@@ -40,9 +39,7 @@ public class Appointment {
 	}
 
 	public void setStartTime(Date startTime) {
-        Date oldVal = getStartTime();
 		this.startTime = startTime;
-
 	}
 
 	public Date getEndTime() {
