@@ -1,7 +1,9 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.PersonControl;
+import no.ntnu.pu.model.Email;
 import no.ntnu.pu.model.Person;
-import no.ntnu.pu.storage.ServerStorage;
+import no.ntnu.pu.net.SendMail;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +40,6 @@ public class LoginView extends JPanel {
 
         //Textfields (with listeners)
         userField = new JTextField(20);
-        userField.addActionListener(new myUserAction());
         passField = new JPasswordField(20);
         passField.addActionListener(new myPasswordAction());
 
@@ -83,12 +84,6 @@ public class LoginView extends JPanel {
         this.passwordInput = passwordInput;
     }
 
-    class myUserAction implements ActionListener{
-        public void actionPerformed(ActionEvent e) {
-            setUsernameInput(userField.getText());
-        }
-    }
-
     class myPasswordAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             setPasswordInput(new String(passField.getPassword()));
@@ -97,24 +92,38 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //TODO: Sjekk brukernavn (usernameInput) og passord (passwordInput) opp mot database, gå så til kalendervisning
+            /**Person person = PersonControl.getPersonByEmail(usernameInput);
+            if(passwordInput.equals(person.getPassword())){
+                Person loggedIn = person;
+                frmMain.dispose();
+                MainView mainView = new MainView();
+
+            }
+            else{
+                userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
+                passField.setText("");
+            }**/
+            frmMain.dispose();
+            MainView mainView = new MainView();
         }
     }
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
-            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+            String feilmelding = "Skriv inn brukernavn og passord";
+            setUsernameInput(userField.getText());
+            if(usernameInput.length() == 0 || usernameInput.equals(feilmelding)){
                 userField.setText(feilmelding);
             }
             else{
+                /**
                 Person person;
-                person = ServerStorage.getPersonByEmail(userField.getText());
+                person = PersonControl.getPersonByEmail(usernameInput);
                 new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
-
+                **/
+                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", "hei"));
 
             }
-            //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }
 
@@ -124,6 +133,7 @@ public class LoginView extends JPanel {
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());
         frmMain.pack();
+        frmMain.setLocationRelativeTo(null);
         frmMain.setResizable(false);
         frmMain.setVisible(true);
     }
