@@ -3,18 +3,19 @@ package no.ntnu.pu.net;
 /**
  * Created by Lima on 17.03.14.
  */
-// File Name SendEmail.java
 
 import no.ntnu.pu.model.Email;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
 public class SendMail
 {
     public SendMail(Email mail)
     {
+        final String username = "gigakalender@gmail.com";
+        final String password = "kalendergiga";
+
         // Recipient's email ID needs to be mentioned.
         String to = mail.getRecipient();
 
@@ -25,13 +26,21 @@ public class SendMail
         String host = "localhost";
 
         // Get system properties
-        Properties properties = System.getProperties();
+        Properties props = System.getProperties();
 
         // Setup mail server
-        properties.setProperty("mail.smtp.host", host);
+        props.setProperty("mail.smtp.host", host);
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
 
         // Get the default Session object.
-        Session session = Session.getDefaultInstance(properties);
+        Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(username, password);
+        }});
 
         try{
             // Create a default MimeMessage object.
