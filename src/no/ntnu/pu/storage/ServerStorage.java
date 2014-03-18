@@ -186,11 +186,11 @@ public class ServerStorage implements Storage {
 		try {
 			sql = "SELECT * FROM group_person WHERE groupid = " + g.getId();
 			rs = stmt.executeQuery(sql);
-			ArrayList<Integer> listId = new ArrayList<>();
+			ArrayList<Integer> listId = new ArrayList();
 			while (rs.next()) {
 				listId.add(rs.getInt("personid"));
 			}
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList();
 			for (int id : listId) {
 				sql = "SELECT * FROM person WHERE id = " + id;
 				rs = stmt.executeQuery(sql);
@@ -257,7 +257,7 @@ public class ServerStorage implements Storage {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
+		ArrayList<Participant> participants = new ArrayList();
 		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
@@ -348,7 +348,7 @@ public class ServerStorage implements Storage {
 		try {
 			sql = "SELECT * FROM person WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setPerson(rs));
 			}
@@ -447,7 +447,7 @@ public class ServerStorage implements Storage {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Group> list = new ArrayList<>();
+			ArrayList<Group> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
@@ -517,6 +517,11 @@ public class ServerStorage implements Storage {
 			return false;
 		}
 	}
+	@Override
+	public Appointment updateAppointment(Appointment a) {
+		//Todo
+		return a;
+	}
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
@@ -526,7 +531,7 @@ public class ServerStorage implements Storage {
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
 			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList<>();
+			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}

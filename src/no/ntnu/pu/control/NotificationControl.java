@@ -2,11 +2,13 @@ package no.ntnu.pu.control;
 
 import no.ntnu.pu.model.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NotificationControl {
+public class NotificationControl implements PropertyChangeListener{
 
 
 	
@@ -29,5 +31,23 @@ public class NotificationControl {
         list.add(new DeclineNotification(new Person("Kari"), new Person("rec"), new Appointment("FIXA N")));
     
         return list;
+    }
+
+    public static Notification createNotification(){
+
+    }
+
+
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(propEq(evt, Appointment.ADDRESS_PROPERTY)){
+            CalenderControl.addNotification
+
+        }
+    }
+
+    private static boolean propEq(PropertyChangeEvent evt, String prop){
+        return evt.getPropertyName() == prop;
     }
 }

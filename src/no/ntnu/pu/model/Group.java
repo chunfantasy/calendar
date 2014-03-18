@@ -10,7 +10,7 @@ public class Group implements Participant {
 
 	public Group(String name) {
 		this.name = name;
-		this.persons = new ArrayList<>();
+		this.persons = new ArrayList();
 	}
 
 	public int getId() {
