@@ -102,8 +102,15 @@ public class LoginView extends JPanel {
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Person person = PersonControl.getPersonByEmail(usernameInput);
-            if(passwordInput.equals())
-            //TODO: Sjekk brukernavn (usernameInput) og passord (passwordInput) opp mot database, gå så til kalendervisning
+            if(passwordInput.equals(person.getPassword())){
+                Person loggedIn = person;
+                frmMain.dispose();
+                MainView mainView = new MainView();
+            }
+            else{
+                userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
+                passField.setText("");
+            }
         }
     }
 
