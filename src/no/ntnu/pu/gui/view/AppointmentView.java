@@ -104,7 +104,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         mainButton = new JButton("Vis avtale");
         mainButton.addActionListener(this);
         mainButton.setFocusable(false);
-        mainButton.setSelected(true);
 
         roomButton = new JButton("Book rom");
         roomButton.addActionListener(this);
@@ -323,7 +322,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             for (int i = 0; i<participantListModel.getSize(); i++){
                 participants.add(participantListModel.getElementAt(i));
             }
-            model.setParticipants(participants);
+            //model.setParticipants(participants);
         }
         if (e.getSource()== cancelButton){
             frame.dispose();
@@ -380,6 +379,10 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public static void main(String[] args){
         new AppointmentView();
+    }
+
+    public Appointment getModel(){
+        return this.model;
     }
 
 

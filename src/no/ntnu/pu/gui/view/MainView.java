@@ -98,6 +98,7 @@ public class MainView {
             Object s = e.getSource();
             if(s.equals(newAppointmentButton)){
                 AppointmentControl.createAppointment();
+                AppointmentView appointmentView = new AppointmentView();
             }else if(s.equals(monthButton)){
                 showMonth();
                 monthButton.setEnabled(false);

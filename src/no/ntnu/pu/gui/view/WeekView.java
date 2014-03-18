@@ -13,6 +13,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class WeekView extends CalenderView {
@@ -26,11 +30,13 @@ public class WeekView extends CalenderView {
             lastDayOfWeek,
             firstMonth,
             lastMonth;
+    private ArrayList<Appointment> appointments;
 
     public WeekView(){
         super();
 
         /**Initialize subclass-specific components**/
+        appointments = CalendarControl.getAppointments();
         weekLabel = new JLabel("Uke 1");
         dateSpanLabel = new JLabel("(01.01 - 07.01)");
         cttcm = calendarTableHeader.getColumnModel();
@@ -41,8 +47,15 @@ public class WeekView extends CalenderView {
         yearComboBox.addActionListener(new year_Action());
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    AppointmentControl.createAppointment();
+                if (e.getClickCount() == 2 && calendarTable.getSelectedColumn() != 0) {
+                    if(calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn()) == null){
+                        AppointmentView appointmentView = new AppointmentView();
+                    }
+                    else{
+                        Appointment appointment = (Appointment)calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+                        AppointmentView appointmentView = new AppointmentView(appointment);
+                    }
+                    refreshCells();
                 }
             }
         });
@@ -69,6 +82,7 @@ public class WeekView extends CalenderView {
         calendarTable.setRowHeight(25);
         calendarTableModel.setRowCount(24);
         calendarTableModel.setColumnCount(8);
+
 
         for(int i = 0; i<24; i++){
             if(i < 10){
@@ -140,21 +154,49 @@ public class WeekView extends CalenderView {
             }
         }
 
-        for(int i = 0; i<24; i++) {
-            for(int j = 1; j<8; j++) {
-                calendarTableModel.setValueAt(null, i, j);
-            }
-        }
-        /**
-        for(int i = 0; i < loggedIn.getAppointments().size(); i++){
-            for(int j = 0; j<24; j++) {
-                for(int k = 1; k<8; k++) {
-                    calendarTableModel.setValueAt(loggedIn.getAppointments().get(i), j, k);
-                }
-            }
-        }**/
+
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
+    }
+
+    private void refreshCells() {
+        for(Appointment appointment : appointments){
+            Date startTime = appointment.getStartTime();
+            Date endTime = appointment.getEndTime();
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTime(startTime);
+            int weekStart = cal.get(GregorianCalendar.WEEK_OF_YEAR);
+            int dayStart = cal.get(GregorianCalendar.DAY_OF_MONTH);
+            int monthStart = cal.get(GregorianCalendar.MONTH);
+            int hourStart = cal.get(GregorianCalendar.HOUR_OF_DAY);
+            cal.setTime(endTime);
+            int weekEnd = cal.get(GregorianCalendar.WEEK_OF_YEAR);
+            int dayEnd = cal.get(GregorianCalendar.DAY_OF_MONTH);
+            int monthEnd = cal.get(GregorianCalendar.MONTH);
+            int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
+            String appointmentDate = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
+            for(int j = 1; j<8; j++) {
+                String headerDate = cttcm.getColumn(j).toString().substring(cttcm.getColumn(j).toString().length() - 3, cttcm.getColumn(j).toString().length());
+                headerDate.trim();
+                for(int i = hourStart; i < hourEnd; i++){
+                    if(appointmentDate.equals(headerDate)){
+                        calendarTableModel.setValueAt(appointment, i, j);
+                    }
+                    else{
+                        calendarTableModel.setValueAt(null, i, j);
+                    }
+                }
+            }
+
+            /**
+             if(){
+
+             }
+             else{
+             calendarTableModel.setValueAt(null, i, j);
+             }
+             **/
+        }
     }
 
     class previous_Action implements ActionListener {

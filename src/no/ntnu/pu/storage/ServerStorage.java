@@ -261,7 +261,7 @@ public class ServerStorage implements Storage {
 		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
-		a.setParticipants(participants);
+		//a.setParticipants(participants);
 		serverStorage.insertAppointment(a);
 
 		serverStorage.getAppointmentByTime(new Date(), new Date());
