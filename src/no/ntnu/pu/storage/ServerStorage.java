@@ -28,7 +28,6 @@ public class ServerStorage implements Storage {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -46,7 +45,7 @@ public class ServerStorage implements Storage {
 		// create table person
 		sql = "DROP TABLE IF EXISTS appointment_participant";
 		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS group_person";
+		sql = "DROP TABLE IF EXISTS meetinggroup_person";
 		stmt.execute(sql);
 		sql = "DROP TABLE IF EXISTS person";
 		stmt.execute(sql);
@@ -73,8 +72,8 @@ public class ServerStorage implements Storage {
 				+ "email varchar(20))";
 		stmt.execute(sql);
 		
-		// create table group_person
-		sql = "CREATE TABLE group_person (" 
+		// create table meetinggroup_person
+		sql = "CREATE TABLE meetinggroup_person (" 
 				+ "id int auto_increment primary key, "
 				+ "groupid int, " 
 				+ "personid int, "
@@ -184,7 +183,8 @@ public class ServerStorage implements Storage {
 		g.setName(rs.getString("name"));
 
 		try {
-			sql = "SELECT * FROM group_person WHERE groupid = " + g.getId();
+			sql = "SELECT * FROM meetinggroup_person WHERE groupid = "
+					+ g.getId();
 			rs = stmt.executeQuery(sql);
 			ArrayList<Integer> listId = new ArrayList<>();
 			while (rs.next()) {
@@ -234,20 +234,26 @@ public class ServerStorage implements Storage {
 		p2.setEmail("email2");
 		p2.setTitle("title2");
 		p2 = serverStorage.insertPerson(p2);
-		
+
 		Person p3 = new Person("c");
 		p3.setEmail("email3");
 		p3.setTitle("title3");
 		p3 = serverStorage.insertPerson(p3);
-		
+
 		Group g = new Group("super group 12");
 		g.addPerson(p1);
-		g.addPerson(p3);
 		g = serverStorage.insertGroup(g);
+		g.addPerson(p3);
+		serverStorage.updateGroup(g);
+
+		g.removePerson(p1);
+		serverStorage.updateGroup(g);
 
 		g = serverStorage.getGroupById(1);
 
-		System.out.println(g.getPersons().get(1).getEmail());
+		p1.setEmail("emaillllllllllllllll");
+		serverStorage.updatePerson(p1);
+
 		Room r = new Room("P15");
 		r.setId(1);
 		serverStorage.insertRoom(r);
@@ -284,6 +290,25 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updatePerson(Person p) {
+		try {
+			sql = "UPDATE  person SET email = ?, name= ?, title = ? WHERE id = "
+					+ p.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, p.getEmail());
+			pstmt.setString(2, p.getName());
+			pstmt.setString(3, p.getTitle());
+			pstmt.executeUpdate();
+			p.setId(this.getLastId());
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -371,7 +396,7 @@ public class ServerStorage implements Storage {
 
 			if (!g.getPersons().isEmpty()) {
 				for (Person person : g.getPersons()) {
-					sql = "INSERT INTO group_person (groupid, personid) "
+					sql = "INSERT INTO meetinggroup_person (groupid, personid) "
 							+ "VALUES(?, ?)";
 					pstmt = con.prepareStatement(sql);
 					pstmt.setInt(1, g.getId());
@@ -384,6 +409,61 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updateGroup(Group g) {
+		try {
+			sql = "UPDATE meetinggroup SET email = ?, name = ? WHERE id = "
+					+ g.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, g.getEmail());
+			pstmt.setString(2, g.getName());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM meetinggroup_person WHERE groupid = "
+						+ g.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOld = new ArrayList<>();
+				while (rs.next()) {
+					listOld.add(rs.getInt("personid"));
+				}
+				ArrayList<Integer> listNew = new ArrayList<>();
+				for (Person p : g.getPersons()) {
+					listNew.add(p.getId());
+				}
+
+				for (int id : listOld) {
+					if (!listNew.contains(id)) {
+						sql = "DELETE FROM meetinggroup_person WHERE groupid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						listOld.remove(Integer.valueOf(id));
+					}
+				}
+
+				for (int id : listNew) {
+					if (!listOld.contains(id)) {
+						sql = "INSERT INTO meetinggroup_person(groupid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -443,6 +523,7 @@ public class ServerStorage implements Storage {
 		}
 	}
 
+	@Override
 	public ArrayList<Group> getGroupByName(String name) {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;

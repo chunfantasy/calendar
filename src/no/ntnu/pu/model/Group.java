@@ -50,7 +50,7 @@ public class Group implements Participant {
 		return this.persons;
 	}
 
-	public ArrayList<Person> removePersons(Person p) {
+	public ArrayList<Person> removePerson(Person p) {
 		this.persons.remove(p);
 		return this.persons;
 	}

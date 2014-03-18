@@ -14,6 +14,8 @@ public interface Storage {
 	// Person
 	public Person insertPerson(Person p);
 
+	public boolean updatePerson(Person p);
+
 	public boolean deletePersonById(int id);
 
 	public boolean deletePersonByEmail(String email);
@@ -26,6 +28,8 @@ public interface Storage {
 
 	// Group
 	public Group insertGroup(Group g);
+
+	public boolean updateGroup(Group g);
 
 	public boolean deleteGroupById(int id);
 
