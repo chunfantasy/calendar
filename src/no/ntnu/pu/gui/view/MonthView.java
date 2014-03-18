@@ -1,7 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -87,7 +85,6 @@ public class MonthView extends CalenderView{
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
 
     }

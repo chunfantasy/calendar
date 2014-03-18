@@ -1,5 +1,6 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
 
@@ -11,8 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,7 +33,9 @@ public class WeekView extends CalenderView {
         super();
 
         /**Initialize subclass-specific components**/
-        appointments = CalendarControl.getAppointments();
+        if(CalendarControl.getAppointments().size() > 0){
+            appointments = CalendarControl.getAppointments();
+        }
         weekLabel = new JLabel("Uke 1");
         dateSpanLabel = new JLabel("(01.01 - 07.01)");
         cttcm = calendarTableHeader.getColumnModel();

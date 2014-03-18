@@ -1,5 +1,7 @@
 package no.ntnu.pu.gui.panel;
 
+import no.ntnu.pu.model.Appointment;
+
 import java.awt.*;
 import java.awt.event.*;
 

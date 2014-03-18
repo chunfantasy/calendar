@@ -12,9 +12,9 @@ public class Calendar {
     private ArrayList<Notification> notifications;
     private PropertyChangeSupport pcs;
 
-    public Calendar(ArrayList<Appointment> appointments, ArrayList<Notification> notifications){
-        this.appointments = appointments;
-        this.notifications = notifications;
+    public Calendar(){
+        appointments = new ArrayList();
+        notifications = new ArrayList();
         pcs = new PropertyChangeSupport(this);
     }
 

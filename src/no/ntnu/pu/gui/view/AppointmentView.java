@@ -6,6 +6,7 @@ import no.ntnu.pu.gui.panel.AddParticipant;
 import no.ntnu.pu.gui.panel.AddRoom;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Participant;
+import no.ntnu.pu.model.Person;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -150,7 +151,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public JPanel createContentPane(boolean editing){
         // Appointment
-        model = new Appointment("");
+        model = new Appointment(new Person("LIMA"));
 
         totalGUI = new JPanel();
 

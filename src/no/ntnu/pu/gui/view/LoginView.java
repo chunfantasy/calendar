@@ -1,5 +1,6 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.model.Email;
 import no.ntnu.pu.model.Person;
@@ -92,19 +93,21 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            /**Person person = PersonControl.getPersonByEmail(usernameInput);
+            Person person = PersonControl.getPersonByEmail(usernameInput);
             if(passwordInput.equals(person.getPassword())){
                 Person loggedIn = person;
                 frmMain.dispose();
                 MainView mainView = new MainView();
+                CalendarControl.setModel(loggedIn.getCalendar());
 
             }
             else{
                 userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
                 passField.setText("");
-            }**/
+            }
+            /**
             frmMain.dispose();
-            MainView mainView = new MainView();
+            MainView mainView = new MainView();**/
         }
     }
 
