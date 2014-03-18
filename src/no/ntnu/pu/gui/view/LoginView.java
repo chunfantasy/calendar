@@ -1,5 +1,8 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.ServerStorage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -105,11 +108,11 @@ public class LoginView extends JPanel {
                 userField.setText(feilmelding);
             }
             else{
-                for(person : database){
-                    if(userField.getText().equals(person.email)){
-                        new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
-                    }
-                }
+                Person person;
+                person = ServerStorage.getPersonByEmail(userField.getText());
+                new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
+
+
             }
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
