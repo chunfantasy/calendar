@@ -186,11 +186,11 @@ public class ServerStorage implements Storage {
 			sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 					+ g.getId();
 			rs = stmt.executeQuery(sql);
-			ArrayList<Integer> listId = new ArrayList<>();
+			ArrayList<Integer> listId = new ArrayList();
 			while (rs.next()) {
 				listId.add(rs.getInt("personid"));
 			}
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList();
 			for (int id : listId) {
 				sql = "SELECT * FROM person WHERE id = " + id;
 				rs = stmt.executeQuery(sql);
@@ -269,7 +269,8 @@ public class ServerStorage implements Storage {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
+		ArrayList<Participant> participants = new ArrayList();
+		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
 		a.setParticipants(participants);
@@ -387,7 +388,7 @@ public class ServerStorage implements Storage {
 		try {
 			sql = "SELECT * FROM person WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setPerson(rs));
 			}
@@ -440,16 +441,16 @@ public class ServerStorage implements Storage {
 				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 						+ g.getId();
 				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOld = new ArrayList<>();
+				ArrayList<Integer> listOld = new ArrayList();
 				while (rs.next()) {
 					listOld.add(rs.getInt("personid"));
 				}
-				ArrayList<Integer> listNew = new ArrayList<>();
+				ArrayList<Integer> listNew = new ArrayList();
 				for (Person p : g.getPersons()) {
 					listNew.add(p.getId());
 				}
 
-				ArrayList<Integer> list = new ArrayList<>();
+				ArrayList<Integer> list = new ArrayList();
 				for (int id : listOld) {
 					if (!listNew.contains(id)) {
 						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
@@ -547,7 +548,7 @@ public class ServerStorage implements Storage {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Group> list = new ArrayList<>();
+			ArrayList<Group> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
@@ -623,8 +624,8 @@ public class ServerStorage implements Storage {
 				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
 						+ a.getId();
 				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOldPerson = new ArrayList<>();
-				ArrayList<Integer> listOldGroup = new ArrayList<>();
+				ArrayList<Integer> listOldPerson = new ArrayList();
+				ArrayList<Integer> listOldGroup = new ArrayList();
 				while (rs.next()) {
 					if (rs.getInt("personid") != 0)
 						listOldPerson.add(rs.getInt("personid"));
@@ -632,8 +633,8 @@ public class ServerStorage implements Storage {
 						listOldGroup.add(rs.getInt("meetinggroupid"));
 				}
 
-				ArrayList<Integer> listNewPerson = new ArrayList<>();
-				ArrayList<Integer> listNewGroup = new ArrayList<>();
+				ArrayList<Integer> listNewPerson = new ArrayList();
+				ArrayList<Integer> listNewGroup = new ArrayList();
 				for (Participant p : a.getParticipants()) {
 					if (p instanceof Person)
 						listNewPerson.add(((Person) p).getId());
@@ -641,7 +642,7 @@ public class ServerStorage implements Storage {
 						listNewGroup.add(((Group) p).getId());
 				}
 
-				ArrayList<Integer> list = new ArrayList<>();
+				ArrayList<Integer> list = new ArrayList();
 				for (int id : listOldPerson) {
 					if (!listNewPerson.contains(id)) {
 						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
@@ -726,7 +727,7 @@ public class ServerStorage implements Storage {
 					+ new Timestamp(endTime.getTime()) + "'";
 			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList<>();
+			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
@@ -749,7 +750,7 @@ public class ServerStorage implements Storage {
 			else
 				return null;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList<>();
+			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}

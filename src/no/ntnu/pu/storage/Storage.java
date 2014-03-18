@@ -56,7 +56,7 @@ public interface Storage {
 	public boolean updateAppointment(Appointment a);
 
 	public boolean deleteAppointmentById(int id);
-
+	
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime);
 

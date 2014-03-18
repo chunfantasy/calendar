@@ -3,6 +3,7 @@
 
 #IDE Files#
 .settings
+.settings/*
 .idea
 calender.iml
 
@@ -10,3 +11,4 @@ calender.iml
 *.jar
 *.war
 *.ear
+/bin
