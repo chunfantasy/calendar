@@ -1,5 +1,8 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.ServerStorage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,15 +13,20 @@ public class LoginView extends JPanel {
     private JTextField userField;
     private JPasswordField passField;
     private JButton btnLogin, btnForgottenPassword;
-
     private String usernameInput, passwordInput;
-
-    static JLabel lblUsername, lblPassword;
-
-    static Container pane;
-    static JFrame frmMain;
+    private static JLabel lblUsername, lblPassword;
+    private static Container pane;
+    private static JFrame frmMain;
 
     public LoginView(){
+
+        /**Set look and feel, catch exceptions**/
+        try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
+        catch (ClassNotFoundException e) {}
+        catch (InstantiationException e) {}
+        catch (IllegalAccessException e) {}
+        catch (UnsupportedLookAndFeelException e) {}
+
         JPanel panel = new JPanel();
         add(panel);
         panel.setLayout(new GridBagLayout());
@@ -41,15 +49,19 @@ public class LoginView extends JPanel {
         btnForgottenPassword.addActionListener(new myForgottenAction());
 
         //Adding components to panel
-        panelAdd(0, 0, constraints, lblUsername, panel);
-        panelAdd(0, 1, constraints, lblPassword, panel);
-        panelAdd(1, 0, constraints, userField, panel);
-        panelAdd(1, 1, constraints, passField, panel);
-        panelAdd(1, 2, constraints, btnLogin, panel);
-        panelAdd(1, 3, constraints, btnForgottenPassword, panel);
+        panelAdd(1, 0, 0, constraints, lblUsername, panel);
+        panelAdd(1, 0, 1, constraints, lblPassword, panel);
+        panelAdd(2, 1, 0, constraints, userField, panel);
+        panelAdd(2, 1, 1, constraints, passField, panel);
+        panelAdd(1, 1, 2, constraints, btnLogin, panel);
+        panelAdd(1, 2, 2, constraints, btnForgottenPassword, panel);
     }
 
-    public void panelAdd(int gridx, int gridy, GridBagConstraints c, Component comp, JPanel panel){
+    public void panelAdd(int gridwidth, int gridx, int gridy, GridBagConstraints c, Component comp, JPanel panel){
+        if(comp.equals(btnLogin) || comp.equals(btnForgottenPassword)){
+            c.insets = new Insets(10, 0, 0, 3);
+        }
+        c.gridwidth = gridwidth;
         c.gridx = gridx;
         c.gridy = gridy;
         panel.add(comp, c);
@@ -91,6 +103,17 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
+            String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
+            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+                userField.setText(feilmelding);
+            }
+            else{
+                Person person;
+                person = ServerStorage.getPersonByEmail(userField.getText());
+                new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
+
+
+            }
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }

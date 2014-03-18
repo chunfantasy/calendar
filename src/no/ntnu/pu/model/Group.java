@@ -1,26 +1,57 @@
 package no.ntnu.pu.model;
 
-public class Group implements Participant{
+import java.util.ArrayList;
 
-    private String name,email;
+public class Group implements Participant {
 
-    public Group(String name){
-        this.name = name;
-    }
+	private int id;
+	private String name, email;
+	private ArrayList<Person> persons;
 
-    public String getEmail() {
-        return email;
-    }
+	public Group(String name) {
+		this.name = name;
+		this.persons = new ArrayList<>();
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public ArrayList<Person> getPersons() {
+		return persons;
+	}
+
+	public void setPersons(ArrayList<Person> persons) {
+		this.persons = persons;
+	}
+
+	public ArrayList<Person> addPerson(Person p) {
+		this.persons.add(p);
+		return this.persons;
+	}
+
+	public ArrayList<Person> removePersons(Person p) {
+		this.persons.remove(p);
+		return this.persons;
+	}
 }

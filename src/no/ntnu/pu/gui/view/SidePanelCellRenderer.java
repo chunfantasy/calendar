@@ -1,6 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import javafx.scene.control.ListCell;
 import no.ntnu.pu.model.*;
 
 import javax.swing.*;
