@@ -5,9 +5,9 @@ import no.ntnu.pu.storage.ServerStorage;
 
 import java.util.ArrayList;
 
-public class GroupControl {
+public class GroupControl{
 
-    public static ServerStorage serverStorage = new ServerStorage();
+    public static ServerStorage serverStorage = new ServerStorage() ;
 
     public static Group getGroupById(int id){
         return serverStorage.getGroupById(id);

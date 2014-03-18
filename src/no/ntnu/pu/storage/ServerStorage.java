@@ -23,6 +23,10 @@ public class ServerStorage implements Storage {
 	private ResultSet rs;
 	private String sql;
 
+	public ServerStorage() throws SQLException{
+		this.connect();
+	}
+	
 	// Connect to the database
 	public void connect() throws SQLException {
 		try {
@@ -62,7 +66,9 @@ public class ServerStorage implements Storage {
 				+ "id int auto_increment primary key, "
 				+ "email varchar(20), " 
 				+ "name varchar(10), "
-				+ "title varchar(10))";
+				+ "title varchar(10), "
+				+ "password varchar(20), "
+				+ "phonenumbers varchar(30))";
 		stmt.execute(sql);
 
 		// create table meetinggroup
@@ -173,6 +179,7 @@ public class ServerStorage implements Storage {
 		p.setEmail(rs.getString("email"));
 		p.setName(rs.getString("name"));
 		p.setTitle(rs.getString("title"));
+		p.setPassword(rs.getString("password"));
 		return p;
 	}
 
@@ -294,11 +301,13 @@ public class ServerStorage implements Storage {
 	@Override
 	public Person insertPerson(Person p) {
 		try {
-			sql = "INSERT INTO person(email, name, title) VALUES(?, ?, ?)";
+			sql = "INSERT INTO person(email, name, title, password, phonenumbers) VALUES(?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
+			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
@@ -312,12 +321,13 @@ public class ServerStorage implements Storage {
 	@Override
 	public boolean updatePerson(Person p) {
 		try {
-			sql = "UPDATE  person SET email = ?, name= ?, title = ? WHERE id = "
+			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
 					+ p.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
+			pstmt.setString(4, p.getPassword());
 			pstmt.executeUpdate();
 			con.commit();
 			return true;
