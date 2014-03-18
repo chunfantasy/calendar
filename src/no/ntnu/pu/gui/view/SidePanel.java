@@ -10,13 +10,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Lima on 12.03.14.
  */
-public abstract class SidePanel extends JPanel {
+public abstract class SidePanel extends JPanel implements PropertyChangeListener{
 
 
     protected JList list;
