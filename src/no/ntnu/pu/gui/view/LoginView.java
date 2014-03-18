@@ -29,23 +29,23 @@ public class LoginView extends JPanel {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        /**Labels**/
+        //Labels
         lblUsername = new JLabel("Brukernavn: ", JLabel.LEFT);
         lblPassword = new JLabel("Passord: ", JLabel.LEFT);
 
-        /**Textfields (with listeners)**/
+        //Textfields (with listeners)
         userField = new JTextField(20);
         userField.addActionListener(new myUserAction());
         passField = new JPasswordField(20);
         passField.addActionListener(new myPasswordAction());
 
-        /**Buttons (with listeners)**/
+        //Buttons (with listeners)
         btnLogin = new JButton("Logg inn");
         btnLogin.addActionListener(new myLoginAction());
         btnForgottenPassword = new JButton("Glemt passord?");
         btnForgottenPassword.addActionListener(new myForgottenAction());
 
-        /**Adding components to panel**/
+        //Adding components to panel
         panelAdd(1, 0, 0, constraints, lblUsername, panel);
         panelAdd(1, 0, 1, constraints, lblPassword, panel);
         panelAdd(2, 1, 0, constraints, userField, panel);
@@ -94,26 +94,23 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-          /**  for(person : database){
-                if(person.email.equals(usernameInput)){
-                    if(person.password.equals(passwordInput)){
-                       Person loggedIn = person;
-                       frmMain.dispose();
-                        //TODO: Starte mainview
-                    }
-                }
-            }**/
+            //TODO: Sjekk brukernavn (usernameInput) og passord (passwordInput) opp mot database, gå så til kalendervisning
         }
     }
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            /**
-            for(person : database){
-                if(person.email.equals(passwordInput)) {
-                    email.send(person.password);
+            String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
+            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+                userField.setText(feilmelding);
+            }
+            else{
+                for(person : database){
+                    if(userField.getText().equals(person.email)){
+                        new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
+                    }
                 }
-            }**/
+            }
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }
@@ -124,7 +121,6 @@ public class LoginView extends JPanel {
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());
         frmMain.pack();
-        frmMain.setLocationRelativeTo(null);
         frmMain.setResizable(false);
         frmMain.setVisible(true);
     }
