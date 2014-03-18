@@ -48,6 +48,8 @@ public interface Storage {
 	public Appointment insertAppointment(Appointment a);
 
 	public boolean deleteAppointmentById(int id);
+	
+	public Appointment updateAppointment(Appointment a);
 
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime);
