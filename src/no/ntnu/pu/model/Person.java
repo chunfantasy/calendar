@@ -69,4 +69,12 @@ public class Person implements Participant {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
 }

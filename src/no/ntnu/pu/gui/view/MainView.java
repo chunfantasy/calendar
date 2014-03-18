@@ -1,7 +1,6 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.AppointmentControl;
-import no.ntnu.pu.model.Calendar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +14,8 @@ public class MainView {
     private ButtonGroup buttonGroup;
     private MonthView monthView;
     private WeekView weekView;
-    private Calendar calendar;
-
 
     public MainView(){
-
 
         JFrame frame = new JFrame("Gigakalender");
         frame.setResizable(false);
@@ -97,7 +93,7 @@ public class MainView {
         public void actionPerformed(ActionEvent e) {
             Object s = e.getSource();
             if(s.equals(newAppointmentButton)){
-                AppointmentControl.createAppointment();
+                new AppointmentView();
             }else if(s.equals(monthButton)){
                 showMonth();
                 monthButton.setEnabled(false);

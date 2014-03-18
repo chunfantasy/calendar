@@ -12,10 +12,10 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
+    private final Person creator;
 
-	public Appointment(String title) {
-		this.title = title;
-		this.participants = new ArrayList();
+	public Appointment(Person creator) {
+        this.creator = creator;
 	}
 
 	public int getId() {
@@ -31,7 +31,7 @@ public class Appointment {
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+        this.title = title;
 	}
 
 	public Date getStartTime() {
@@ -78,8 +78,12 @@ public class Appointment {
 		return participants;
 	}
 
-	public void setParticipants(ArrayList<Participant> participants) {
-		this.participants = participants;
+	public void addParticipant(Participant participant) {
+        this.participants.add(participant);
 	}
+
+    public Person getCreator() {
+        return creator;
+    }
 
 }

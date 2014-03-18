@@ -1,6 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
 import no.ntnu.pu.gui.panel.MeetingPanel;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Notification;
