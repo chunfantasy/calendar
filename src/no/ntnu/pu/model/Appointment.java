@@ -12,24 +12,10 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-
-	public Appointment(String title) {
-		this.title = title;
-		this.participants = new ArrayList();
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	
 	public String getTitle() {
 		return title;
 	}
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -57,7 +43,6 @@ public class Appointment {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-
 	public Room getMeetingRoom() {
 		return meetingRoom;
 	}

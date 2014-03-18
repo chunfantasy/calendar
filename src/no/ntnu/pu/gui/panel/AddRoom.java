@@ -1,5 +1,11 @@
 package no.ntnu.pu.gui.panel;
 
+
+import javafx.scene.control.ColorPicker;
+import no.ntnu.pu.gui.view.AppointmentView;
+import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Room;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -15,12 +21,15 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
     private JLabel searchLabel;
     private JPanel totalGUI;
     private JComboBox roomSize;
+    private Appointment model;
     private String[] SIZES = {"5", "10", "15", "20", "50", "100", "200"};
     private String[] HEADER  = {"Romnavn", "Romkode", "Kapasitet"};
     private Object[][] data = {{"Fraglejens", "p72", 8}, {"Isbjørn", "s15", 15}, {"Qalypso", "r21", 4}};
 
-    public JPanel createContentPane(){
+    public JPanel createContentPane(Appointment model){
         totalGUI = new JPanel();
+
+        this.model = model;
 
         GridBagConstraints gbc;
         totalGUI.setLayout(new GridBagLayout());
@@ -103,11 +112,11 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
 
-    public static void createAndShowGUI() {
+    public static void createAndShowGUI(Appointment model) {
         JFrame frame = new JFrame("Book rom");
         JFrame.setDefaultLookAndFeelDecorated(true);
         AddRoom view = new AddRoom();
-        frame.setContentPane(view.createContentPane());
+        frame.setContentPane(view.createContentPane(model));
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
@@ -218,13 +227,13 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
             return this;
         }
     }
-    public static void main(String[] args){
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+//    public static void main(String[] args){
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                createAndShowGUI();
+//            }
+//        });
+//    }
 
 
 }
