@@ -1,18 +1,9 @@
 package no.ntnu.pu.model;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Date;
 import java.util.ArrayList;
 
 public class Appointment {
-
-    public final static String  TITLE_PROPERTY = "title",
-                                STARTTIME_PROPERTY ="startTime",
-                                ENDTIME_PROPERTY = "endTime",
-                                ADDRESS_PROPERTY = "address",
-                                MEETINGROOM_PROPERTY = "meetingRoom",
-                                PARTICIPANTS_PROPERTY = "participants";
 
 	private int id;
 	private String title;
@@ -22,11 +13,11 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-    private PropertyChangeSupport pcs;
+    private final Person creator;
 
-	public Appointment(String title) {
+	public Appointment(String title, Person creator) {
 		this.title = title;
-        pcs = new PropertyChangeSupport(this);
+        this.creator = creator;
 	}
 
 	public int getId() {
@@ -42,9 +33,7 @@ public class Appointment {
 	}
 
 	public void setTitle(String title) {
-		String oldVal = getTitle();
         this.title = title;
-        pcs.firePropertyChange(TITLE_PROPERTY,oldVal,title);
 	}
 
 	public Date getStartTime() {
@@ -54,7 +43,6 @@ public class Appointment {
 	public void setStartTime(Date startTime) {
         Date oldVal = getStartTime();
 		this.startTime = startTime;
-        pcs.firePropertyChange(STARTTIME_PROPERTY,oldVal,startTime);
 
 	}
 
@@ -63,9 +51,7 @@ public class Appointment {
 	}
 
 	public void setEndTime(Date endTime) {
-        Date oldVal = getEndTime();
 		this.endTime = endTime;
-        pcs.firePropertyChange(ENDTIME_PROPERTY,oldVal,endTime);
 	}
 
 	public String getAddress() {
@@ -73,9 +59,7 @@ public class Appointment {
 	}
 
 	public void setAddress(String address) {
-        String oldVal = getAddress();
 		this.address = address;
-        pcs.firePropertyChange(ADDRESS_PROPERTY,oldVal,address);
 	}
 
 	public Room getMeetingRoom() {
@@ -83,9 +67,7 @@ public class Appointment {
 	}
 
 	public void setMeetingRoom(Room meetingRoom) {
-        Room oldVal= getMeetingRoom();
 		this.meetingRoom = meetingRoom;
-        pcs.firePropertyChange(MEETINGROOM_PROPERTY,oldVal,meetingRoom);
 	}
 
 	public String getDescription() {
@@ -101,9 +83,11 @@ public class Appointment {
 	}
 
 	public void addParticipant(Participant participant) {
-		ArrayList<Participant> oldVal = getParticipants();
         this.participants.add(participant);
-        pcs.firePropertyChange(PARTICIPANTS_PROPERTY,oldVal,participant);
 	}
+
+    public Person getCreator() {
+        return creator;
+    }
 
 }
