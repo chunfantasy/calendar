@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Person implements Participant {
 	private int id;
-	private String name, email, title;
+	private String name, email, title, password;
 	private List<String> phoneNumbers;
 
 	public int getId() {
@@ -60,4 +60,12 @@ public class Person implements Participant {
 	public String getTitle() {
 		return title;
 	}
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

@@ -1,6 +1,10 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.control.PersonControl;
+import no.ntnu.pu.model.Email;
 import no.ntnu.pu.model.Person;
+import no.ntnu.pu.net.SendMail;
 import no.ntnu.pu.storage.ServerStorage;
 
 import javax.swing.*;
@@ -97,6 +101,8 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
+            Person person = PersonControl.getPersonByEmail(usernameInput);
+            if(passwordInput.equals())
             //TODO: Sjekk brukernavn (usernameInput) og passord (passwordInput) opp mot database, gå så til kalendervisning
         }
     }
@@ -104,12 +110,12 @@ public class LoginView extends JPanel {
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
-            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+            if(usernameInput.length() == 0 || usernameInput.equals(feilmelding)){
                 userField.setText(feilmelding);
             }
             else{
                 Person person;
-                person = ServerStorage.getPersonByEmail(userField.getText());
+                person = PersonControl.getPersonByEmail(usernameInput);
                 new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
 
 
