@@ -1,5 +1,8 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.ServerStorage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -100,6 +103,17 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
+            String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
+            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+                userField.setText(feilmelding);
+            }
+            else{
+                Person person;
+                person = ServerStorage.getPersonByEmail(userField.getText());
+                new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
+
+
+            }
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }

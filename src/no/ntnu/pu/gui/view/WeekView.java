@@ -1,6 +1,9 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Calendar;
+import no.ntnu.pu.model.Notification;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
@@ -9,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.GregorianCalendar;
 
 public class WeekView extends CalenderView {
@@ -141,6 +145,15 @@ public class WeekView extends CalenderView {
                 calendarTableModel.setValueAt(null, i, j);
             }
         }
+        /**
+        for(int i = 0; i < loggedIn.getAppointments().size(); i++){
+            for(int j = 0; j<24; j++) {
+                for(int k = 1; k<8; k++) {
+                    calendarTableModel.setValueAt(loggedIn.getAppointments().get(i), j, k);
+                }
+            }
+        }**/
+
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }
 
@@ -181,6 +194,18 @@ public class WeekView extends CalenderView {
                 if(var != 0){
                     refreshCalendar(currentWeek, currentMonth,currentYear);
                 }
+            }
+        }
+    }
+
+    /** PROPERTYCHANGE **/
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getPropertyName().equals(Calendar.APPOINTMENT_PROPERTY)){
+            if(evt.getNewValue() instanceof Appointment){
+                //Appointment added
+            }
+            else{
+                //Appointment removed
             }
         }
     }

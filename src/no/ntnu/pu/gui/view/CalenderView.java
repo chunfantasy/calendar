@@ -1,10 +1,14 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Calendar;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 import java.util.GregorianCalendar;
 
 public class CalenderView extends JPanel {
