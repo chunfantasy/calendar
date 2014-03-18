@@ -187,15 +187,6 @@ public class WeekView extends CalenderView {
                     }
                 }
             }
-
-            /**
-             if(){
-
-             }
-             else{
-             calendarTableModel.setValueAt(null, i, j);
-             }
-             **/
         }
     }
 
