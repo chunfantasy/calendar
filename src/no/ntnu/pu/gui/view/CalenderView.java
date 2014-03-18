@@ -63,6 +63,7 @@ public class CalenderView extends JPanel {
 
         /**Set bounds**/
         setBounds(0, 0, 614, 400);
+        setPreferredSize(new Dimension(614, 400));
 
         /**Create calendar**/
         gregCal = new GregorianCalendar();

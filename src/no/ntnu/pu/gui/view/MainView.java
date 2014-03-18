@@ -18,8 +18,8 @@ public class MainView {
 
     public MainView(){
 
-        JFrame frame = new JFrame("Calendar");
-
+        JFrame frame = new JFrame("Gigakalender");
+        frame.setResizable(false);
         container = new JPanel(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -35,10 +35,10 @@ public class MainView {
 
         buttonGroup = new ButtonGroup();
 
-        monthButton = new JButton("Month");
+        monthButton = new JButton("Måned");
         monthButton.setEnabled(false);
-        weekButton = new JButton("Week");
-        newAppointmentButton = new JButton("New Appointment");
+        weekButton = new JButton("Uke");
+        newAppointmentButton = new JButton("Ny avtale");
 
         monthButton.addActionListener(new ButtonListener());
         weekButton.addActionListener(new ButtonListener());
@@ -66,6 +66,7 @@ public class MainView {
         frame.getContentPane().add(container);
         frame.setSize(1024, 768);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
