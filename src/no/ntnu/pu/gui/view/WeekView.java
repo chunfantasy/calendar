@@ -145,13 +145,14 @@ public class WeekView extends CalenderView {
                 calendarTableModel.setValueAt(null, i, j);
             }
         }
-        for(int i = 0; i < SOMETHING.getAppointments().size(); i++){
+        /**
+        for(int i = 0; i < loggedIn.getAppointments().size(); i++){
             for(int j = 0; j<24; j++) {
                 for(int k = 1; k<8; k++) {
-                    calendarTableModel.setValueAt(SOMETHING.getAppointments().get(i), j, k);
+                    calendarTableModel.setValueAt(loggedIn.getAppointments().get(i), j, k);
                 }
             }
-        }
+        }**/
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
     }

@@ -262,7 +262,7 @@ public class ServerStorage implements Storage {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
+		ArrayList<Participant> participants = new ArrayList();
 		participants.add(p);
 		participants.add(g);
 		a.setParticipants(participants);
@@ -292,7 +292,7 @@ public class ServerStorage implements Storage {
 		sql = "SELECT * FROM PERSON WHERE email = " + email;
 		rs = stmt.executeQuery(sql);
 		Person p = new Person("");
-		ArrayList<Person> list = new ArrayList<>();
+		ArrayList<Person> list = new ArrayList();
 		while (rs.next()) {
 			p.setId(rs.getInt("id"));
 			p.setEmail(rs.getString("email"));

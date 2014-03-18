@@ -94,12 +94,26 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //TODO: Sjekk brukernavn (usernameInput) og passord (passwordInput) opp mot database, gå så til kalendervisning
+          /**  for(person : database){
+                if(person.email.equals(usernameInput)){
+                    if(person.password.equals(passwordInput)){
+                       Person loggedIn = person;
+                       frmMain.dispose();
+                        //TODO: Starte mainview
+                    }
+                }
+            }**/
         }
     }
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
+            /**
+            for(person : database){
+                if(person.email.equals(passwordInput)) {
+                    email.send(person.password);
+                }
+            }**/
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }
