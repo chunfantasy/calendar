@@ -75,9 +75,9 @@ public class ServerStorage implements Storage {
 		// create table meetinggroup_person
 		sql = "CREATE TABLE meetinggroup_person (" 
 				+ "id int auto_increment primary key, "
-				+ "groupid int, " 
+				+ "meetinggroupid int, " 
 				+ "personid int, "
-				+ "foreign key (groupid) references meetinggroup(id) on delete set null on update cascade, "
+				+ "foreign key (meetinggroupid) references meetinggroup(id) on delete set null on update cascade, "
 				+ "foreign key (personid) references person(id) on delete set null on update cascade)";
 		stmt.execute(sql);		
 				
@@ -183,7 +183,7 @@ public class ServerStorage implements Storage {
 		g.setName(rs.getString("name"));
 
 		try {
-			sql = "SELECT * FROM meetinggroup_person WHERE groupid = "
+			sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 					+ g.getId();
 			rs = stmt.executeQuery(sql);
 			ArrayList<Integer> listId = new ArrayList<>();
@@ -245,8 +245,14 @@ public class ServerStorage implements Storage {
 		g = serverStorage.insertGroup(g);
 		g.addPerson(p3);
 		serverStorage.updateGroup(g);
+		serverStorage.updateGroup(g);
+		serverStorage.updateGroup(g);
 
 		g.removePerson(p1);
+		g.removePerson(p1);
+		g.removePerson(p1);
+		serverStorage.updateGroup(g);
+		g.addPerson(p2);
 		serverStorage.updateGroup(g);
 
 		g = serverStorage.getGroupById(1);
@@ -264,14 +270,23 @@ public class ServerStorage implements Storage {
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
 		ArrayList<Participant> participants = new ArrayList<>();
-		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
 		a.setParticipants(participants);
 		serverStorage.insertAppointment(a);
 
-		serverStorage.getAppointmentByTime(new Date(), new Date());
-		System.out.println(new Date());
+		a.setTitle("comecomecome");
+		a.addParticipant(g);
+		a.addParticipant(g);
+		a.addParticipant(g);
+		a.addParticipant(p2);
+		serverStorage.updateAppointment(a);
+
+		serverStorage.updateAppointment(a);
+
+		ArrayList<Appointment> appointmentByTime = serverStorage
+				.getAppointmentByParticipant(p3);
+		System.out.println(appointmentByTime);
 
 	}
 
@@ -303,7 +318,6 @@ public class ServerStorage implements Storage {
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
 			pstmt.executeUpdate();
-			p.setId(this.getLastId());
 			con.commit();
 			return true;
 		} catch (SQLException e) {
@@ -396,7 +410,7 @@ public class ServerStorage implements Storage {
 
 			if (!g.getPersons().isEmpty()) {
 				for (Person person : g.getPersons()) {
-					sql = "INSERT INTO meetinggroup_person (groupid, personid) "
+					sql = "INSERT INTO meetinggroup_person (meetinggroupid, personid) "
 							+ "VALUES(?, ?)";
 					pstmt = con.prepareStatement(sql);
 					pstmt.setInt(1, g.getId());
@@ -423,7 +437,7 @@ public class ServerStorage implements Storage {
 			pstmt.executeUpdate();
 
 			try {
-				sql = "SELECT * FROM meetinggroup_person WHERE groupid = "
+				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 						+ g.getId();
 				rs = stmt.executeQuery(sql);
 				ArrayList<Integer> listOld = new ArrayList<>();
@@ -435,20 +449,25 @@ public class ServerStorage implements Storage {
 					listNew.add(p.getId());
 				}
 
+				ArrayList<Integer> list = new ArrayList<>();
 				for (int id : listOld) {
 					if (!listNew.contains(id)) {
-						sql = "DELETE FROM meetinggroup_person WHERE groupid = ? AND personid = ?";
+						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
 						pstmt = con.prepareStatement(sql);
 						pstmt.setInt(1, g.getId());
 						pstmt.setInt(2, id);
 						pstmt.executeUpdate();
-						listOld.remove(Integer.valueOf(id));
+						list.add(id);
 					}
+				}
+
+				for (int id : list) {
+					listOld.remove((Integer.valueOf(id)));
 				}
 
 				for (int id : listNew) {
 					if (!listOld.contains(id)) {
-						sql = "INSERT INTO meetinggroup_person(groupid, personid) VALUES(?, ?)";
+						sql = "INSERT INTO meetinggroup_person(meetinggroupid, personid) VALUES(?, ?)";
 						pstmt = con.prepareStatement(sql);
 						pstmt.setInt(1, g.getId());
 						pstmt.setInt(2, id);
@@ -587,6 +606,105 @@ public class ServerStorage implements Storage {
 	}
 
 	@Override
+	public boolean updateAppointment(Appointment a) {
+		try {
+			sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
+					+ "WHERE id = " + a.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, a.getTitle());
+			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
+			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
+			pstmt.setString(4, a.getAddress());
+			pstmt.setString(5, a.getDescription());
+			pstmt.setInt(6, a.getMeetingRoom().getId());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
+						+ a.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOldPerson = new ArrayList<>();
+				ArrayList<Integer> listOldGroup = new ArrayList<>();
+				while (rs.next()) {
+					if (rs.getInt("personid") != 0)
+						listOldPerson.add(rs.getInt("personid"));
+					if (rs.getInt("meetinggroupid") != 0)
+						listOldGroup.add(rs.getInt("meetinggroupid"));
+				}
+
+				ArrayList<Integer> listNewPerson = new ArrayList<>();
+				ArrayList<Integer> listNewGroup = new ArrayList<>();
+				for (Participant p : a.getParticipants()) {
+					if (p instanceof Person)
+						listNewPerson.add(((Person) p).getId());
+					if (p instanceof Group)
+						listNewGroup.add(((Group) p).getId());
+				}
+
+				ArrayList<Integer> list = new ArrayList<>();
+				for (int id : listOldPerson) {
+					if (!listNewPerson.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewPerson) {
+					if (!listOldPerson.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+
+				list.clear();
+				for (int id : listOldGroup) {
+					if (!listNewGroup.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND meetinggroupid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewGroup) {
+					if (!listOldGroup.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, meetinggroupid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
 	public boolean deleteAppointmentById(int id) {
 		try {
 			sql = "DELETE FROM appointment WHERE id = " + id;
@@ -606,6 +724,7 @@ public class ServerStorage implements Storage {
 			sql = "SELECT * FROM appointment WHERE starttime >= '"
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
+			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList<>();
 			while (rs.next()) {
@@ -620,8 +739,25 @@ public class ServerStorage implements Storage {
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if (p instanceof Person)
+				sql = "SELECT * FROM appointment_participant WHERE personid = "
+						+ ((Person) p).getId();
+			else if (p instanceof Group)
+				sql = "SELECT * FROM appointment_participant WHERE meetinggroupid = "
+						+ ((Group) p).getId();
+			else
+				return null;
+			rs = stmt.executeQuery(sql);
+			ArrayList<Appointment> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(this.setAppointment(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
@@ -637,6 +773,21 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updateRoom(Room r) {
+		try {
+			sql = "UPDATE meetingroom SET roomname = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, r.getRoomname());
+			pstmt.executeUpdate();
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return true;
 		}
 	}
 

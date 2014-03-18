@@ -44,12 +44,16 @@ public interface Storage {
 	// Room
 	public Room insertRoom(Room r);
 
+	public boolean updateRoom(Room r);
+
 	public boolean deleteRoomById(int id);
 
 	public Room getRoomById(int id);
 
 	// Appointment
 	public Appointment insertAppointment(Appointment a);
+
+	public boolean updateAppointment(Appointment a);
 
 	public boolean deleteAppointmentById(int id);
 

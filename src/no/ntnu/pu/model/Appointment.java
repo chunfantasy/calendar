@@ -82,4 +82,15 @@ public class Appointment {
 		this.participants = participants;
 	}
 
+	public ArrayList<Participant> addParticipant(Participant p) {
+		if (!this.participants.contains(p))
+			this.participants.add(p);
+		return this.participants;
+	}
+
+	public ArrayList<Participant> removeParticipant(Participant p) {
+		this.participants.remove(p);
+		return this.participants;
+	}
+
 }

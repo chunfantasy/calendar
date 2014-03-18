@@ -46,7 +46,8 @@ public class Group implements Participant {
 	}
 
 	public ArrayList<Person> addPerson(Person p) {
-		this.persons.add(p);
+		if (!this.persons.contains(p))
+			this.persons.add(p);
 		return this.persons;
 	}
 
