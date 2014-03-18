@@ -106,6 +106,7 @@ public class LoginView extends JPanel {
                 Person loggedIn = person;
                 frmMain.dispose();
                 MainView mainView = new MainView();
+
             }
             else{
                 userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
@@ -127,7 +128,6 @@ public class LoginView extends JPanel {
 
 
             }
-            //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }
 
@@ -137,6 +137,7 @@ public class LoginView extends JPanel {
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());
         frmMain.pack();
+        frmMain.setLocationRelativeTo(null);
         frmMain.setResizable(false);
         frmMain.setVisible(true);
     }
