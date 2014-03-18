@@ -1,6 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
 import no.ntnu.pu.gui.panel.MeetingPanel;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Notification;
@@ -9,9 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Lima on 12.03.14.

@@ -15,8 +15,7 @@ public class Appointment {
 	private ArrayList<Participant> participants;
     private final Person creator;
 
-	public Appointment(String title, Person creator) {
-		this.title = title;
+	public Appointment(Person creator) {
         this.creator = creator;
 	}
 

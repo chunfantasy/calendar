@@ -1,6 +1,6 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
 
 import javax.swing.border.Border;
@@ -15,7 +15,7 @@ public class MeetingsView extends SidePanel{
         super();
         this.setBorder(meetingsBorder);
 
-        for(Appointment a: AppointmentControl.getAppointments()){
+        for(Appointment a: CalendarControl.getAppointments()){
             addMeeting(a);
         }
    }
