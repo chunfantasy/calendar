@@ -7,6 +7,7 @@ public class Person implements Participant {
 	private int id;
 	private String name, email, title, password;
 	private List<String> phoneNumbers;
+    private Calendar calendar;
 
 	public int getId() {
 		return id;
