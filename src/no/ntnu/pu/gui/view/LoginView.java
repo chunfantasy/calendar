@@ -100,6 +100,17 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
+            String feilmelding = "Skriv inn brukernavn for å få tilsendt passord";
+            if(userField.getText().length() == 0 || userField.getText().equals(feilmelding)){
+                userField.setText(feilmelding);
+            }
+            else{
+                for(person : database){
+                    if(userField.getText().equals(person.email)){
+                        new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
+                    }
+                }
+            }
             //TODO: Hent ut e-post som matcher brukernavn, send passord til e-post
         }
     }
