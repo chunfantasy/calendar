@@ -8,6 +8,7 @@ import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Participant;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -16,29 +17,149 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class AppointmentView extends JPanel implements ListSelectionListener, ActionListener, FocusListener{
 
-    private JButton addParticipantButton, removeButton, saveButton, deleteButton, addRoomButton, dateButton, cancelButton;
-    private JTextField appointmentField, dateField, startField, endField, placeField;
-    private JLabel appointmentLabel, dateLabel, timeLabel, placeLabel, participantsLabel, betweenTimeLabel;
+    private JButton addParticipantButton, removeButton, saveButton, deleteButton, addRoomButton, cancelButton, mainButton, roomButton, participantButton;
+    private JTextField appointmentField,  startField, endField, placeField;
+    private JLabel appointmentLabel, timeLabel, placeLabel, participantsLabel, betweenTimeLabel;
     private JList<Participant> participantList;
+    private JFrame frame;
+    private ButtonGroup grp;
     private DefaultListModel<Participant> participantListModel;
     private final String DATETEXT = "dd.mm.yy", TIMETEXT = "hh:mm";
     private static final String EDITINGTITLE = "Endre avtale", NEWTITLE = "Legg til ny avtale";
     private Appointment model;
-    private JPanel totalGUI;
+    private JPanel totalGUI, container, addRoomView, addParticipantView, appointmentView;
+
+//
+//    private static void createAndShowGUI(boolean editing) {
+//        JFrame frame = new JFrame(NEWTITLE);
+//        if (editing){
+//            frame.setTitle(EDITINGTITLE);
+//        }
+//        JFrame.setDefaultLookAndFeelDecorated(true);
+//        AppointmentView view = new AppointmentView();
+//        frame.setContentPane(view.createContentPane(editing));
+//
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setVisible(true);
+//        frame.pack();
+//    }
+
+    public AppointmentView(Appointment appointment){
+
+
+        frame = new JFrame(EDITINGTITLE);
+        // Different Views
+        addRoomView = new AddRoom().createContentPane();
+        addParticipantView = new AddParticipant().createContentPane();
+        System.out.print(addRoomView.getClass());
+        appointmentView = createContentPane(true);
+
+        mainButton = new JButton("Vis avtale");
+        mainButton.addActionListener(this);
+
+        roomButton = new JButton("Book rom");
+        roomButton.addActionListener(this);
+
+        participantButton = new JButton("Legg til deltaker");
+        participantButton.addActionListener(this);
+
+        container = new JPanel(new GridBagLayout());
+
+        container.add(appointmentView);
+        container.add(addRoomView);
+        container.add(addParticipantView);
+        addRoomView.setVisible(true);
+        addParticipantView.setVisible(false);
+        appointmentView.setVisible(false);
+
+
+        frame.getContentPane().add(container);
+        frame.setDefaultLookAndFeelDecorated(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+
+    }
+
+    public AppointmentView(){
+        frame = new JFrame(NEWTITLE);
+
+        // GridBagLayout
+        GridBagConstraints c;
+        setLayout(new GridBagLayout());
+        c = new GridBagConstraints();
+
+        // Different Views
+        addRoomView = new AddRoom().createContentPane();
+        addParticipantView = new AddParticipant().createContentPane();
+        appointmentView = createContentPane(false);
+        appointmentView.setPreferredSize(new Dimension(400, 300));
+
+        mainButton = new JButton("Vis avtale");
+        mainButton.addActionListener(this);
+        mainButton.setFocusable(false);
+        mainButton.setSelected(true);
+
+        roomButton = new JButton("Book rom");
+        roomButton.addActionListener(this);
+        roomButton.setFocusable(false);
+
+
+        participantButton = new JButton("Legg til deltaker");
+        participantButton.addActionListener(this);
+        participantButton.setFocusable(false);
+
+        grp = new ButtonGroup();
+        grp.add(mainButton);
+        grp.add(roomButton);
+        grp.add(participantButton);
+
+        container = new JPanel(new GridBagLayout());
+
+        // Setup GridBagLayout
+        c.gridx = 0;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        container.add(mainButton, c);
+
+        c.gridx = 1;
+        container.add(participantButton, c);
+
+        c.gridx = 2;
+        container.add(roomButton, c);
+
+        c.gridy = 1;
+        c.gridx = 0;
+        c.gridwidth = 3;
+        container.add(appointmentView, c);
+        container.add(addRoomView, c);
+        container.add(addParticipantView, c);
+        showAppointment();
+        frame.getContentPane().add(container);
+        frame.setDefaultLookAndFeelDecorated(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+    }
 
     public JPanel createContentPane(boolean editing){
-        totalGUI = new JPanel();
-
         // Appointment
-        model = new Appointment();
+        model = new Appointment("");
+
+        totalGUI = new JPanel();
 
         // GridBag
         GridBagConstraints gbc;
         totalGUI.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
+
 
         // participantListModel
         participantListModel = new DefaultListModel<Participant>();
@@ -62,6 +183,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setPreferredSize(new Dimension(180, 150));
         participantsLabel = new JLabel("Deltakere ");
+        participantsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         // participantList End
 
         addParticipantButton = new JButton("Legg til");
@@ -80,33 +202,20 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         addRoomButton = new JButton("Rom");
         addRoomButton.addActionListener(this);
 
-        dateButton = new JButton();
-        dateButton.setIcon(calIcon);
-        dateButton.addActionListener(this);
-        dateButton.setPreferredSize(new Dimension(26, 19));
-        dateButton.setBorderPainted(false);
-        dateButton.setContentAreaFilled(false);
-        dateButton.setFocusPainted(false);
-//        dateButton.setHorizontalAlignment(SwingConstants.RIGHT);
-        dateButton.setOpaque(false);
-
         cancelButton = new JButton("Avslutt");
         cancelButton.addActionListener(this);
 
         appointmentField = new JTextField();
         appointmentField.setColumns(20);
         appointmentLabel = new JLabel("Hendelse ");
-
-        dateField = new JTextField(DATETEXT);
-        dateField.setColumns(10);
-        dateLabel = new JLabel("Dato ");
-        dateField.setEditable(false);
+        appointmentLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         startField = new JTextField(TIMETEXT);
         startField.setToolTipText(TIMETEXT);
         startField.setColumns(5);
         startField.addFocusListener(this);
         timeLabel = new JLabel("Tid ");
+        timeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         endField = new JTextField(TIMETEXT);
         endField.setToolTipText(TIMETEXT);
@@ -117,13 +226,13 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         placeField.setColumns(15);
         placeField.addFocusListener(this);
         placeLabel = new JLabel("Sted ");
-        // Legg til FocusListener SLUTT 
+        placeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         betweenTimeLabel = new JLabel("-");
         betweenTimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        Dimension dim = new Dimension(addParticipantButton.getPreferredSize().width, dateField.getPreferredSize().height);
-
+        // Set height of buttons to be equal to height of JTextFields
+        Dimension dim = new Dimension(addParticipantButton.getPreferredSize().width, endField.getPreferredSize().height);
         addParticipantButton.setPreferredSize(dim);
         addRoomButton.setPreferredSize(dim);
         removeButton.setPreferredSize(dim);
@@ -131,45 +240,29 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         deleteButton.setPreferredSize(dim);
         cancelButton.setPreferredSize(dim);
 
+//        AddRoom room = new AddRoom(model);
+//        frame.add(room);
+//        room.setVisible(false);
 
-
-        setupGBC(1, 1, 0.5, 0, 0, gbc, appointmentLabel, true);
-        setupGBC(3, 1, 0.5, 1, 0, gbc, appointmentField, true);
-        setupGBC(1, 1, 0.5, 0, 1, gbc, dateLabel, true);
-        setupGBC(1, 1, 0.5, 1, 1, gbc, dateField, true);
-        setupGBC(1, 1, 0.5, 0, 2, gbc, timeLabel, true);
-        setupGBC(1, 1, 0.5, 1, 2, gbc, startField, true);
-        setupGBC(1, 1, 0.5, 3, 2, gbc, endField, true);
-        setupGBC(1, 1, 0.5, 0, 3, gbc, placeLabel, true);
-        setupGBC(3, 1, 0.5, 1, 3, gbc, placeField, true);
-        setupGBC(1, 1, 0.5, 4, 3, gbc, addRoomButton, true);
-        setupGBC(1, 1, 0.5, 0, 4, gbc, participantsLabel, true);
-        setupGBC(3, 4, 0.5, 1, 4, gbc, scroll, true);
-        setupGBC(1, 1, 0.5, 4, 4, gbc, addParticipantButton, true);
-        setupGBC(1, 1, 0.5, 4, 5, gbc, removeButton, true);
-        setupGBC(1, 1, 0.5, 1, 9, gbc, saveButton, true);
-        setupGBC(1, 1, 0.5, 2, 9, gbc, deleteButton, true);
-        setupGBC(1, 1, 0.5, 3, 9, gbc, cancelButton, true);
-        setupGBC(1, 1, 0.5, 2, 2, gbc, betweenTimeLabel, true);
-        setupGBC(1, 1, 0.5, 3, 1, gbc, dateButton, false);
+        setupGBC(1, 1, 0.5, 0, 1, gbc, appointmentLabel, true);
+        setupGBC(3, 1, 0.5, 1, 1, gbc, appointmentField, true);
+        setupGBC(1, 1, 0.5, 0, 3, gbc, timeLabel, true);
+        setupGBC(1, 1, 0.5, 1, 3, gbc, startField, true);
+        setupGBC(1, 1, 0.5, 3, 3, gbc, endField, true);
+        setupGBC(1, 1, 0.5, 0, 4, gbc, placeLabel, true);
+        setupGBC(3, 1, 0.5, 1, 4, gbc, placeField, true);
+        setupGBC(1, 1, 0.5, 0, 5, gbc, participantsLabel, true);
+        setupGBC(3, 4, 0.5, 1, 5, gbc, scroll, true);
+        setupGBC(1, 1, 0.5, 0, 8, gbc, removeButton, true);
+        setupGBC(1, 1, 0.5, 1, 10, gbc, saveButton, true);
+        setupGBC(1, 1, 0.5, 2, 10, gbc, deleteButton, true);
+        setupGBC(1, 1, 0.5, 3, 10, gbc, cancelButton, true);
+        setupGBC(1, 1, 0.5, 2, 3, gbc, betweenTimeLabel, true);
 
         totalGUI.setOpaque(true);
         return totalGUI;
     }
 
-    private static void createAndShowGUI(boolean editing) {
-        JFrame frame = new JFrame(NEWTITLE);
-        if (editing){
-            frame.setTitle(EDITINGTITLE);
-        }
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        AppointmentView view = new AppointmentView();
-        frame.setContentPane(view.createContentPane(editing));
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.pack();
-    }
 
     public void setupGBC(int gridwidth, int gridheight, double weightx, int x, int y, GridBagConstraints c, Component comp, boolean fill){
         c.gridheight = gridheight;
@@ -186,12 +279,54 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     }
 
 
+    public void showAppointment(){
+        addRoomView.setVisible(false);
+        addParticipantView.setVisible(false);
+        appointmentView.setVisible(true);
+        container.setBorder(new TitledBorder("Legg til avtale"));
+    }
+
+    public void showRoom(){
+        addParticipantView.setVisible(false);
+        appointmentView.setVisible(false);
+        addRoomView.setVisible(true);
+        container.setBorder(new TitledBorder("Velg rom"));
+    }
+
+    public void showParticipant(){
+        addRoomView.setVisible(false);
+        appointmentView.setVisible(false);
+        addParticipantView.setVisible(true);
+        container.setBorder(new TitledBorder("Legg til deltaker"));
+    }
+
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addRoomButton){
-            AddRoom.createAndShowGUI(model);
+        if (e.getSource() == roomButton){
+//            AddRoom.createAndShowGUI(model);
+            showRoom();
         }
-        if (e.getSource() == addParticipantButton){
-            AddParticipant.createAndShowGUI();
+        if (e.getSource() == participantButton){
+            showParticipant();
+        }
+        if (e.getSource() == mainButton){
+            showAppointment();
+        }
+        if (e.getSource() == saveButton){
+            model.setDescription("");
+            model.setAddress(placeField.getText());
+            model.setTitle(appointmentField.getText());
+//            model.setStartTime(startField.getText());
+//            model.setEndTime(endField.getText());
+            model.setMeetingRoom(null);
+            // setParticipants
+            ArrayList<Participant> participants = new ArrayList<Participant>();
+            for (int i = 0; i<participantListModel.getSize(); i++){
+                participants.add(participantListModel.getElementAt(i));
+            }
+            model.setParticipants(participants);
+        }
+        if (e.getSource()== cancelButton){
+            frame.dispose();
         }
     }
 
@@ -211,7 +346,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             placeField.setText("");
         }
         if (e.getSource() == saveButton){
-            model.setAdress(null);
+            model.setAddress(null);
         }
 
     }
@@ -230,14 +365,25 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                createAndShowGUI(true);
-            }
-        });
+    public void setEnabledButton(){
+        addRoomButton.setEnabled(true);
+        addParticipantButton.setEnabled(true);
+    }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable(){
+//            public void run() {
+//                createAndShowGUI(true);
+//            }
+//        });
+//    }
+
+    public static void main(String[] args){
+        new AppointmentView();
     }
 
 
 
 }
+
+
