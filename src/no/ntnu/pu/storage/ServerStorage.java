@@ -214,7 +214,8 @@ public class ServerStorage implements Storage {
 	}
 
 	private Appointment setAppointment(ResultSet rs) throws SQLException {
-		Appointment a = new Appointment("");
+		Person p = new Person("");
+		Appointment a = new Appointment(p);
 		a.setId(rs.getInt("id"));
 		return a;
 	}
@@ -252,16 +253,15 @@ public class ServerStorage implements Storage {
 		r.setId(1);
 		serverStorage.insertRoom(r);
 
-		Appointment a = new Appointment("");
+		Appointment a = new Appointment(p1);
 		a.setTitle("gogogo");
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
 		ArrayList<Participant> participants = new ArrayList();
-		participants.add(p2);
-		participants.add(p3);
-		participants.add(g);
-		a.setParticipants(participants);
+		a.addParticipant(p2);
+		a.addParticipant(p3);
+		a.addParticipant(participant);
 		serverStorage.insertAppointment(a);
 
 		serverStorage.getAppointmentByTime(new Date(), new Date());
