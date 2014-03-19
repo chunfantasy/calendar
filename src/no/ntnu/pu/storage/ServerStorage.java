@@ -62,22 +62,31 @@ public class ServerStorage {
 			// create table person
 			sql = "DROP TABLE IF EXISTS alarm";
 			stmt.execute(sql);
+			System.out.println("Database: Table alarm dropped");
 			sql = "DROP TABLE IF EXISTS changenotification";
 			stmt.execute(sql);
+			System.out.println("Database: Table changenotification dropped");
 			sql = "DROP TABLE IF EXISTS declinenotification";
 			stmt.execute(sql);
+			System.out.println("Database: Table declinenotification dropped");
 			sql = "DROP TABLE IF EXISTS appointment_participant";
 			stmt.execute(sql);
+			System.out.println("Database: Table appointment_participant dropped");
 			sql = "DROP TABLE IF EXISTS meetinggroup_person";
 			stmt.execute(sql);
+			System.out.println("Database: Table meetinggroup_person dropped");
 			sql = "DROP TABLE IF EXISTS appointment";
 			stmt.execute(sql);
+			System.out.println("Database: Table appointment dropped");
 			sql = "DROP TABLE IF EXISTS person";
 			stmt.execute(sql);
+			System.out.println("Database: Table person dropped");
 			sql = "DROP TABLE IF EXISTS meetingroom";
 			stmt.execute(sql);
+			System.out.println("Database: Table meetingroom dropped");
 			sql = "DROP TABLE IF EXISTS meetinggroup";
 			stmt.execute(sql);
+			System.out.println("Database: Table meetinggroup dropped");
 	
 	
 			// create table person
@@ -89,13 +98,15 @@ public class ServerStorage {
 					+ "password varchar(20), "
 					+ "phonenumbers varchar(30))";
 			stmt.execute(sql);
-	
+			System.out.println("Database: Table person created");
+			
 			// create table meetinggroup
 			sql = "CREATE TABLE meetinggroup (" 
 					+ "id int auto_increment primary key, "
 					+ "name varchar(15)," 
 					+ "email varchar(20))";
 			stmt.execute(sql);
+			System.out.println("Database: Table meetinggroup created");
 			
 			// create table meetinggroup_person
 			sql = "CREATE TABLE meetinggroup_person (" 
@@ -105,6 +116,7 @@ public class ServerStorage {
 					+ "foreign key (meetinggroupid) references meetinggroup(id) on delete set null on update cascade, "
 					+ "foreign key (personid) references person(id) on delete set null on update cascade)";
 			stmt.execute(sql);		
+			System.out.println("Database: Table meetinggroup_person created");
 					
 			// create table meetingroom
 			sql = "CREATE TABLE meetingroom ("
@@ -112,6 +124,7 @@ public class ServerStorage {
 					+ "capacity int, "
 					+ "roomname varchar(15))";
 			stmt.execute(sql);
+			System.out.println("Database: Table meetingroom created");
 	
 			// create table appointment
 			sql = "CREATE TABLE appointment ("
@@ -126,6 +139,7 @@ public class ServerStorage {
 					+ "foreign key(creatorid) references person(id) on delete set null on update cascade, "
 					+ "description varchar(50))";
 			stmt.execute(sql);
+			System.out.println("Database: Table appointment created");
 	
 			// create table appointment_participant
 			sql = "CREATE TABLE appointment_participant ("
@@ -136,6 +150,7 @@ public class ServerStorage {
 					+ "foreign key(personid) references person(id) on delete set null on update cascade, "
 					+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
 			stmt.execute(sql);
+			System.out.println("Database: Table appointment_participant created");
 			
 			// create table alarm
 			sql = "CREATE TABLE alarm ("
@@ -146,6 +161,7 @@ public class ServerStorage {
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
 					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
+			System.out.println("Database: Table alarm created");
 			
 			// create table declinenotification
 			sql = "CREATE TABLE declinenotification ("
@@ -157,6 +173,7 @@ public class ServerStorage {
 					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade, "
 					+ "foreign key(declinerid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
+			System.out.println("Database: Table declinenotification created");
 			
 			// create table appointment_participant
 			sql = "CREATE TABLE changenotification ("
@@ -167,9 +184,11 @@ public class ServerStorage {
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
 					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
+			System.out.println("Database: Table changenotification created");
 			//@formatter:on
 
 			con.commit();
+			System.out.println("Database: All tables reset");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

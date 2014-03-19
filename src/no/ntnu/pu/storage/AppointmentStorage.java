@@ -12,6 +12,12 @@ import no.ntnu.pu.model.Person;
 
 public class AppointmentStorage extends ServerStorage {
 
+	public AppointmentStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by AppointmentStorage");
+	}
+	
 	public Appointment insertAppointment(Appointment a) {
 		try {
 			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid, creatorid) "
@@ -52,6 +58,7 @@ public class AppointmentStorage extends ServerStorage {
 				}
 			}
 			con.commit();
+			System.out.println("Database: Appointment inserted");
 			return a;
 		} catch (SQLException e) {
 			e.printStackTrace();

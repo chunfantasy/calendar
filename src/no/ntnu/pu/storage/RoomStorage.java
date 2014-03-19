@@ -7,6 +7,11 @@ import no.ntnu.pu.model.Room;
 
 public class RoomStorage extends ServerStorage {
 
+	public RoomStorage() {
+		super();
+		System.out.println("Database: Database connected by RoomStorage");
+	}
+
 	public Room insertRoom(Room r) {
 		try {
 			sql = "INSERT INTO meetingroom(capacity, roomname) VALUES(?, ?)";
@@ -16,6 +21,7 @@ public class RoomStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			r.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: Room inserted");
 			return r;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -49,7 +55,7 @@ public class RoomStorage extends ServerStorage {
 			return false;
 		}
 	}
-	
+
 	public ArrayList<Room> getAll() {
 		try {
 			sql = "SELECT * FROM meetingroom";
@@ -64,7 +70,7 @@ public class RoomStorage extends ServerStorage {
 			return null;
 		}
 	}
-	
+
 	public Room getRoomById(int id) {
 		try {
 			sql = "SELECT * FROM meetingroom WHERE id = " + id;

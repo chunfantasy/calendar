@@ -7,6 +7,12 @@ import no.ntnu.pu.model.DeclineNotification;
 
 public class DeclineNotificationStorage extends ServerStorage{
 	
+	public DeclineNotificationStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by DeclineNotificationStorage");
+	}
+	
 	public DeclineNotification insertDeclineNotification(DeclineNotification d) {
 		try {
 			sql = "INSERT INTO declinenotification(appointmentid, recipientid, declinerid) VALUES(?, ?, ?)";
@@ -17,6 +23,7 @@ public class DeclineNotificationStorage extends ServerStorage{
 			pstmt.executeUpdate();
 			d.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: DeclineNotification inserted");
 			return d;
 		} catch (SQLException e) {
 			e.printStackTrace();

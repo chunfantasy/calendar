@@ -7,6 +7,12 @@ import no.ntnu.pu.model.ChangeNotification;
 
 public class ChangeNotificationStorage extends ServerStorage {
 
+	public ChangeNotificationStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by ChangeNotificationStorage");
+	}
+
 	public ChangeNotification insertChangeNotification(ChangeNotification c) {
 		try {
 			sql = "INSERT INTO changenotification(appointmentid, recipientid, changedproperties) VALUES(?, ?, ?)";
@@ -17,6 +23,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			c.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: ChangeNotification inserted");
 			return c;
 		} catch (SQLException e) {
 			e.printStackTrace();

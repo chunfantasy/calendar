@@ -7,6 +7,12 @@ import no.ntnu.pu.model.Person;
 
 public class PersonStorage extends ServerStorage {
 
+	public PersonStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by PersonStorage");
+	}
+	
 	public Person insertPerson(Person p) {
 		try {
 			sql = "INSERT INTO person(email, name, title, password, phonenumbers) VALUES(?, ?, ?, ?, ?)";
@@ -19,6 +25,7 @@ public class PersonStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: Person inserted");
 			return p;
 		} catch (SQLException e) {
 			e.printStackTrace();

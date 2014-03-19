@@ -8,6 +8,11 @@ import no.ntnu.pu.model.Alarm;
 
 public class AlarmStorage extends ServerStorage {
 
+	public AlarmStorage(){
+		super();
+		System.out.println("Database: Database connected by AlarmStorage");
+	}
+	
 	public Alarm insertAlarm(Alarm a) {
 		try {
 			sql = "INSERT INTO alarm(appointmentid, recipientid, date) VALUES(?, ?, ?)";
@@ -18,6 +23,7 @@ public class AlarmStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			a.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: Alarm inserted");
 			return a;
 		} catch (SQLException e) {
 			e.printStackTrace();
