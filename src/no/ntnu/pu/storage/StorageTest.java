@@ -90,6 +90,7 @@ public class StorageTest {
 		a.addParticipant(p2);
 		a.addParticipant(p3);
 		a.addParticipant(g);
+		a.setCreator(p1);
 		appointmentStorage.insertAppointment(a);
 
 		a.setTitle("comecomecome");
