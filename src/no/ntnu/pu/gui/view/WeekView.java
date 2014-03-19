@@ -3,6 +3,7 @@ package no.ntnu.pu.gui.view;
 import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
+import no.ntnu.pu.model.Notification;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;

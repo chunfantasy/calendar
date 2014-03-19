@@ -4,6 +4,7 @@ import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
 import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.AppointmentStorage;
 import no.ntnu.pu.storage.ServerStorage;
 
 import java.sql.SQLException;
@@ -11,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarControl {
-	private static ServerStorage storage;
+	private static AppointmentStorage storage = new AppointmentStorage();
     private static Calendar model;
 
     public static Calendar getModel() {
         return model;
     }
 
-    public static ArrayList<Appointment> getAppointments(){
+    public static List<Appointment> getAppointments(){
         return model.getAppointments();
     }
 
@@ -29,11 +30,6 @@ public class CalendarControl {
     public static void setModel(Calendar model) {
         CalendarControl.model = model;
     }
-
-    public void CalendarControl() throws SQLException {
-		storage = new ServerStorage();
-        storage.connect();
-	}
 	
 	public static void addAppointment(Appointment appointment) {
 		storage.insertAppointment(appointment);

@@ -1,13 +1,13 @@
 package no.ntnu.pu.control;
 
 import no.ntnu.pu.model.Group;
-import no.ntnu.pu.storage.ServerStorage;
+import no.ntnu.pu.storage.GroupStorage;
 
 import java.util.ArrayList;
 
 public class GroupControl{
 
-    public static ServerStorage serverStorage = new ServerStorage() ;
+    public static GroupStorage serverStorage = new GroupStorage() ;
 
     public static Group getGroupById(int id){
         return serverStorage.getGroupById(id);

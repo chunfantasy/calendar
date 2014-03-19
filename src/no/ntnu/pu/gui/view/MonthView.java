@@ -1,5 +1,7 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.AppointmentControl;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
