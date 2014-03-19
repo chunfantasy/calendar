@@ -438,10 +438,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         }
 
 
-
-
-
-
+        // aids
     }
 
     public void valueChanged(ListSelectionEvent e) {
