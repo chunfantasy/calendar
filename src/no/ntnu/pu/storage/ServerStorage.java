@@ -391,7 +391,7 @@ public class ServerStorage {
 		try {
 			stmt = con.createStatement();
 			Person person = new Person("");
-			Appointment appointment = new Appointment(person);
+			Appointment appointment = new Appointment();
 			Alarm a = new Alarm(new Date(), person, appointment);
 			a.setId(rs.getInt("id"));
 			a.setTime(new Date(rs.getTimestamp("date").getTime()));
@@ -419,7 +419,7 @@ public class ServerStorage {
 		try {
 			stmt = con.createStatement();
 			Person person = new Person("");
-			Appointment appointment = new Appointment(person);
+			Appointment appointment = new Appointment();
 			List<String> list = new ArrayList<String>();
 			ChangeNotification c = new ChangeNotification(list,	person, appointment);
 			c.setId(rs.getInt("id"));
@@ -456,7 +456,7 @@ public class ServerStorage {
 		try {
 			stmt = con.createStatement();
 			Person person = new Person("");
-			Appointment appointment = new Appointment(person);
+			Appointment appointment = new Appointment();
 			DeclineNotification d = new DeclineNotification(person, person,
 					appointment);
 			d.setId(rs.getInt("id"));
