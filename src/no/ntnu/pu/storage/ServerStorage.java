@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
@@ -55,6 +56,12 @@ public class ServerStorage {
 
 			//@formatter:off
 			// create table person
+			sql = "DROP TABLE IF EXISTS alarm";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS changenotification";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS declinenotification";
+			stmt.execute(sql);
 			sql = "DROP TABLE IF EXISTS appointment_participant";
 			stmt.execute(sql);
 			sql = "DROP TABLE IF EXISTS meetinggroup_person";
@@ -121,6 +128,37 @@ public class ServerStorage {
 					+ "meetinggroupid int null, "
 					+ "foreign key(personid) references person(id) on delete set null on update cascade, "
 					+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
+			stmt.execute(sql);
+			
+			// create table alarm
+			sql = "CREATE TABLE alarm ("
+					+ "id int auto_increment primary key, " 
+					+ "appointmentid int, "
+					+ "personid int, "
+					+ "date datetime, "
+					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
+					+ "foreign key(personid) references person(id) on delete cascade on update cascade) ";
+			stmt.execute(sql);
+			
+			// create table declinenotification
+			sql = "CREATE TABLE declinenotification ("
+					+ "id int auto_increment primary key, " 
+					+ "appointmentid int, "
+					+ "personid int, "
+					+ "decliner int, "
+					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
+					+ "foreign key(personid) references person(id) on delete cascade on update cascade, "
+					+ "foreign key(decliner) references person(id) on delete cascade on update cascade) ";
+			stmt.execute(sql);
+			
+			// create table appointment_participant
+			sql = "CREATE TABLE changenotification ("
+					+ "id int auto_increment primary key, " 
+					+ "appointmentid int, "
+					+ "personid int, "
+					+ "changedproperties varchar(200), "
+					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
+					+ "foreign key(personid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			//@formatter:on
 
@@ -219,11 +257,11 @@ public class ServerStorage {
 			sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 					+ g.getId();
 			rs = stmt.executeQuery(sql);
-			ArrayList<Integer> listId = new ArrayList<>();
+			ArrayList<Integer> listId = new ArrayList<Integer>();
 			while (rs.next()) {
 				listId.add(rs.getInt("personid"));
 			}
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList<Person>();
 			for (int id : listId) {
 				sql = "SELECT * FROM person WHERE id = " + id;
 				rs = stmt.executeQuery(sql);
@@ -257,6 +295,47 @@ public class ServerStorage {
 			Person p = new Person("");
 			Appointment a = new Appointment(p);
 			a.setId(rs.getInt("id"));
+			a.setAddress(rs.getString("address"));
+			a.setDescription(rs.getString("description"));
+			a.setStartTime(new Date(rs.getTimestamp("starttime").getTime()));
+			a.setEndTime(new Date(rs.getTimestamp("endtime").getTime()));
+			a.setTitle(rs.getString("title"));
+
+			sql = "SELECT * FROM meetingroom WHERE id = "
+					+ rs.getInt("meetingroomid");
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				a.setMeetingRoom(this.setRoom(rs));
+			}
+
+			sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
+					+ a.getId();
+			rs = stmt.executeQuery(sql);
+			ArrayList<Integer> listPersonId = new ArrayList<Integer>();
+			ArrayList<Integer> listGroupId = new ArrayList<Integer>();
+			while (rs.next()) {
+				if (rs.getInt("personid") != 0)
+					listPersonId.add(rs.getInt("personid"));
+				else if (rs.getInt("meetinggroupid") != 0)
+					listGroupId.add(rs.getInt("meetinggroupid"));
+				else
+					continue;
+			}
+
+			for (int id : listPersonId) {
+				sql = "SELECT * FROM person WHERE id = " + id;
+				rs = stmt.executeQuery(sql);
+				if (rs.next()) {
+					a.addParticipant(this.setPerson(rs));
+				}
+			}
+			for (int id : listGroupId) {
+				sql = "SELECT * FROM meetinggroup WHERE id = " + id;
+				rs = stmt.executeQuery(sql);
+				if (rs.next()) {
+					a.addParticipant(this.setGroup(rs));
+				}
+			}
 			return a;
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -48,16 +48,16 @@ public class GroupStorage extends ServerStorage {
 				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 						+ g.getId();
 				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOld = new ArrayList<>();
+				ArrayList<Integer> listOld = new ArrayList<Integer>();
 				while (rs.next()) {
 					listOld.add(rs.getInt("personid"));
 				}
-				ArrayList<Integer> listNew = new ArrayList<>();
+				ArrayList<Integer> listNew = new ArrayList<Integer>();
 				for (Person p : g.getPersons()) {
 					listNew.add(p.getId());
 				}
 
-				ArrayList<Integer> list = new ArrayList<>();
+				ArrayList<Integer> list = new ArrayList<Integer>();
 				for (int id : listOld) {
 					if (!listNew.contains(id)) {
 						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
@@ -150,7 +150,7 @@ public class GroupStorage extends ServerStorage {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Group> list = new ArrayList<>();
+			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}

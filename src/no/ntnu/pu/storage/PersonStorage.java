@@ -100,7 +100,7 @@ public class PersonStorage extends ServerStorage {
 		try {
 			sql = "SELECT * FROM person WHERE name = '" + name + "'";
 			rs = stmt.executeQuery(sql);
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList<Person>();
 			while (rs.next()) {
 				list.add(this.setPerson(rs));
 			}

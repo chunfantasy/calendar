@@ -5,7 +5,6 @@ import java.util.Date;
 
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
-import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
@@ -69,7 +68,6 @@ public class StorageTest {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
 		a.addParticipant(p2);
 		a.addParticipant(p3);
 		a.addParticipant(g);
@@ -86,7 +84,7 @@ public class StorageTest {
 
 		ArrayList<Appointment> appointmentByTime = appointmentStorage
 				.getAppointmentByParticipant(p3);
-		System.out.println(appointmentByTime);
+		System.out.println(appointmentByTime.get(0).getParticipants());
 
 	}
 

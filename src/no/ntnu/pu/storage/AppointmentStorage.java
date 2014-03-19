@@ -87,8 +87,8 @@ public class AppointmentStorage extends ServerStorage {
 				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
 						+ a.getId();
 				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOldPerson = new ArrayList<>();
-				ArrayList<Integer> listOldGroup = new ArrayList<>();
+				ArrayList<Integer> listOldPerson = new ArrayList<Integer>();
+				ArrayList<Integer> listOldGroup = new ArrayList<Integer>();
 				while (rs.next()) {
 					if (rs.getInt("personid") != 0)
 						listOldPerson.add(rs.getInt("personid"));
@@ -96,8 +96,8 @@ public class AppointmentStorage extends ServerStorage {
 						listOldGroup.add(rs.getInt("meetinggroupid"));
 				}
 
-				ArrayList<Integer> listNewPerson = new ArrayList<>();
-				ArrayList<Integer> listNewGroup = new ArrayList<>();
+				ArrayList<Integer> listNewPerson = new ArrayList<Integer>();
+				ArrayList<Integer> listNewGroup = new ArrayList<Integer>();
 				for (Participant p : a.getParticipants()) {
 					if (p instanceof Person)
 						listNewPerson.add(((Person) p).getId());
@@ -105,7 +105,7 @@ public class AppointmentStorage extends ServerStorage {
 						listNewGroup.add(((Group) p).getId());
 				}
 
-				ArrayList<Integer> list = new ArrayList<>();
+				ArrayList<Integer> list = new ArrayList<Integer>();
 				for (int id : listOldPerson) {
 					if (!listNewPerson.contains(id)) {
 						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
@@ -176,7 +176,7 @@ public class AppointmentStorage extends ServerStorage {
 					+ new Timestamp(endTime.getTime()) + "'";
 			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList<>();
+			ArrayList<Appointment> list = new ArrayList<Appointment>();
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
@@ -198,11 +198,19 @@ public class AppointmentStorage extends ServerStorage {
 			else
 				return null;
 			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList<>();
+			ArrayList<Integer> listId = new ArrayList<Integer>();
 			while (rs.next()) {
-				list.add(this.setAppointment(rs));
+				listId.add(rs.getInt("appointmentid"));
 			}
-			return list;
+
+			ArrayList<Appointment> listAppointment = new ArrayList<Appointment>();
+			for (int id : listId) {
+				sql = "SELECT * FROM appointment WHERE id = " + id;
+				rs = stmt.executeQuery(sql);
+				if (rs.next())
+					listAppointment.add(this.setAppointment(rs));
+			}
+			return listAppointment;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
