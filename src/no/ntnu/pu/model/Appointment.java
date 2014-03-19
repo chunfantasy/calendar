@@ -12,11 +12,11 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-	private final Person creator;
+    private final Person creator;
 
 	public Appointment(Person creator) {
 		this.creator = creator;
-		this.participants = new ArrayList();
+		this.participants = new ArrayList<Participant>();
 	}
 
 	public int getId() {
