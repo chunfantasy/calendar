@@ -91,7 +91,7 @@ public class MainView {
         public void actionPerformed(ActionEvent e) {
             Object s = e.getSource();
             if(s.equals(newAppointmentButton)){
-                new AppointmentView();
+                //TODO: remove TODO new AppointmentView();
             }else if(s.equals(monthButton)){
                 showMonth();
                 monthButton.setEnabled(false);

@@ -1,13 +1,13 @@
 package no.ntnu.pu.control;
 
 import no.ntnu.pu.model.Person;
-import no.ntnu.pu.storage.ServerStorage;
+import no.ntnu.pu.storage.PersonStorage;
 
 import java.util.ArrayList;
 
 public class PersonControl {
 
-    public static ServerStorage serverStorage = new ServerStorage();
+    public static PersonStorage serverStorage = new PersonStorage();
 
     public static Person getPersonByEmail(String email){
         return serverStorage.getPersonByEmail(email);

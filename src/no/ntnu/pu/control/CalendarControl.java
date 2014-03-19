@@ -3,12 +3,13 @@ package no.ntnu.pu.control;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
+import no.ntnu.pu.storage.AppointmentStorage;
 import no.ntnu.pu.storage.ServerStorage;
 
 import java.util.List;
 
 public class CalendarControl {
-	private static ServerStorage storage;
+	private static AppointmentStorage storage = new AppointmentStorage();
     private static Calendar model;
 
     public static Calendar getModel() {
@@ -27,10 +28,6 @@ public class CalendarControl {
         CalendarControl.model = model;
     }
 
-    public void CalendarControl() {
-		storage = new ServerStorage();
-	}
-	
 	public static void addAppointment(Appointment appointment) {
 		storage.insertAppointment(appointment);
 	}
