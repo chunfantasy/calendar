@@ -17,7 +17,7 @@ public class NotificationControl{
         }
     }
 
-	public void sendChangeNotification(Appointment a, String[] changedProp){
+	public void sendChangeNotification(Appointment a, ArrayList changedProp){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
             p.getCalendar().addNotification(new ChangeNotification(changedProp,p, a));
