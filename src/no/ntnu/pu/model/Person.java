@@ -78,4 +78,9 @@ public class Person implements Participant {
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

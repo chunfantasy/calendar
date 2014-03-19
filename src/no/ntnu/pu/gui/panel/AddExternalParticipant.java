@@ -20,9 +20,10 @@ import java.util.regex.Pattern;
  */
 public class AddExternalParticipant extends JPanel implements ActionListener {
     private JTextField nameField, emailField;
-    private JButton inviteButton, cancelButton;
-    private JLabel nameLabel, emailLabel, mailErrorLabel, nameErrorLabel;
+    private JButton inviteButton;
+    private JLabel nameLabel, emailLabel;
     private JPanel totalGUI;
+    private boolean emailBackground, nameBackground;
 
     public JPanel createContentPane(){
         totalGUI = new JPanel();
@@ -44,9 +45,6 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
         nameField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (nameErrorLabel.isVisible()){
-                    nameErrorLabel.setVisible(false);
-                }
             }
 
             @Override
@@ -56,27 +54,26 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                if (e.getSource() == nameField){
+                    if (nameBackground){
+                        nameField.setBackground(new JTextField().getBackground());
+                        nameBackground = false;
+                    }
+                }
             }
         });
         nameLabel = new JLabel("Navn ");
         nameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        mailErrorLabel = new JLabel(UIManager.getIcon("OptionPane.errorIcon"));
-        mailErrorLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        mailErrorLabel.setVisible(false);
-        nameErrorLabel = mailErrorLabel;
 
-        emailField = new JTextField();
+        emailField = new JTextField(15);
         emailField.addActionListener(this);
         emailLabel = new JLabel("Email ");
         emailLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         emailField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (mailErrorLabel.isVisible()){
-                    mailErrorLabel.setVisible(false);
-                }
+
             }
 
             @Override
@@ -86,13 +83,17 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                if (e.getSource() == emailField){
+                    if (emailBackground){
+                        emailField.setBackground(new JTextField().getBackground());
+                        emailBackground = false;
+                    }
+                }
             }
         });
 
-        cancelButton = new JButton("Avbryt");
-        cancelButton.addActionListener(this);
-        cancelButton.setFocusable(false);
+        // aidsx2
+
 
         inviteButton = new JButton("Inviter");
         inviteButton.addActionListener(this);
@@ -100,13 +101,11 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
 
         setupGBC(1, 0, 0, gbc, nameLabel, false);
         setupGBC(2, 1, 0, gbc, nameField, true);
-        setupGBC(1, 3, 0, gbc, nameErrorLabel, false);
         setupGBC(1, 0, 1, gbc, emailLabel, false);
         setupGBC(2, 1, 1, gbc, emailField, true);
-        setupGBC(1, 3, 1, gbc, mailErrorLabel, false);
         setupGBC(1, 1, 2, gbc, inviteButton, true);
-        setupGBC(1, 2, 2, gbc, cancelButton, true);
 
+        totalGUI.setPreferredSize(new Dimension(400, 300));
         return totalGUI;
     }
 
@@ -131,12 +130,23 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
                 // todo: legg person til i liste
             }
             if (!ev.validate(emailField.getText().trim())){
-                mailErrorLabel.setVisible(true);
+                emailField.setBackground(new Color(250, 0, 0));
+                emailBackground = true;
             }
             if (nameField.getText().length() == 0){
-                nameErrorLabel.setVisible(true);
             }
         }
+        if (e.getSource() == inviteButton){
+            if (nameField.getText().length()== 0){
+                nameField.setBackground(new Color(250, 0, 0));
+                nameBackground = true;
+            }
+            if (!ev.validate(emailField.getText().trim())){
+                emailField.setBackground(new Color(250, 0, 0));
+                emailBackground = true;
+            }
+        }
+
     }
 }
 
