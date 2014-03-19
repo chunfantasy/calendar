@@ -13,7 +13,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
     private JButton chooseButton;
     private JTextField searchField;
     private JTable roomTable;
-    private JLabel searchLabel;
+    private JLabel searchLabel, capacityLabel;
     private JComboBox roomSize;
     private DefaultTableModel tableModel;
     private JPanel totalGUI;
@@ -51,28 +51,24 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
             }
         };
 
-        // Icons
-        ImageIcon icon = new ImageIcon(getClass().getResource("search.png"));
 
 
         searchField = new JTextField("Søk");
         searchField.setColumns(15);
         searchField.addActionListener(this);
         searchField.addFocusListener(this);
-        searchLabel = new JLabel(icon);
+        searchLabel = new JLabel("Søk");
         searchLabel.setPreferredSize(new Dimension(13, 13));
         searchLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         roomSize = new JComboBox(SIZES);
         roomSize.addActionListener(this);
+        capacityLabel = new JLabel("Kapasitet: ");
+        capacityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         chooseButton = new JButton("Velg");
         chooseButton.setFocusable(false);
         chooseButton.addActionListener(this);
-
-        cancelButton = new JButton("Avslutt");
-        cancelButton.setFocusable(false);
-        cancelButton.addActionListener(this);
 
         // Table
         roomTable = new JTable();
@@ -101,13 +97,14 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
         setupGBC(1, 1, 0, 0, 0, gbc, searchLabel, true);
-        setupGBC(1, 1, 0.5, 1, 0, gbc, searchField, false);
-        setupGBC(1, 1, 0.5, 2, 0, gbc, roomSize, false);
+        setupGBC(1, 1, 0.5, 1, 0, gbc, searchField, true);
+        setupGBC(1, 1, 0.5, 3, 0, gbc, roomSize, false);
+        setupGBC(1, 1, 0.5, 2, 0, gbc, capacityLabel, true);
         setupGBC(4, 4, 0.5, 0, 1, gbc, scroll, true);
-        setupGBC(1, 1, 0.5, 0, 6, gbc, chooseButton, false);
-        setupGBC(1, 1, 0.5, 3, 6, gbc, cancelButton, false);
+        setupGBC(4, 1, 0.5, 1, 6, gbc, chooseButton, false);
 
         totalGUI.setOpaque(true);
+        totalGUI.setPreferredSize(new Dimension(400, 300));
         return totalGUI;
 
     }
@@ -115,7 +112,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
     public static void createAndShowGUI() {
-        JFrame frame = new JFrame("Book rom");
+        frame = new JFrame("Book rom");
         JFrame.setDefaultLookAndFeelDecorated(true);
         AddRoom view = new AddRoom();
         frame.setContentPane(view.createContentPane());
@@ -159,11 +156,6 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
             JComboBox cb = (JComboBox)e.getSource();
             int value = Integer.parseInt((String)cb.getSelectedItem());
             updateModel(value);
-        }
-
-        // cancelButton
-        if (e.getSource() == cancelButton){
-            // todo
         }
 
         if (e.getSource() == chooseButton){
@@ -239,5 +231,4 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
 }
-
 
