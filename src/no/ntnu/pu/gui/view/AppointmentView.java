@@ -387,20 +387,58 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 endDayCB.setSelectedIndex(startDayCB.getSelectedIndex());
             }
         }
-        if (e.getSource() == startMonthCB){
-            int start = (Integer)startMonthCB.getSelectedItem();
-            int end = (Integer)endMonthCB.getSelectedItem();
-            if (start > end){
-                endMonthCB.setSelectedIndex(startMonthCB.getSelectedIndex());
-            }
-        }
         if (e.getSource() == endMonthCB){
-            int start = (Integer)startMonthCB.getSelectedItem();
-            int end = (Integer)endMonthCB.getSelectedItem();
+            int start = (Integer)startMonthCB.getSelectedIndex();
+            int end = (Integer)endMonthCB.getSelectedIndex();
             if (start > end){
                 startMonthCB.setSelectedIndex(endMonthCB.getSelectedIndex());
             }
         }
+        if (e.getSource() == startMonthCB){
+            int start = (Integer)startMonthCB.getSelectedIndex();
+            int end = (Integer)endMonthCB.getSelectedIndex();
+            if (start > end){
+                endMonthCB.setSelectedIndex(startMonthCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endYearCB){
+            int start = (Integer)startYearCB.getSelectedItem();
+            int end = (Integer)endYearCB.getSelectedItem();
+            if (start > end){
+                startYearCB.setSelectedIndex(endYearCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startYearCB){
+            int start = (Integer)startYearCB.getSelectedItem();
+            int end = (Integer)endYearCB.getSelectedItem();
+            if (start > end){
+                endYearCB.setSelectedIndex(startYearCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endHourCB){
+            int start = (Integer)startHourCB.getSelectedItem();
+            int end = (Integer)endHourCB.getSelectedItem();
+            if (start > end){
+                startHourCB.setSelectedIndex(endHourCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startMinCB){
+            int start = (Integer)startMinCB.getSelectedIndex();
+            int end = (Integer)endMinCB.getSelectedIndex();
+            if (start > end){
+                endMinCB.setSelectedIndex(startMinCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endMinCB){
+            int start = (Integer)startMinCB.getSelectedIndex();
+            int end = (Integer)endMinCB.getSelectedIndex();
+            if (start > end){
+                startMinCB.setSelectedIndex(endMinCB.getSelectedIndex());
+            }
+        }
+
+
+
 
 
 
