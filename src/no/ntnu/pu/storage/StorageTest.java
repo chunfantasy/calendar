@@ -5,7 +5,6 @@ import java.util.Date;
 
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
-import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
@@ -42,8 +41,12 @@ public class StorageTest {
 		System.out.println(p.getPassword());
 
 		Group g = new Group("super group 12");
+		Group g2 = new Group("super group 13");
+		Group g3 = new Group("super group 14");
 		g.addPerson(p1);
 		g = groupStorage.insertGroup(g);
+		g = groupStorage.insertGroup(g2);
+		g = groupStorage.insertGroup(g3);
 		g.addPerson(p3);
 		groupStorage.updateGroup(g);
 
@@ -82,10 +85,8 @@ public class StorageTest {
 		appointmentStorage.updateAppointment(a);
 
 		appointmentStorage.updateAppointment(a);
-
-		ArrayList<Appointment> appointmentByTime = appointmentStorage
-				.getAppointmentByParticipant(p3);
-		System.out.println(appointmentByTime);
+		a = appointmentStorage.getAppointmentById(a.getId());
+		System.out.println(a.getCreator().getEmail());
 
 	}
 

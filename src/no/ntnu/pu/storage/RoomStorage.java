@@ -1,6 +1,7 @@
 package no.ntnu.pu.storage;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import no.ntnu.pu.model.Room;
 
@@ -46,7 +47,22 @@ public class RoomStorage extends ServerStorage {
 			return false;
 		}
 	}
-
+	
+	public ArrayList<Room> getAll() {
+		try {
+			sql = "SELECT * FROM meetingroom";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Room> list = new ArrayList<Room>();
+			while (rs.next()) {
+				list.add(this.setRoom(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public Room getRoomById(int id) {
 		try {
 			sql = "SELECT * FROM meetingroom WHERE id = " + id;
