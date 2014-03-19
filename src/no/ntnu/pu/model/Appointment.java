@@ -12,7 +12,7 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-	private final Person creator;
+	private Person creator;
 
 	public Appointment(Person creator) {
 		this.creator = creator;
@@ -81,6 +81,10 @@ public class Appointment {
 
 	public Person getCreator() {
 		return creator;
+	}
+
+	public void setCreator(Person creator) {
+		this.creator = creator;
 	}
 
 	public void addParticipant(Participant p) {
