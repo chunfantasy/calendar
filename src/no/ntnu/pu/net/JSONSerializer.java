@@ -17,29 +17,35 @@ import org.json.simple.JSONObject;
 public class JSONSerializer {
 	
 	private static final Appointment Appointment = null;
-	public static void toJSON(Appointment appointment){
-		JSONObject appointmentJSON = new JSONObject();
-		appointmentJSON.put("id", new Integer(appointment.getId()));;
-	 
-		JSONArray list = new JSONArray();
-		list.add("msg 1");
-		list.add("msg 2");
-		list.add("msg 3");
-	 
-		appointmentJSON.put("messages", list);
-	 
-		try {
-	 
-			FileWriter file = new FileWriter("/home/hernil/temp/test.json");
-			file.write(appointmentJSON.toJSONString());
-			file.flush();
-			file.close();
-	 
-		} catch (IOException e) {
-			e.printStackTrace();
+	
+	@SuppressWarnings("unchecked")
+	public static String toJSON(Appointment appointment){
+		JSONObject aJSON = new JSONObject();
+		aJSON.put("id", new Integer(appointment.getId()));
+		aJSON.put("startTime", new String(appointment.getStartTimeString()));
+		aJSON.put("endTime", new String(appointment.getEndTimeString()));
+		if (appointment.getMeetingRoom() instanceof Room) {
+			aJSON.put("meetingRoom", new Integer(appointment.getMeetingRoom().getId()));			
 		}
-	 
-		System.out.print(appointmentJSON);
+		else {
+			aJSON.put("address", new String(appointment.getAddress()));			
+		}
+		aJSON.put("description", new String(appointment.getDescription()));
+		
+		JSONArray participantList = new JSONArray();
+		for (Participant p : appointment.getParticipants()) {
+			JSONObject participant = new JSONObject();
+			participant.put("id", new Integer(p.getId()));
+			if (p instanceof Person) {
+				participant.put("type", "Person");
+			}
+			if (p instanceof Group) {
+				participant.put("type", "Group");
+			};
+			participantList.add(participant);
+		};
+		aJSON.put("participants", participantList);
+		return aJSON.toJSONString();
 		
 	}
 	
@@ -70,13 +76,25 @@ public class JSONSerializer {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
+		a.setDescription("Hyttetur med Alexander Rybakk");
 		ArrayList<Participant> participants = new ArrayList();
 		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
 		a.setParticipants(participants);
 		
-		toJSON(a);
+		try {
+			 
+			FileWriter file = new FileWriter("/home/hernil/temp/test.json");
+			file.write(toJSON(a));
+			file.flush();
+			file.close();
+	 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	 
+		System.out.print(toJSON(a));
 	}
 	public void fromJSON(){
 		
