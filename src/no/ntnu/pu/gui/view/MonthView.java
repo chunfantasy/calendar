@@ -1,6 +1,6 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.control.AppointmentControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.GregorianCalendar;
 
 public class MonthView extends CalenderView{
@@ -22,8 +23,6 @@ public class MonthView extends CalenderView{
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    //TODO: Update this
-                    //CalendarControl.createAppointment();
                 }
             }
         });
@@ -86,6 +85,10 @@ public class MonthView extends CalenderView{
             calendarTableModel.setValueAt(i, row, column);
         }
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+
     }
 
     class previous_Action implements ActionListener {

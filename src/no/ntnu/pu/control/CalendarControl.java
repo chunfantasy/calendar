@@ -3,9 +3,12 @@ package no.ntnu.pu.control;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
+import no.ntnu.pu.model.Person;
 import no.ntnu.pu.storage.AppointmentStorage;
 import no.ntnu.pu.storage.ServerStorage;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarControl {
@@ -27,7 +30,7 @@ public class CalendarControl {
     public static void setModel(Calendar model) {
         CalendarControl.model = model;
     }
-
+	
 	public static void addAppointment(Appointment appointment) {
 		storage.insertAppointment(appointment);
 	}
