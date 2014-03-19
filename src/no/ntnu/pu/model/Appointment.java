@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.ArrayList;
 
 public class Appointment {
-
 	private int id;
 	private String title;
 	private Date startTime;
@@ -13,10 +12,11 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-    private final Person creator;
+	private final Person creator;
 
 	public Appointment(Person creator) {
-        this.creator = creator;
+		this.creator = creator;
+		this.participants = new ArrayList<>();
 	}
 
 	public int getId() {
@@ -32,7 +32,7 @@ public class Appointment {
 	}
 
 	public void setTitle(String title) {
-        this.title = title;
+		this.title = title;
 	}
 
 	public Date getStartTime() {
@@ -40,9 +40,7 @@ public class Appointment {
 	}
 
 	public void setStartTime(Date startTime) {
-        Date oldVal = getStartTime();
 		this.startTime = startTime;
-
 	}
 
 	public Date getEndTime() {
@@ -81,12 +79,16 @@ public class Appointment {
 		return participants;
 	}
 
-	public void addParticipant(Participant participant) {
-        this.participants.add(participant);
+	public Person getCreator() {
+		return creator;
 	}
 
-    public Person getCreator() {
-        return creator;
-    }
+	public void addParticipant(Participant p) {
+		if (!this.participants.contains(p))
+			this.participants.add(p);
+	}
 
+	public void removeParticipant(Participant p) {
+		this.participants.remove(p);
+	}
 }
