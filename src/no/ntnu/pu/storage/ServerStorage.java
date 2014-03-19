@@ -36,7 +36,8 @@ public class ServerStorage implements Storage {
 		}
 		try {
 			con = DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/calendar", "root", "123");
+					"jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
+					"chunf_calendar", "group12");
 			con.setAutoCommit(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -261,24 +262,28 @@ public class ServerStorage implements Storage {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ServerStorage serverStorage = new ServerStorage();
-		serverStorage.connect();
 		serverStorage.initiate();
 
 		Person p1 = new Person("a");
 		p1.setEmail("email1");
 		p1.setTitle("title1");
+		p1.setPassword("test");
 		p1 = serverStorage.insertPerson(p1);
 
 		Person p2 = new Person("b");
 		p2.setEmail("email2");
 		p2.setTitle("title2");
+		p2.setPassword("test");
 		p2 = serverStorage.insertPerson(p2);
 
 		Person p3 = new Person("c");
 		p3.setEmail("email3");
 		p3.setTitle("title3");
+		p3.setPassword("test");
 		p3 = serverStorage.insertPerson(p3);
 
+		Person p = serverStorage.getPersonByEmail("email2");
+		System.out.println(p.getPassword());
 		Group g = new Group("super group 12");
 		g.addPerson(p1);
 		g = serverStorage.insertGroup(g);
@@ -384,7 +389,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public boolean deletePersonByEmail(String email) {
 		try {
-			sql = "DELETE FROM person WHERE email = " + email;
+			sql = "DELETE FROM person WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
 			return true;
@@ -412,7 +417,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public Person getPersonByEmail(String email) {
 		try {
-			sql = "SELECT * FROM person WHERE email = " + email;
+			sql = "SELECT * FROM person WHERE email = '" + email + "'";
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				return this.setPerson(rs);
@@ -427,7 +432,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public ArrayList<Person> getPersonByName(String name) {
 		try {
-			sql = "SELECT * FROM person WHERE name = " + name;
+			sql = "SELECT * FROM person WHERE name = '" + name + "'";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Person> list = new ArrayList();
 			while (rs.next()) {
@@ -544,7 +549,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public boolean deleteGroupByEmail(String email) {
 		try {
-			sql = "DELETE FROM meetinggroup WHERE email = " + email;
+			sql = "DELETE FROM meetinggroup WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
 			return true;
