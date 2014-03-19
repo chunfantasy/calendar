@@ -246,14 +246,19 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	private Appointment setAppointment(ResultSet rs) throws SQLException {
-		Person p = new Person("");
-		Appointment a = new Appointment(p);
-		a.setId(rs.getInt("id"));
-		return a;
+	private Appointment setAppointment(ResultSet rs) {
+		try {
+			Person p = new Person("");
+			Appointment a = new Appointment(p);
+			a.setId(rs.getInt("id"));
+			return a;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ServerStorage serverStorage = new ServerStorage();
 		serverStorage.connect();
