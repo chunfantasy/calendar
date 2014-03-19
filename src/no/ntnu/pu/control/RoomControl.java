@@ -17,7 +17,7 @@ public class RoomControl {
         ArrayList<Room> allRooms = getAll();
         ArrayList<Room> suitableRooms = new ArrayList<Room>();
         for(Room room : allRooms){
-            if(room.getSize() >= size) {
+            if(room.getCapacity() >= size) {
                 suitableRooms.add(room);
             }
         }
