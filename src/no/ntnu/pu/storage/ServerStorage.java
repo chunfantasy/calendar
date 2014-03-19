@@ -21,7 +21,12 @@ public class ServerStorage {
 	protected String sql;
 
 	public ServerStorage() {
-		this.connect();
+		try {
+			this.connect();
+			stmt = con.createStatement();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Connect to the database
@@ -48,76 +53,77 @@ public class ServerStorage {
 		try {
 			stmt = con.createStatement();
 
-		//@formatter:off
-		// create table person
-		sql = "DROP TABLE IF EXISTS appointment_participant";
-		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS meetinggroup_person";
-		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS person";
-		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS appointment";
-		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS meetingroom";
-		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS meetinggroup";
-		stmt.execute(sql);
+			//@formatter:off
+			// create table person
+			sql = "DROP TABLE IF EXISTS appointment_participant";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS meetinggroup_person";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS person";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS appointment";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS meetingroom";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS meetinggroup";
+			stmt.execute(sql);
+	
+	
+			// create table person
+			sql = "CREATE TABLE person (" 
+					+ "id int auto_increment primary key, "
+					+ "email varchar(20), " 
+					+ "name varchar(10), "
+					+ "title varchar(10), "
+					+ "password varchar(20), "
+					+ "phonenumbers varchar(30))";
+			stmt.execute(sql);
+	
+			// create table meetinggroup
+			sql = "CREATE TABLE meetinggroup (" 
+					+ "id int auto_increment primary key, "
+					+ "name varchar(15)," 
+					+ "email varchar(20))";
+			stmt.execute(sql);
+			
+			// create table meetinggroup_person
+			sql = "CREATE TABLE meetinggroup_person (" 
+					+ "id int auto_increment primary key, "
+					+ "meetinggroupid int, " 
+					+ "personid int, "
+					+ "foreign key (meetinggroupid) references meetinggroup(id) on delete set null on update cascade, "
+					+ "foreign key (personid) references person(id) on delete set null on update cascade)";
+			stmt.execute(sql);		
+					
+			// create table meetingroom
+			sql = "CREATE TABLE meetingroom ("
+					+ "id int auto_increment primary key, "
+					+ "roomname varchar(15))";
+			stmt.execute(sql);
+	
+			// create table appointment
+			sql = "CREATE TABLE appointment ("
+					+ "id int auto_increment primary key, " 
+					+ "title varchar(20), "
+					+ "starttime datetime, " 
+					+ "endtime datetime, "
+					+ "address varchar(30), " 
+					+ "meetingroomid int, "
+					+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
+					+ "description varchar(50))";
+			stmt.execute(sql);
+	
+			// create table appointment_participant
+			sql = "CREATE TABLE appointment_participant ("
+					+ "id int auto_increment primary key, " 
+					+ "appointmentid int, "
+					+ "personid int null, "
+					+ "meetinggroupid int null, "
+					+ "foreign key(personid) references person(id) on delete set null on update cascade, "
+					+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
+			stmt.execute(sql);
+			//@formatter:on
 
-
-		// create table person
-		sql = "CREATE TABLE person (" 
-				+ "id int auto_increment primary key, "
-				+ "email varchar(20), " 
-				+ "name varchar(10), "
-				+ "title varchar(10), "
-				+ "password varchar(20), "
-				+ "phonenumbers varchar(30))";
-		stmt.execute(sql);
-
-		// create table meetinggroup
-		sql = "CREATE TABLE meetinggroup (" 
-				+ "id int auto_increment primary key, "
-				+ "name varchar(15)," 
-				+ "email varchar(20))";
-		stmt.execute(sql);
-		
-		// create table meetinggroup_person
-		sql = "CREATE TABLE meetinggroup_person (" 
-				+ "id int auto_increment primary key, "
-				+ "meetinggroupid int, " 
-				+ "personid int, "
-				+ "foreign key (meetinggroupid) references meetinggroup(id) on delete set null on update cascade, "
-				+ "foreign key (personid) references person(id) on delete set null on update cascade)";
-		stmt.execute(sql);		
-				
-		// create table meetingroom
-		sql = "CREATE TABLE meetingroom ("
-				+ "id int auto_increment primary key, "
-				+ "roomname varchar(15))";
-		stmt.execute(sql);
-
-		// create table appointment
-		sql = "CREATE TABLE appointment ("
-				+ "id int auto_increment primary key, " 
-				+ "title varchar(20), "
-				+ "starttime datetime, " 
-				+ "endtime datetime, "
-				+ "address varchar(30), " 
-				+ "meetingroomid int, "
-				+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
-				+ "description varchar(50))";
-		stmt.execute(sql);
-
-		// create table appointment_participant
-		sql = "CREATE TABLE appointment_participant ("
-				+ "id int auto_increment primary key, " 
-				+ "appointmentid int, "
-				+ "personid int null, "
-				+ "meetinggroupid int null, "
-				+ "foreign key(personid) references person(id) on delete set null on update cascade, "
-				+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
-		stmt.execute(sql);
-		//@formatter:on
 			con.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
