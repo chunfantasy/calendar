@@ -2,8 +2,6 @@ package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
-import no.ntnu.pu.model.Calendar;
-import no.ntnu.pu.model.Notification;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
@@ -12,10 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
+import java.util.List;
 
 public class WeekView extends CalenderView {
 
@@ -28,7 +24,7 @@ public class WeekView extends CalenderView {
             lastDayOfWeek,
             firstMonth,
             lastMonth;
-    private ArrayList<Appointment> appointments;
+    private List<Appointment> appointments;
 
     public WeekView(){
         super();
@@ -73,7 +69,6 @@ public class WeekView extends CalenderView {
 
         /**Set border**/
         setBorder(BorderFactory.createTitledBorder("Ukevisning"));
-
 
         for (int i = 0; i<8; i++){
             calendarTableModel.addColumn(headers[i]);
@@ -159,37 +154,44 @@ public class WeekView extends CalenderView {
     }
 
     private void refreshCells() {
-        for(Appointment appointment : appointments){
-            Date startTime = appointment.getStartTime();
-            Date endTime = appointment.getEndTime();
-            GregorianCalendar cal = new GregorianCalendar();
-            cal.setTime(startTime);
-            int weekStart = cal.get(GregorianCalendar.WEEK_OF_YEAR);
-            int dayStart = cal.get(GregorianCalendar.DAY_OF_MONTH);
-            int monthStart = cal.get(GregorianCalendar.MONTH);
-            int hourStart = cal.get(GregorianCalendar.HOUR_OF_DAY);
-            cal.setTime(endTime);
-            int weekEnd = cal.get(GregorianCalendar.WEEK_OF_YEAR);
-            int dayEnd = cal.get(GregorianCalendar.DAY_OF_MONTH);
-            int monthEnd = cal.get(GregorianCalendar.MONTH);
-            int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
-            String appointmentDateStart = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
-            String appointmentDateEnd = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
+        if(appointments != null && appointments.size()>0){
+            for(Appointment appointment : appointments){
+                Date startTime = appointment.getStartTime();
+                Date endTime = appointment.getEndTime();
+                GregorianCalendar cal = new GregorianCalendar();
+                cal.setTime(startTime);
+                int dayStart = cal.get(GregorianCalendar.DAY_OF_MONTH);
+                int monthStart = cal.get(GregorianCalendar.MONTH);
+                int hourStart = cal.get(GregorianCalendar.HOUR_OF_DAY);
+                int yearStart = cal.get(GregorianCalendar.YEAR);
+                cal.setTime(endTime);
+                int dayEnd = cal.get(GregorianCalendar.DAY_OF_MONTH);
+                int monthEnd = cal.get(GregorianCalendar.MONTH);
+                int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
+                int yearEnd = cal.get(GregorianCalendar.YEAR);
 
-            int appmentDateStart = Integer.valueOf(""+String.valueOf(dayStart)+String.valueOf(monthStart+1));
-            int appmentDateEnd = Integer.valueOf(""+String.valueOf(dayEnd)+String.valueOf(monthEnd+1));
+                int appointmentDateStart = Integer.valueOf(""+String.valueOf(dayStart)+String.valueOf(monthStart+1));
+                int appointmentDateEnd = Integer.valueOf(""+String.valueOf(dayEnd)+String.valueOf(monthEnd+1));
 
-            for(int j = 1; j<8; j++) {
-                String[] headerDate = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
-                headerDate[1].trim();
-                int headerDateInt = Integer.valueOf(headerDate[1].split("\\.")[0] + headerDate[1].split("\\.")[1]);
-                for(int i = hourStart; i < hourEnd; i++) {
-                    if(appmentDateEnd >= headerDateInt && appmentDateStart <= headerDateInt){
-                        calendarTableModel.setValueAt(appointment, i, j);
+                for(int j = 1; j<8; j++) {
+                    String[] headerDate = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
+                    headerDate[1].trim();
+                    int headerDateInt = Integer.valueOf(headerDate[1].split("\\.")[0] + headerDate[1].split("\\.")[1]);
+                    for(int i = hourStart; i < hourEnd; i++) {
+                        if(appointmentDateEnd >= headerDateInt && appointmentDateStart <= headerDateInt && yearStart <= currentYear && yearEnd >= currentYear){
+                            calendarTableModel.setValueAt(appointment, i, j);
+                        }
+                        else{
+                            calendarTableModel.setValueAt(null, i, j);
+                        }
                     }
-                    else{
-                        calendarTableModel.setValueAt(null, i, j);
-                    }
+                }
+            }
+        }
+        else{
+            for(int i = 1; i < 8; i++){
+                for(int j = 0; j < 24; j++){
+                   calendarTableModel.setValueAt(null, j, i);
                 }
             }
         }
@@ -232,18 +234,6 @@ public class WeekView extends CalenderView {
                 if(var != 0){
                     refreshCalendar(currentWeek, currentMonth,currentYear);
                 }
-            }
-        }
-    }
-
-    /** PROPERTYCHANGE **/
-    public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(Calendar.APPOINTMENT_PROPERTY)){
-            if(evt.getNewValue() instanceof Appointment){
-                //Appointment added
-            }
-            else{
-                //Appointment removed
             }
         }
     }

@@ -13,7 +13,6 @@ import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
-import no.ntnu.pu.storage.ServerStorage;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
