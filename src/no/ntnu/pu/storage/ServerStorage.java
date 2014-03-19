@@ -92,9 +92,9 @@ public class ServerStorage {
 			// create table person
 			sql = "CREATE TABLE person (" 
 					+ "id int auto_increment primary key, "
-					+ "email varchar(20), " 
-					+ "name varchar(10), "
-					+ "title varchar(10), "
+					+ "email varchar(30), "
+					+ "name varchar(20), "
+					+ "title varchar(20), "
 					+ "password varchar(20), "
 					+ "phonenumbers varchar(30))";
 			stmt.execute(sql);

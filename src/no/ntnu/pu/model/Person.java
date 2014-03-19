@@ -19,6 +19,7 @@ public class Person implements Participant {
 
 	public Person(String Name) {
 		name = Name;
+        calendar = new Calendar();
 		phoneNumbers = new ArrayList<String>();
 	}
 
