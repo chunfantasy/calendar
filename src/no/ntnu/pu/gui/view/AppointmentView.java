@@ -9,7 +9,6 @@ import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -374,8 +373,12 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         if (e.getSource()== cancelButton){
             frame.dispose();
         }
-        if (e.getSource() == startDayCB){
-            
+        if (e.getSource() == endDayCB){
+            int start = (Integer)startDayCB.getSelectedItem();
+            int end = (Integer)endDayCB.getSelectedItem();
+            if (start > end){
+                startDayCB.setSelectedIndex(endDayCB.getSelectedIndex());
+            }
         }
 
     }
