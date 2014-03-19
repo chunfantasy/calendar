@@ -401,7 +401,8 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 startMonthCB.setSelectedIndex(endMonthCB.getSelectedIndex());
             }
         }
-        
+
+
 
     }
 
