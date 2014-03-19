@@ -42,6 +42,8 @@ public class LoginView extends JPanel {
         //Textfields (with listeners)
         userField = new JTextField(20);
         passField = new JPasswordField(20);
+        userField.addActionListener(new myUserAction());
+        passField.addActionListener(new myPasswordAction());
         passField.addActionListener(new myPasswordAction());
 
         //Buttons (with listeners)
@@ -83,6 +85,12 @@ public class LoginView extends JPanel {
 
     public void setPasswordInput(String passwordInput) {
         this.passwordInput = passwordInput;
+    }
+
+    class myUserAction implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+            btnLogin.doClick();
+        }
     }
 
     class myPasswordAction implements ActionListener{

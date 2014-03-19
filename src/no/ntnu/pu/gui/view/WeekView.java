@@ -156,6 +156,7 @@ public class WeekView extends CalenderView {
 
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
+        refreshCells();
     }
 
     private void refreshCells() {

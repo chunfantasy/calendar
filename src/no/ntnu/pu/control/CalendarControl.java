@@ -33,12 +33,6 @@ public class CalendarControl {
     public void CalendarControl() throws SQLException {
 		storage = new ServerStorage();
         storage.connect();
-        Person test = new Person("test");
-        test.setEmail("haakon.t@gmail.com");
-        test.setPassword("test123");
-        test.setCalendar(new Calendar());
-        test.setId(123);
-        storage.insertPerson(test);
 	}
 	
 	public static void addAppointment(Appointment appointment) {
