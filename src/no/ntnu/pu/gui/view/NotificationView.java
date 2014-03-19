@@ -1,5 +1,6 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.model.*;
 
@@ -17,7 +18,7 @@ public class NotificationView extends SidePanel{
         super();
         this.setBorder(notificationBorder);
 
-        for(Notification n: NotificationControl.getNotifications()){
+        for(Notification n: CalendarControl.getNotifications()){
             this.addNotification(n);
         }
     }
