@@ -37,23 +37,29 @@ public class Appointment {
 	public Date getStartTime() {
 		return startTime;
 	}
-	public String getStartTimeString() {
-		return startTime.toString();
+	public Long getStartTimeLong() {
+		return startTime.getTime();
 	}
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
+	public void setStartTimeByLong(Long inputStartTime) {
+		this.startTime = new Date(inputStartTime);
+	}
 
 	public Date getEndTime() {
 		return endTime;
 	}
-	public String getEndTimeString() {
-		return endTime.toString();
+	public Long getEndTimeLong() {
+		return endTime.getTime();
 	}
 
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+	public void setEndTimeByLong(Long inputEndTime) {
+		this.endTime = new Date(inputEndTime);
 	}
 
 	public String getAddress() {
