@@ -9,9 +9,10 @@ public class RoomStorage extends ServerStorage {
 
 	public Room insertRoom(Room r) {
 		try {
-			sql = "INSERT INTO meetingroom(roomname) VALUES(?)";
+			sql = "INSERT INTO meetingroom(capacity, roomname) VALUES(?, ?)";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
+			pstmt.setInt(1, r.getCapacity());
+			pstmt.setString(2, r.getRoomname());
 			pstmt.executeUpdate();
 			r.setId(this.getLastId());
 			con.commit();
@@ -24,9 +25,10 @@ public class RoomStorage extends ServerStorage {
 
 	public boolean updateRoom(Room r) {
 		try {
-			sql = "UPDATE meetingroom SET roomname = ?";
+			sql = "UPDATE meetingroom SET capacity = ?, roomname = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
+			pstmt.setInt(1, r.getCapacity());
+			pstmt.setString(2, r.getRoomname());
 			pstmt.executeUpdate();
 			con.commit();
 			return true;

@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import no.ntnu.pu.model.Alarm;
 import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.ChangeNotification;
+import no.ntnu.pu.model.DeclineNotification;
 import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
@@ -105,6 +109,7 @@ public class ServerStorage {
 			// create table meetingroom
 			sql = "CREATE TABLE meetingroom ("
 					+ "id int auto_increment primary key, "
+					+ "capacity int, "
 					+ "roomname varchar(15))";
 			stmt.execute(sql);
 	
@@ -136,20 +141,20 @@ public class ServerStorage {
 			sql = "CREATE TABLE alarm ("
 					+ "id int auto_increment primary key, " 
 					+ "appointmentid int, "
-					+ "personid int, "
+					+ "recipientid int, "
 					+ "date datetime, "
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
-					+ "foreign key(personid) references person(id) on delete cascade on update cascade) ";
+					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			
 			// create table declinenotification
 			sql = "CREATE TABLE declinenotification ("
 					+ "id int auto_increment primary key, " 
 					+ "appointmentid int, "
-					+ "personid int, "
+					+ "recipientid int, "
 					+ "declinerid int, "
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
-					+ "foreign key(personid) references person(id) on delete cascade on update cascade, "
+					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade, "
 					+ "foreign key(declinerid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			
@@ -157,10 +162,10 @@ public class ServerStorage {
 			sql = "CREATE TABLE changenotification ("
 					+ "id int auto_increment primary key, " 
 					+ "appointmentid int, "
-					+ "personid int, "
+					+ "recipientid int, "
 					+ "changedproperties varchar(200), "
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
-					+ "foreign key(personid) references person(id) on delete cascade on update cascade) ";
+					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			//@formatter:on
 
@@ -242,6 +247,12 @@ public class ServerStorage {
 			p.setName(rs.getString("name"));
 			p.setTitle(rs.getString("title"));
 			p.setPassword(rs.getString("password"));
+			String phoneNumbers = rs.getString("phonenumbers");
+			phoneNumbers = phoneNumbers.substring(1, phoneNumbers.length() - 1);
+			String[] s = phoneNumbers.split(", ");
+			for (String phoneNumber : s) {
+				p.addPhoneNumber(phoneNumber);
+			}
 			return p;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -285,6 +296,7 @@ public class ServerStorage {
 		try {
 			Room r = new Room("");
 			r.setId(rs.getInt("id"));
+			r.setCapacity(rs.getInt("capacity"));
 			r.setRoomname(rs.getString("roomname"));
 			return r;
 		} catch (SQLException e) {
@@ -304,22 +316,21 @@ public class ServerStorage {
 			a.setStartTime(new Date(rs.getTimestamp("starttime").getTime()));
 			a.setEndTime(new Date(rs.getTimestamp("endtime").getTime()));
 			a.setTitle(rs.getString("title"));
-			
+
 			int meetingroomId = rs.getInt("meetingroomid");
 			int creatorId = rs.getInt("creatorid");
-			
-			sql = "SELECT * FROM meetingroom WHERE id = "
-					+ meetingroomId;
+
+			sql = "SELECT * FROM meetingroom WHERE id = " + meetingroomId;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				a.setMeetingRoom(this.setRoom(rs));
 			}
-			
-			sql = "SELECT * FROM person WHERE id = "
-					+ creatorId;
+
+			sql = "SELECT * FROM person WHERE id = " + creatorId;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				a.setCreator(this.setPerson(rs));;
+				a.setCreator(this.setPerson(rs));
+				;
 			}
 
 			sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
@@ -357,4 +368,102 @@ public class ServerStorage {
 		}
 	}
 
+	protected Alarm setAlarm(ResultSet rs) {
+		try {
+			stmt = con.createStatement();
+			Person person = new Person("");
+			Appointment appointment = new Appointment(person);
+			Alarm a = new Alarm(new Date(), person, appointment);
+			a.setId(rs.getInt("id"));
+			a.setTime(new Date(rs.getTimestamp("date").getTime()));
+			int appointmentId = rs.getInt("appointmentid");
+			int recipientId = rs.getInt("recipientid");
+
+			sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				a.setAppointment(this.setAppointment(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + recipientId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				a.setRecipient(this.setPerson(rs));
+
+			return a;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	protected ChangeNotification setChangeNotification(ResultSet rs) {
+		try {
+			stmt = con.createStatement();
+			Person person = new Person("");
+			Appointment appointment = new Appointment(person);
+			List<String> list = new ArrayList<String>();
+			ChangeNotification c = new ChangeNotification(list,	person, appointment);
+			c.setId(rs.getInt("id"));
+			
+			String changedProperties = rs.getString("changedproperties");
+			changedProperties = changedProperties.substring(1, changedProperties.length() - 1);
+			String[] s = changedProperties.split(", ");
+			for (String changedProperty : s) {
+				list.add(changedProperty);
+			}
+			c.setChangedProperties(list);
+			
+			int appointmentId = rs.getInt("appointmentid");
+			int recipientId = rs.getInt("recipientid");
+
+			sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				c.setAppointment(this.setAppointment(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + recipientId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				c.setRecipient(this.setPerson(rs));
+
+			return c;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	protected DeclineNotification setDeclineNotification(ResultSet rs) {
+		try {
+			stmt = con.createStatement();
+			Person person = new Person("");
+			Appointment appointment = new Appointment(person);
+			DeclineNotification d = new DeclineNotification(person, person,
+					appointment);
+			d.setId(rs.getInt("id"));
+			int appointmentId = rs.getInt("appointmentid");
+			int recipientId = rs.getInt("recipientid");
+			int declinerId = rs.getInt("declinerid");
+
+			sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				d.setAppointment(this.setAppointment(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + recipientId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				d.setRecipient(this.setPerson(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + declinerId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				d.setDecliner(this.setPerson(rs));
+
+			return d;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

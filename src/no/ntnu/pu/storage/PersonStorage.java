@@ -3,7 +3,6 @@ package no.ntnu.pu.storage;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Person;
 
 public class PersonStorage extends ServerStorage {
@@ -29,13 +28,14 @@ public class PersonStorage extends ServerStorage {
 
 	public boolean updatePerson(Person p) {
 		try {
-			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
+			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ?, phonenumbers = ? WHERE id = "
 					+ p.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
 			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			con.commit();
 			return true;
@@ -83,7 +83,7 @@ public class PersonStorage extends ServerStorage {
 			return null;
 		}
 	}
-	
+
 	public Person getPersonById(int id) {
 		try {
 			sql = "SELECT * FROM person WHERE id = " + id;
