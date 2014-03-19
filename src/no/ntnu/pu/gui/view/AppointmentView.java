@@ -126,7 +126,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public JPanel createContentPane(boolean editing){
         // Appointment
-        model = new Appointment(new Person("Hei"));
+        model = new Appointment();
 
         totalGUI = new JPanel();
 
