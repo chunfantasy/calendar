@@ -387,6 +387,21 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 endDayCB.setSelectedIndex(startDayCB.getSelectedIndex());
             }
         }
+        if (e.getSource() == startMonthCB){
+            int start = (Integer)startMonthCB.getSelectedItem();
+            int end = (Integer)endMonthCB.getSelectedItem();
+            if (start > end){
+                endMonthCB.setSelectedIndex(startMonthCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endMonthCB){
+            int start = (Integer)startMonthCB.getSelectedItem();
+            int end = (Integer)endMonthCB.getSelectedItem();
+            if (start > end){
+                startMonthCB.setSelectedIndex(endMonthCB.getSelectedIndex());
+            }
+        }
+        
 
     }
 
