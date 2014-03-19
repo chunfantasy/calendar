@@ -2,9 +2,8 @@ package no.ntnu.pu.model;
 
 public class Room {
 
-	private int id;
+	private int id, capacity;
 	private String roomname;
-    private int size;
 
 	public Room(String roomname) {
 		this.roomname = roomname;
@@ -26,11 +25,12 @@ public class Room {
 		this.id = id;
 	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getCapacity() {
+		return capacity;
+	}
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
 }
