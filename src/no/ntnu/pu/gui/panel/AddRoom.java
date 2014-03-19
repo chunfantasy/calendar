@@ -55,8 +55,6 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
             }
         };
 
-        // Icons
-//        ImageIcon icon = new ImageIcon(getClass().getResource("search.png"));
 
 
         searchField = new JTextField("Søk");
