@@ -38,6 +38,9 @@ public class Appointment {
 	public Date getStartTime() {
 		return startTime;
 	}
+	public String getStartTimeString() {
+		return startTime.toString();
+	}
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
@@ -45,6 +48,9 @@ public class Appointment {
 
 	public Date getEndTime() {
 		return endTime;
+	}
+	public String getEndTimeString() {
+		return endTime.toString();
 	}
 
 	public void setEndTime(Date endTime) {
