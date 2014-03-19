@@ -16,7 +16,7 @@ public class Appointment {
 
 	public Appointment(Person creator) {
 		this.creator = creator;
-		this.participants = new ArrayList<Participant>();
+		this.participants = new ArrayList<>();
 	}
 
 	public int getId() {
