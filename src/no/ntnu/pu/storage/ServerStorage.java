@@ -35,6 +35,8 @@ public class ServerStorage implements Storage {
 			e.printStackTrace();
 		}
 		try {
+			// mysql -h mysql.stud.ntnu.no/chunf_calendar
+			// -u chunf_calender -pgroup12
 			con = DriverManager.getConnection(
 					"jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
 					"chunf_calendar", "group12");
