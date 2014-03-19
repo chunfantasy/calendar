@@ -377,24 +377,6 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	@Override
-	public boolean updatePerson(Person p) {
-		try {
-			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
-					+ p.getId();
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, p.getEmail());
-			pstmt.setString(2, p.getName());
-			pstmt.setString(3, p.getTitle());
-			pstmt.setString(4, p.getPassword());
-			pstmt.executeUpdate();
-			con.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	@Override
 	public boolean deletePersonById(int id) {
@@ -496,65 +478,6 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	@Override
-	public boolean updateGroup(Group g) {
-		try {
-			sql = "UPDATE meetinggroup SET email = ?, name = ? WHERE id = "
-					+ g.getId();
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, g.getEmail());
-			pstmt.setString(2, g.getName());
-			pstmt.executeUpdate();
-
-			try {
-				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
-						+ g.getId();
-				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOld = new ArrayList();
-				while (rs.next()) {
-					listOld.add(rs.getInt("personid"));
-				}
-				ArrayList<Integer> listNew = new ArrayList();
-				for (Person p : g.getPersons()) {
-					listNew.add(p.getId());
-				}
-
-				ArrayList<Integer> list = new ArrayList();
-				for (int id : listOld) {
-					if (!listNew.contains(id)) {
-						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, g.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-						list.add(id);
-					}
-				}
-
-				for (int id : list) {
-					listOld.remove((Integer.valueOf(id)));
-				}
-
-				for (int id : listNew) {
-					if (!listOld.contains(id)) {
-						sql = "INSERT INTO meetinggroup_person(meetinggroupid, personid) VALUES(?, ?)";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, g.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
-			con.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	@Override
 	public boolean updateGroup(Group g) {
@@ -672,7 +595,6 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	@Override
 	@Override
 	public ArrayList<Group> getGroupByName(String name) {
 		try {
@@ -835,104 +757,7 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	@Override
-	public boolean updateAppointment(Appointment a) {
-		try {
-			sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
-					+ "WHERE id = " + a.getId();
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, a.getTitle());
-			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
-			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
-			pstmt.setString(4, a.getAddress());
-			pstmt.setString(5, a.getDescription());
-			pstmt.setInt(6, a.getMeetingRoom().getId());
-			pstmt.executeUpdate();
 
-			try {
-				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
-						+ a.getId();
-				rs = stmt.executeQuery(sql);
-				ArrayList<Integer> listOldPerson = new ArrayList();
-				ArrayList<Integer> listOldGroup = new ArrayList();
-				while (rs.next()) {
-					if (rs.getInt("personid") != 0)
-						listOldPerson.add(rs.getInt("personid"));
-					if (rs.getInt("meetinggroupid") != 0)
-						listOldGroup.add(rs.getInt("meetinggroupid"));
-				}
-
-				ArrayList<Integer> listNewPerson = new ArrayList();
-				ArrayList<Integer> listNewGroup = new ArrayList();
-				for (Participant p : a.getParticipants()) {
-					if (p instanceof Person)
-						listNewPerson.add(((Person) p).getId());
-					if (p instanceof Group)
-						listNewGroup.add(((Group) p).getId());
-				}
-
-				ArrayList<Integer> list = new ArrayList();
-				for (int id : listOldPerson) {
-					if (!listNewPerson.contains(id)) {
-						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, a.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-						list.add(id);
-					}
-				}
-
-				for (int id : list) {
-					listOldPerson.remove((Integer.valueOf(id)));
-				}
-
-				for (int id : listNewPerson) {
-					if (!listOldPerson.contains(id)) {
-						sql = "INSERT INTO appointment_participant (appointmentid, personid) VALUES(?, ?)";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, a.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-					}
-				}
-
-				list.clear();
-				for (int id : listOldGroup) {
-					if (!listNewGroup.contains(id)) {
-						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND meetinggroupid = ?";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, a.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-						list.add(id);
-					}
-				}
-
-				for (int id : list) {
-					listOldPerson.remove((Integer.valueOf(id)));
-				}
-
-				for (int id : listNewGroup) {
-					if (!listOldGroup.contains(id)) {
-						sql = "INSERT INTO appointment_participant (appointmentid, meetinggroupid) VALUES(?, ?)";
-						pstmt = con.prepareStatement(sql);
-						pstmt.setInt(1, a.getId());
-						pstmt.setInt(2, id);
-						pstmt.executeUpdate();
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return false;
-			}
-			con.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
 
 	@Override
 	public boolean deleteAppointmentById(int id) {
@@ -970,25 +795,15 @@ public class ServerStorage implements Storage {
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
-		try {
-			if (p instanceof Person)
-				sql = "SELECT * FROM appointment_participant WHERE personid = "
-						+ ((Person) p).getId();
+            try {
+                if (p instanceof Person)
+                    sql = "SELECT * FROM appointment_participant WHERE personid = "
+                            + ((Person) p).getId();
 			else if (p instanceof Group)
 				sql = "SELECT * FROM appointment_participant WHERE meetinggroupid = "
 						+ ((Group) p).getId();
 			else
 				return null;
-			rs = stmt.executeQuery(sql);
-			ArrayList<Appointment> list = new ArrayList();
-			while (rs.next()) {
-				list.add(this.setAppointment(rs));
-			}
-			return list;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
@@ -1032,20 +847,6 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	@Override
-	public boolean updateRoom(Room r) {
-		try {
-			sql = "UPDATE meetingroom SET roomname = ?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
-			pstmt.executeUpdate();
-			con.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return true;
-		}
-	}
 
 	@Override
 	public boolean deleteRoomById(int id) {
