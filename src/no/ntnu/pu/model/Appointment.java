@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.ArrayList;
 
 public class Appointment {
+
 	private int id;
 	private String title;
 	private Date startTime;
@@ -12,11 +13,11 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-	private final Person creator;
+    private final Person creator;
 
 	public Appointment(Person creator) {
 		this.creator = creator;
-		this.participants = new ArrayList<>();
+		this.participants = new ArrayList<Participant>();
 	}
 
 	public int getId() {
@@ -32,7 +33,7 @@ public class Appointment {
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+        this.title = title;
 	}
 
 	public Date getStartTime() {

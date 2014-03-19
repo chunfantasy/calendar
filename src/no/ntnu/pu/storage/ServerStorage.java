@@ -346,6 +346,8 @@ public class ServerStorage implements Storage {
 			pstmt.setString(3, p.getTitle());
 			pstmt.setString(4, p.getPassword());
 			pstmt.setString(5, p.getPhoneNumbers().toString());
+			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
@@ -374,6 +376,7 @@ public class ServerStorage implements Storage {
 			return false;
 		}
 	}
+
 
 	@Override
 	public boolean deletePersonById(int id) {
@@ -474,6 +477,7 @@ public class ServerStorage implements Storage {
 			return null;
 		}
 	}
+
 
 	@Override
 	public boolean updateGroup(Group g) {
@@ -753,6 +757,8 @@ public class ServerStorage implements Storage {
 		}
 	}
 
+
+
 	@Override
 	public boolean deleteAppointmentById(int id) {
 		try {
@@ -774,6 +780,7 @@ public class ServerStorage implements Storage {
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
 			System.out.println(sql);
+			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
@@ -788,10 +795,10 @@ public class ServerStorage implements Storage {
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
-		try {
-			if (p instanceof Person)
-				sql = "SELECT * FROM appointment_participant WHERE personid = "
-						+ ((Person) p).getId();
+            try {
+                if (p instanceof Person)
+                    sql = "SELECT * FROM appointment_participant WHERE personid = "
+                            + ((Person) p).getId();
 			else if (p instanceof Group)
 				sql = "SELECT * FROM appointment_participant WHERE meetinggroupid = "
 						+ ((Group) p).getId();
@@ -839,6 +846,7 @@ public class ServerStorage implements Storage {
 			return true;
 		}
 	}
+
 
 	@Override
 	public boolean deleteRoomById(int id) {

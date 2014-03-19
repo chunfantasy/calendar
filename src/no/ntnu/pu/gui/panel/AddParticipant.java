@@ -23,13 +23,14 @@ import java.awt.event.FocusListener;
 
 
 public class AddParticipant extends JPanel implements ActionListener, ListSelectionListener, FocusListener {
-    private JButton addButton, cancelButton;
+    private JButton addButton;
     private JTextField searchField;
     private JLabel searchLabel;
     private JTable participantTable;
     private JToggleButton personButton, groupButton;
     private ButtonGroup buttonGroup;
     private DefaultTableModel personTableModel, groupTableModel;
+    private static JFrame frame;
     private JPanel totalGUI;
     private Object[][] Personer = {{"Bernt"}, {"Gerd"}, {"Gjørdis"}, {"Olga"}, {"Per Hege"}, {"Arnold"}, {"Ludvig"}}, Grupper = {{"Juventus"}, {"Inter"}, {"Napoli"}, {"Milan"}, {"Roma"}};
     private String[] HEADER = {"Navn"};
@@ -71,19 +72,16 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         addButton = new JButton("Legg til");
         addButton.addActionListener(this);
         addButton.setFocusable(false);
-
-        cancelButton = new JButton("Avbryt");
-        cancelButton.addActionListener(this);
-        cancelButton.setFocusable(false);
+        addButton.setHorizontalAlignment(SwingConstants.CENTER);
 
         searchField = new JTextField("Søk");
-        searchField.setColumns(15);
+//        searchField.setColumns(10);
         searchField.addFocusListener(this);
         searchField.addActionListener(this);
         searchField.setHorizontalAlignment(SwingConstants.LEFT);
         searchLabel = new JLabel(icon);
         searchLabel.setPreferredSize(new Dimension(13, 13));
-        searchLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        searchLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
         // participantTable
         participantTable = new JTable();
@@ -104,7 +102,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         // ScrollPane
         JScrollPane scroll = new JScrollPane(participantTable);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll.setPreferredSize(new Dimension(180, 150));
+        scroll.setPreferredSize(new Dimension(250, 150));
         participantTable.setFillsViewportHeight(true);
 
         // buttons
@@ -120,22 +118,24 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         buttonGroup.add(groupButton);
 
 
-        setupGBC(1, 1, 1, 0, 1, gbc, searchLabel, true);
-        setupGBC(2, 1, 1, 1, 1, gbc, searchField, true);
-        setupGBC(4, 4, 0.5, 0, 2, gbc, scroll, true);
-        setupGBC(1, 1, 0.5, 0, 6, gbc, addButton, false);
-        setupGBC(1, 1, 0.5, 3, 6, gbc, cancelButton, false);
-        setupGBC(1, 1, 0.5, 1, 0, gbc, personButton, false);
-        setupGBC(1, 1, 0.5, 2, 0, gbc, groupButton, false);
+        setupGBC(1, 1, 0.5, 1, 1, gbc, searchLabel, true);
+        setupGBC(1, 1, 0.5, 0, 1, gbc, searchField, true);
+        setupGBC(2, 4, 0.5, 0, 2, gbc, scroll, false);
+        setupGBC(2, 1, 0.5, 0, 6, gbc, addButton, false);
+//        setupGBC(1, 1, 0.5, 3, 6, gbc, cancelButton, false);
+        setupGBC(1, 1, 0.5, 0, 0, gbc, personButton, true);
+        setupGBC(1, 1, 0.5, 1, 0, gbc, groupButton, true);
+
 
 
         totalGUI.setOpaque(true);
+        totalGUI.setPreferredSize(new Dimension(400, 300));
         return totalGUI;
 
     }
 
     public static void createAndShowGUI(){
-        JFrame frame = new JFrame("Legg til deltaker");
+        frame = new JFrame("Legg til deltaker");
         JFrame.setDefaultLookAndFeelDecorated(true);
         AddParticipant view = new AddParticipant();
         frame.setContentPane(view.createContentPane());
@@ -167,10 +167,14 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         if(e.getSource() == personButton){
             participantTable.setModel(personTableModel);
             searchField.setText("Søk");
+            participantTable.getColumnModel().getColumn(0).setHeaderRenderer(new MyTableHeaderRenderer());
+            participantTable.getTableHeader().repaint();
         }
         if (e.getSource() == groupButton){
             participantTable.setModel(groupTableModel);
             searchField.setText("Søk");
+            participantTable.getColumnModel().getColumn(0).setHeaderRenderer(new MyTableHeaderRenderer());
+            participantTable.getTableHeader().repaint();
         }
         // searchField - search for specific word
         if (e.getSource() == searchField){
@@ -191,6 +195,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
                 }
             }
         }
+
 
 
     }
@@ -231,6 +236,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
             }
             if (table.isRowSelected(row)){
                 setBorder(highLight);
+                setBackground(super.getBackground());
             }
             table.getTableHeader().setReorderingAllowed(false);
             return this;

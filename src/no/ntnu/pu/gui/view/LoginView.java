@@ -1,5 +1,6 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.model.Email;
 import no.ntnu.pu.model.Person;
@@ -41,6 +42,8 @@ public class LoginView extends JPanel {
         //Textfields (with listeners)
         userField = new JTextField(20);
         passField = new JPasswordField(20);
+        userField.addActionListener(new myUserAction());
+        passField.addActionListener(new myPasswordAction());
         passField.addActionListener(new myPasswordAction());
 
         //Buttons (with listeners)
@@ -84,6 +87,12 @@ public class LoginView extends JPanel {
         this.passwordInput = passwordInput;
     }
 
+    class myUserAction implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+            btnLogin.doClick();
+        }
+    }
+
     class myPasswordAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             setPasswordInput(new String(passField.getPassword()));
@@ -92,19 +101,21 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            /**Person person = PersonControl.getPersonByEmail(usernameInput);
+            Person person = PersonControl.getPersonByEmail(usernameInput);
             if(passwordInput.equals(person.getPassword())){
                 Person loggedIn = person;
                 frmMain.dispose();
                 MainView mainView = new MainView();
+                CalendarControl.setModel(loggedIn.getCalendar());
 
             }
             else{
                 userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
                 passField.setText("");
-            }**/
+            }
+            /**
             frmMain.dispose();
-            MainView mainView = new MainView();
+            MainView mainView = new MainView();**/
         }
     }
 
