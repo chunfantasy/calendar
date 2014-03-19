@@ -23,30 +23,39 @@ public class ServerStorage implements Storage {
 	private ResultSet rs;
 	private String sql;
 
+	public ServerStorage() {
+		this.connect();
+	}
+
 	// Connect to the database
-	public void connect() throws SQLException {
+	public void connect() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		con = DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/calendar", "root", "123");
-		con.setAutoCommit(false);
+		try {
+			// mysql -h mysql.stud.ntnu.no/chunf_calendar
+			// -u chunf_calender -pgroup12
+			con = DriverManager.getConnection(
+					"jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
+					"chunf_calendar", "group12");
+			con.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// initiate database
-	public void initiate() throws SQLException {
+	public void initiate() {
+		try {
+			stmt = con.createStatement();
 
-		stmt = con.createStatement();
-
-		//@formatter:off
+			//@formatter:off
 		// create table person
 		sql = "DROP TABLE IF EXISTS appointment_participant";
 		stmt.execute(sql);
-		sql = "DROP TABLE IF EXISTS group_person";
+		sql = "DROP TABLE IF EXISTS meetinggroup_person";
 		stmt.execute(sql);
 		sql = "DROP TABLE IF EXISTS person";
 		stmt.execute(sql);
@@ -63,7 +72,9 @@ public class ServerStorage implements Storage {
 				+ "id int auto_increment primary key, "
 				+ "email varchar(20), " 
 				+ "name varchar(10), "
-				+ "title varchar(10))";
+				+ "title varchar(10), "
+				+ "password varchar(20), "
+				+ "phonenumbers varchar(30))";
 		stmt.execute(sql);
 
 		// create table meetinggroup
@@ -73,12 +84,12 @@ public class ServerStorage implements Storage {
 				+ "email varchar(20))";
 		stmt.execute(sql);
 		
-		// create table group_person
-		sql = "CREATE TABLE group_person (" 
+		// create table meetinggroup_person
+		sql = "CREATE TABLE meetinggroup_person (" 
 				+ "id int auto_increment primary key, "
-				+ "groupid int, " 
+				+ "meetinggroupid int, " 
 				+ "personid int, "
-				+ "foreign key (groupid) references meetinggroup(id) on delete set null on update cascade, "
+				+ "foreign key (meetinggroupid) references meetinggroup(id) on delete set null on update cascade, "
 				+ "foreign key (personid) references person(id) on delete set null on update cascade)";
 		stmt.execute(sql);		
 				
@@ -110,7 +121,10 @@ public class ServerStorage implements Storage {
 				+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
 		stmt.execute(sql);
 		//@formatter:on
-		con.commit();
+			con.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean delete(Object o) {
@@ -154,37 +168,53 @@ public class ServerStorage implements Storage {
 		}
 	}
 
-	public void close() throws SQLException {
-		this.con.close();
-	}
-
-	public int getLastId() throws SQLException {
-		this.rs = this.pstmt.executeQuery("select last_insert_id()");
-		if (this.rs.next()) {
-			int id = rs.getInt(1);
-			return id;
-		} else
-			return -1;
-
-	}
-
-	private Person setPerson(ResultSet rs) throws SQLException {
-		Person p = new Person("");
-		p.setId(rs.getInt("id"));
-		p.setEmail(rs.getString("email"));
-		p.setName(rs.getString("name"));
-		p.setTitle(rs.getString("title"));
-		return p;
-	}
-
-	private Group setGroup(ResultSet rs) throws SQLException {
-		Group g = new Group("");
-		g.setId(rs.getInt("id"));
-		g.setEmail(rs.getString("email"));
-		g.setName(rs.getString("name"));
-
+	public void close() {
 		try {
-			sql = "SELECT * FROM group_person WHERE groupid = " + g.getId();
+			this.con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int getLastId() {
+		try {
+			this.rs = this.pstmt.executeQuery("select last_insert_id()");
+			if (this.rs.next()) {
+				int id = rs.getInt(1);
+				return id;
+			} else
+				return -1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+
+	}
+
+	private Person setPerson(ResultSet rs) {
+		try {
+			Person p = new Person("");
+			p.setId(rs.getInt("id"));
+			p.setEmail(rs.getString("email"));
+			p.setName(rs.getString("name"));
+			p.setTitle(rs.getString("title"));
+			p.setPassword(rs.getString("password"));
+			return p;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private Group setGroup(ResultSet rs) {
+		try {
+			Group g = new Group("");
+			g.setId(rs.getInt("id"));
+			g.setEmail(rs.getString("email"));
+			g.setName(rs.getString("name"));
+
+			sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
+					+ g.getId();
 			rs = stmt.executeQuery(sql);
 			ArrayList<Integer> listId = new ArrayList();
 			while (rs.next()) {
@@ -199,84 +229,125 @@ public class ServerStorage implements Storage {
 				}
 			}
 			g.setPersons(list);
+			return g;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 
-		return g;
 	}
 
-	private Room setRoom(ResultSet rs) throws SQLException {
-		Room r = new Room("");
-		r.setId(rs.getInt("id"));
-		r.setRoomname(rs.getString("roomname"));
-		return r;
+	private Room setRoom(ResultSet rs) {
+		try {
+			Room r = new Room("");
+			r.setId(rs.getInt("id"));
+			r.setRoomname(rs.getString("roomname"));
+			return r;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	private Appointment setAppointment(ResultSet rs) throws SQLException {
-		Appointment a = new Appointment(new Person("GEir"));
-		a.setId(rs.getInt("id"));
-		return a;
+	private Appointment setAppointment(ResultSet rs) {
+		try {
+			Person p = new Person("");
+			Appointment a = new Appointment(p);
+			a.setId(rs.getInt("id"));
+			return a;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ServerStorage serverStorage = new ServerStorage();
-		serverStorage.connect();
 		serverStorage.initiate();
 
 		Person p1 = new Person("a");
 		p1.setEmail("email1");
 		p1.setTitle("title1");
+		p1.setPassword("test");
 		p1 = serverStorage.insertPerson(p1);
 
 		Person p2 = new Person("b");
 		p2.setEmail("email2");
 		p2.setTitle("title2");
+		p2.setPassword("test");
 		p2 = serverStorage.insertPerson(p2);
-		
+
 		Person p3 = new Person("c");
 		p3.setEmail("email3");
 		p3.setTitle("title3");
+		p3.setPassword("test");
 		p3 = serverStorage.insertPerson(p3);
-		
+
+		Person p = serverStorage.getPersonByEmail("email2");
+		System.out.println(p.getPassword());
 		Group g = new Group("super group 12");
 		g.addPerson(p1);
-		g.addPerson(p3);
 		g = serverStorage.insertGroup(g);
+		g.addPerson(p3);
+		serverStorage.updateGroup(g);
+		serverStorage.updateGroup(g);
+		serverStorage.updateGroup(g);
+
+		g.removePerson(p1);
+		g.removePerson(p1);
+		g.removePerson(p1);
+		serverStorage.updateGroup(g);
+		g.addPerson(p2);
+		serverStorage.updateGroup(g);
 
 		g = serverStorage.getGroupById(1);
 
-		System.out.println(g.getPersons().get(1).getEmail());
+		p1.setEmail("emaillllllllllllllll");
+		serverStorage.updatePerson(p1);
+
 		Room r = new Room("P15");
 		r.setId(1);
 		serverStorage.insertRoom(r);
 
-		Appointment a = new Appointment(new Person("NiLS"));
+		Appointment a = new Appointment(p1);
 		a.setTitle("gogogo");
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
 		ArrayList<Participant> participants = new ArrayList();
-		participants.add(p2);
-		participants.add(p3);
-		participants.add(g);
-		//a.setParticipants(participants);
+		a.addParticipant(p2);
+		a.addParticipant(p3);
+		a.addParticipant(g);
 		serverStorage.insertAppointment(a);
 
-		serverStorage.getAppointmentByTime(new Date(), new Date());
-		System.out.println(new Date());
+		a.setTitle("comecomecome");
+		a.addParticipant(g);
+		a.addParticipant(g);
+		a.addParticipant(g);
+		a.addParticipant(p2);
+		serverStorage.updateAppointment(a);
+
+		serverStorage.updateAppointment(a);
+
+		ArrayList<Appointment> appointmentByTime = serverStorage
+				.getAppointmentByParticipant(p3);
+		System.out.println(appointmentByTime);
 
 	}
 
 	@Override
 	public Person insertPerson(Person p) {
 		try {
-			sql = "INSERT INTO person(email, name, title) VALUES(?, ?, ?)";
+			sql = "INSERT INTO person(email, name, title, password, phonenumbers) VALUES(?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
+			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
+			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
@@ -284,6 +355,44 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updatePerson(Person p) {
+		try {
+			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
+					+ p.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, p.getEmail());
+			pstmt.setString(2, p.getName());
+			pstmt.setString(3, p.getTitle());
+			pstmt.setString(4, p.getPassword());
+			pstmt.executeUpdate();
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean updatePerson(Person p) {
+		try {
+			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
+					+ p.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, p.getEmail());
+			pstmt.setString(2, p.getName());
+			pstmt.setString(3, p.getTitle());
+			pstmt.setString(4, p.getPassword());
+			pstmt.executeUpdate();
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -303,7 +412,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public boolean deletePersonByEmail(String email) {
 		try {
-			sql = "DELETE FROM person WHERE email = " + email;
+			sql = "DELETE FROM person WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
 			return true;
@@ -331,7 +440,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public Person getPersonByEmail(String email) {
 		try {
-			sql = "SELECT * FROM person WHERE email = " + email;
+			sql = "SELECT * FROM person WHERE email = '" + email + "'";
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				return this.setPerson(rs);
@@ -346,7 +455,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public ArrayList<Person> getPersonByName(String name) {
 		try {
-			sql = "SELECT * FROM person WHERE name = " + name;
+			sql = "SELECT * FROM person WHERE name = '" + name + "'";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Person> list = new ArrayList();
 			while (rs.next()) {
@@ -371,7 +480,7 @@ public class ServerStorage implements Storage {
 
 			if (!g.getPersons().isEmpty()) {
 				for (Person person : g.getPersons()) {
-					sql = "INSERT INTO group_person (groupid, personid) "
+					sql = "INSERT INTO meetinggroup_person (meetinggroupid, personid) "
 							+ "VALUES(?, ?)";
 					pstmt = con.prepareStatement(sql);
 					pstmt.setInt(1, g.getId());
@@ -384,6 +493,126 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updateGroup(Group g) {
+		try {
+			sql = "UPDATE meetinggroup SET email = ?, name = ? WHERE id = "
+					+ g.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, g.getEmail());
+			pstmt.setString(2, g.getName());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
+						+ g.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOld = new ArrayList();
+				while (rs.next()) {
+					listOld.add(rs.getInt("personid"));
+				}
+				ArrayList<Integer> listNew = new ArrayList();
+				for (Person p : g.getPersons()) {
+					listNew.add(p.getId());
+				}
+
+				ArrayList<Integer> list = new ArrayList();
+				for (int id : listOld) {
+					if (!listNew.contains(id)) {
+						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOld.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNew) {
+					if (!listOld.contains(id)) {
+						sql = "INSERT INTO meetinggroup_person(meetinggroupid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean updateGroup(Group g) {
+		try {
+			sql = "UPDATE meetinggroup SET email = ?, name = ? WHERE id = "
+					+ g.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, g.getEmail());
+			pstmt.setString(2, g.getName());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
+						+ g.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOld = new ArrayList();
+				while (rs.next()) {
+					listOld.add(rs.getInt("personid"));
+				}
+				ArrayList<Integer> listNew = new ArrayList();
+				for (Person p : g.getPersons()) {
+					listNew.add(p.getId());
+				}
+
+				ArrayList<Integer> list = new ArrayList();
+				for (int id : listOld) {
+					if (!listNew.contains(id)) {
+						sql = "DELETE FROM meetinggroup_person WHERE meetinggroupid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOld.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNew) {
+					if (!listOld.contains(id)) {
+						sql = "INSERT INTO meetinggroup_person(meetinggroupid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, g.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
@@ -403,7 +632,7 @@ public class ServerStorage implements Storage {
 	@Override
 	public boolean deleteGroupByEmail(String email) {
 		try {
-			sql = "DELETE FROM meetinggroup WHERE email = " + email;
+			sql = "DELETE FROM meetinggroup WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
 			return true;
@@ -443,6 +672,8 @@ public class ServerStorage implements Storage {
 		}
 	}
 
+	@Override
+	@Override
 	public ArrayList<Group> getGroupByName(String name) {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
@@ -506,6 +737,204 @@ public class ServerStorage implements Storage {
 	}
 
 	@Override
+	public boolean updateAppointment(Appointment a) {
+		try {
+			sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
+					+ "WHERE id = " + a.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, a.getTitle());
+			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
+			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
+			pstmt.setString(4, a.getAddress());
+			pstmt.setString(5, a.getDescription());
+			pstmt.setInt(6, a.getMeetingRoom().getId());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
+						+ a.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOldPerson = new ArrayList();
+				ArrayList<Integer> listOldGroup = new ArrayList();
+				while (rs.next()) {
+					if (rs.getInt("personid") != 0)
+						listOldPerson.add(rs.getInt("personid"));
+					if (rs.getInt("meetinggroupid") != 0)
+						listOldGroup.add(rs.getInt("meetinggroupid"));
+				}
+
+				ArrayList<Integer> listNewPerson = new ArrayList();
+				ArrayList<Integer> listNewGroup = new ArrayList();
+				for (Participant p : a.getParticipants()) {
+					if (p instanceof Person)
+						listNewPerson.add(((Person) p).getId());
+					if (p instanceof Group)
+						listNewGroup.add(((Group) p).getId());
+				}
+
+				ArrayList<Integer> list = new ArrayList();
+				for (int id : listOldPerson) {
+					if (!listNewPerson.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewPerson) {
+					if (!listOldPerson.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+
+				list.clear();
+				for (int id : listOldGroup) {
+					if (!listNewGroup.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND meetinggroupid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewGroup) {
+					if (!listOldGroup.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, meetinggroupid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean updateAppointment(Appointment a) {
+		try {
+			sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
+					+ "WHERE id = " + a.getId();
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, a.getTitle());
+			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
+			pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
+			pstmt.setString(4, a.getAddress());
+			pstmt.setString(5, a.getDescription());
+			pstmt.setInt(6, a.getMeetingRoom().getId());
+			pstmt.executeUpdate();
+
+			try {
+				sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
+						+ a.getId();
+				rs = stmt.executeQuery(sql);
+				ArrayList<Integer> listOldPerson = new ArrayList();
+				ArrayList<Integer> listOldGroup = new ArrayList();
+				while (rs.next()) {
+					if (rs.getInt("personid") != 0)
+						listOldPerson.add(rs.getInt("personid"));
+					if (rs.getInt("meetinggroupid") != 0)
+						listOldGroup.add(rs.getInt("meetinggroupid"));
+				}
+
+				ArrayList<Integer> listNewPerson = new ArrayList();
+				ArrayList<Integer> listNewGroup = new ArrayList();
+				for (Participant p : a.getParticipants()) {
+					if (p instanceof Person)
+						listNewPerson.add(((Person) p).getId());
+					if (p instanceof Group)
+						listNewGroup.add(((Group) p).getId());
+				}
+
+				ArrayList<Integer> list = new ArrayList();
+				for (int id : listOldPerson) {
+					if (!listNewPerson.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND personid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewPerson) {
+					if (!listOldPerson.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, personid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+
+				list.clear();
+				for (int id : listOldGroup) {
+					if (!listNewGroup.contains(id)) {
+						sql = "DELETE FROM appointment_participant WHERE appointmentid = ? AND meetinggroupid = ?";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+						list.add(id);
+					}
+				}
+
+				for (int id : list) {
+					listOldPerson.remove((Integer.valueOf(id)));
+				}
+
+				for (int id : listNewGroup) {
+					if (!listOldGroup.contains(id)) {
+						sql = "INSERT INTO appointment_participant (appointmentid, meetinggroupid) VALUES(?, ?)";
+						pstmt = con.prepareStatement(sql);
+						pstmt.setInt(1, a.getId());
+						pstmt.setInt(2, id);
+						pstmt.executeUpdate();
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				return false;
+			}
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
 	public boolean deleteAppointmentById(int id) {
 		try {
 			sql = "DELETE FROM appointment WHERE id = " + id;
@@ -517,11 +946,6 @@ public class ServerStorage implements Storage {
 			return false;
 		}
 	}
-	@Override
-	public Appointment updateAppointment(Appointment a) {
-		//Todo
-		return a;
-	}
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
@@ -530,6 +954,8 @@ public class ServerStorage implements Storage {
 			sql = "SELECT * FROM appointment WHERE starttime >= '"
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
+			System.out.println(sql);
+			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList();
 			while (rs.next()) {
@@ -544,8 +970,35 @@ public class ServerStorage implements Storage {
 
 	@Override
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			if (p instanceof Person)
+				sql = "SELECT * FROM appointment_participant WHERE personid = "
+						+ ((Person) p).getId();
+			else if (p instanceof Group)
+				sql = "SELECT * FROM appointment_participant WHERE meetinggroupid = "
+						+ ((Group) p).getId();
+			else
+				return null;
+			rs = stmt.executeQuery(sql);
+			ArrayList<Appointment> list = new ArrayList();
+			while (rs.next()) {
+				list.add(this.setAppointment(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+			rs = stmt.executeQuery(sql);
+			ArrayList<Appointment> list = new ArrayList();
+			while (rs.next()) {
+				list.add(this.setAppointment(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
@@ -561,6 +1014,36 @@ public class ServerStorage implements Storage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	@Override
+	public boolean updateRoom(Room r) {
+		try {
+			sql = "UPDATE meetingroom SET roomname = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, r.getRoomname());
+			pstmt.executeUpdate();
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return true;
+		}
+	}
+
+	@Override
+	public boolean updateRoom(Room r) {
+		try {
+			sql = "UPDATE meetingroom SET roomname = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, r.getRoomname());
+			pstmt.executeUpdate();
+			con.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return true;
 		}
 	}
 
