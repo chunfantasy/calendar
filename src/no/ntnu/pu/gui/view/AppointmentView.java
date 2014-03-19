@@ -1,12 +1,14 @@
 package no.ntnu.pu.gui.view;
 
 
+import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.gui.panel.AddExternalParticipant;
 import no.ntnu.pu.gui.panel.AddParticipant;
 import no.ntnu.pu.gui.panel.AddRoom;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.PersonStorage;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -38,22 +40,27 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private ArrayList<String> minutes, months;
 
     public AppointmentView(Appointment appointment){
-
-        boolean isEdited = true;
         frame = new JFrame("Endre avtale");
-
-        makeAndShowGUI();
+        // participantListModel
+        participantListModel = new DefaultListModel<Participant>();
+//        ArrayList<Participant> allParticipants = PersonControl.getAllParticipants();
+        ArrayList<Participant> array = appointment.getParticipants();
+        for(Participant p : array){
+            participantListModel.addElement(p);
+        }
+        makeAndShowGUI(true);
 
     }
 
     public AppointmentView(){
-        boolean isEdited = false;
         frame = new JFrame("Legg til ny avtale");
+        // participantListModel
+        participantListModel = new DefaultListModel<Participant>();
 
-        makeAndShowGUI();
+        makeAndShowGUI(false);
     }
 
-    public void makeAndShowGUI(){
+    public void makeAndShowGUI(boolean editing){
         // GridBagLayout
         GridBagConstraints c;
         setLayout(new GridBagLayout());
@@ -63,7 +70,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         addRoomView = new AddRoom().createContentPane();
         addParticipantView = new AddParticipant().createContentPane();
         externalView = new AddExternalParticipant().createContentPane();
-        appointmentView = createContentPane(false);
+        appointmentView = createContentPane(editing);
         appointmentView.setPreferredSize(new Dimension(400, 300));
 
         mainButton = new JToggleButton("Vis avtale");
@@ -137,10 +144,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         GridBagConstraints gbc;
         totalGUI.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
-
-
-        // participantListModel
-        participantListModel = new DefaultListModel<Participant>();
 
         // Icons
         ImageIcon calIcon = new ImageIcon(getClass().getResource("calendar.png"));
@@ -344,6 +347,13 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         container.setBorder(new TitledBorder("Inviter eksterne deltakere"));
     }
 
+
+
+
+
+
+
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == roomButton){
 //            AddRoom.createAndShowGUI(model);
@@ -422,6 +432,13 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 startHourCB.setSelectedIndex(endHourCB.getSelectedIndex());
             }
         }
+        if (e.getSource() == startHourCB){
+            int start = (Integer)startHourCB.getSelectedItem();
+            int end = (Integer)endHourCB.getSelectedItem();
+            if (start > end){
+                endHourCB.setSelectedIndex(startHourCB.getSelectedIndex());
+            }
+        }
         if (e.getSource() == startMinCB){
             int start = (Integer)startMinCB.getSelectedIndex();
             int end = (Integer)endMinCB.getSelectedIndex();
@@ -435,6 +452,11 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             if (start > end){
                 startMinCB.setSelectedIndex(endMinCB.getSelectedIndex());
             }
+        }
+        if (e.getSource() == removeButton){
+//            addParticipantView.
+            participantListModel.removeElementAt(participantList.getSelectedIndex());
+
         }
 
 
@@ -467,7 +489,11 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
 
     public static void main(String[] args){
-        new AppointmentView();
+        Appointment ap = new Appointment(new Person("Per"));
+        ap.addParticipant(new Person("Helge"));
+        ap.addParticipant(new Person("Trond"));
+        ap.addParticipant(new Person("Haakon"));
+        new AppointmentView(ap);
     }
 }
 
