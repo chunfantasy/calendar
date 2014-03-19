@@ -1,5 +1,8 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.model.Calendar;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -91,7 +94,7 @@ public class MainView {
         public void actionPerformed(ActionEvent e) {
             Object s = e.getSource();
             if(s.equals(newAppointmentButton)){
-                //TODO: remove TODO new AppointmentView();
+                new AppointmentView();
             }else if(s.equals(monthButton)){
                 showMonth();
                 monthButton.setEnabled(false);
@@ -104,4 +107,12 @@ public class MainView {
         }
 
     }
+
+
+    public static void main(String args[]){
+        CalendarControl.setModel(new Calendar());
+        new MainView();
+    }
+
+
 }

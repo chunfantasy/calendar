@@ -4,10 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
@@ -75,7 +73,7 @@ public class JSONSerializer {
 		Room r = new Room("P15");
 		r.setId(1);
 
-		Appointment a = new Appointment("");
+		Appointment a = new Appointment();
 		a.setTitle("gogogo");
 		a.setId(1337);
 		a.setStartTime(new Date(710975563000L));
@@ -86,8 +84,10 @@ public class JSONSerializer {
 		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
-		a.setParticipants(participants);
-		
+        for(Participant p:participants){
+            a.addParticipant(p);
+        }
+
 		try {
 			 
 			FileWriter file = new FileWriter("/home/hernil/temp/test.json");
@@ -112,7 +112,8 @@ public class JSONSerializer {
 			Object obj = parser.parse(new FileReader("/home/hernil/temp/test.json"));
 	 
 			JSONObject jsonObject = (JSONObject) obj;
-			Appointment a = new Appointment((String) jsonObject.get("title"));
+			Appointment a = new Appointment();
+            a.setTitle((String) jsonObject.get("title"));
 			a.setDescription((String) jsonObject.get("description"));
 			a.setStartTimeByLong((Long) jsonObject.get("startTime"));
 			a.setEndTimeByLong((Long) jsonObject.get("endTime"));
@@ -120,7 +121,7 @@ public class JSONSerializer {
 				a.setAddress((String) jsonObject.get("address"));
 			}
 			else {
-				a.setMeetingRoom(ServerStorage.getRoomById((int) (jsonObject.get("meetingRoom"))));
+				a.setMeetingRoom(RoomControl.getRoomById((int) (jsonObject.get("meetingRoom"))));
 			}
 			
 			System.out.println(a.getStartTime());
