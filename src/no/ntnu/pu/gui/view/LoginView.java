@@ -35,24 +35,24 @@ public class LoginView extends JPanel {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        //Labels
-        lblUsername = new JLabel("Brukernavn: ", JLabel.LEFT);
+        /**Labels**/
+        lblUsername = new JLabel("E-post: ", JLabel.LEFT);
         lblPassword = new JLabel("Passord: ", JLabel.LEFT);
         lblError = new JLabel("", JLabel.CENTER);
 
-        //Textfields (with listeners)
+        /**Textfields (with listeners)**/
         userField = new JTextField(20);
         passField = new JPasswordField(20);
         userField.addActionListener(new myUserAction());
         passField.addActionListener(new myPasswordAction());
 
-        //Buttons (with listeners)
+        /**Buttons (with listeners)**/
         btnLogin = new JButton("Logg inn");
         btnLogin.addActionListener(new myLoginAction());
         btnForgottenPassword = new JButton("Glemt passord?");
         btnForgottenPassword.addActionListener(new myForgottenAction());
 
-        //Adding components to panel
+        /**Adding components to panel**/
         panelAdd(3, 0, 0, constraints, lblError, panel);
         panelAdd(1, 0, 1, constraints, lblUsername, panel);
         panelAdd(1, 0, 2, constraints, lblPassword, panel);
@@ -104,16 +104,16 @@ public class LoginView extends JPanel {
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            Person person = PersonControl.getPersonByEmail(usernameInput);
-            setPasswordInput(new String(passField.getPassword()));
-            if(passwordInput.equals(person.getPassword())){
-                Person loggedIn = person;
-                frmMain.dispose();
-                CalendarControl.setModel(loggedIn.getCalendar());
-                MainView mainView = new MainView();
+            if(PersonControl.getPersonByEmail(userField.getText()) != null){
+                if(new String(passField.getPassword()).equals(PersonControl.getPersonByEmail(userField.getText()).getPassword())){
+                    Person loggedIn = PersonControl.getPersonByEmail(usernameInput);
+                    frmMain.dispose();
+                    CalendarControl.setModel(loggedIn.getCalendar());
+                    MainView mainView = new MainView();
+                }
             }
             else{
-                lblError.setText("Feil brukernavn/passord-kombinasjon");
+                lblError.setText("Feil brukernavn og/eller passord");
                 userField.setText("");
                 passField.setText("");
             }
@@ -122,25 +122,19 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            String feilmelding = "Skriv inn brukernavn og passord";
-            setUsernameInput(userField.getText());
-            if(usernameInput.length() == 0 || usernameInput.equals(feilmelding)){
-                userField.setText(feilmelding);
+            if(userField.getText().length() == 0){
+                lblError.setText("Feil brukernavn og/eller passord");
+                userField.setText("");
+                passField.setText("");
             }
             else{
-                /**
-                Person person;
-                person = PersonControl.getPersonByEmail(usernameInput);
-                new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
-                **/
-                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", "hei"));
-
+                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", PersonControl.getPersonByEmail(usernameInput).getPassword()));
             }
         }
     }
 
     public static void main(String args[]){
-        frmMain = new JFrame("LoginView");
+        frmMain = new JFrame("Logg inn");
         pane = frmMain.getContentPane();
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());

@@ -4,6 +4,7 @@ public class Room {
 
 	private int id;
 	private String roomname;
+    private int size;
 
 	public Room(String roomname) {
 		this.roomname = roomname;
@@ -24,4 +25,12 @@ public class Room {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }

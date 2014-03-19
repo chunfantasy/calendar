@@ -3,6 +3,7 @@ package no.ntnu.pu.storage;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Person;
 
 public class PersonStorage extends ServerStorage {
@@ -68,6 +69,21 @@ public class PersonStorage extends ServerStorage {
 		}
 	}
 
+	public ArrayList<Person> getAll() {
+		try {
+			sql = "SELECT * FROM person";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Person> list = new ArrayList<Person>();
+			while (rs.next()) {
+				list.add(this.setPerson(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public Person getPersonById(int id) {
 		try {
 			sql = "SELECT * FROM person WHERE id = " + id;

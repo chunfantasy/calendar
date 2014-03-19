@@ -1,6 +1,5 @@
 package no.ntnu.pu.storage;
 
-public class ClientStorage {
-
+public class AlarmStorage {
 
 }

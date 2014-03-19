@@ -19,6 +19,10 @@ public class CalendarControl {
         return model;
     }
 
+    public static ArrayList<Appointment> getAll(){
+        return storage.getAll();
+    }
+
     public static List<Appointment> getAppointments(){
         return model.getAppointments();
     }

@@ -118,6 +118,21 @@ public class GroupStorage extends ServerStorage {
 		}
 	}
 
+	public ArrayList<Group> getAll() {
+		try {
+			sql = "SELECT * FROM meetinggroup";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Group> list = new ArrayList<Group>();
+			while (rs.next()) {
+				list.add(this.setGroup(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public Group getGroupById(int id) {
 		try {
 			sql = "SELECT * FROM meetinggroup WHERE id = " + id;
