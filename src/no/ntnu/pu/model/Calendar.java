@@ -13,8 +13,8 @@ public class Calendar {
     private PropertyChangeSupport pcs;
 
     public Calendar(){
-        appointments = new ArrayList();
-        notifications = new ArrayList();
+        this.appointments = new ArrayList<Appointment>();
+        this.notifications = new ArrayList<Notification>();
         pcs = new PropertyChangeSupport(this);
     }
 
