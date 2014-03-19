@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Bakkan on 19.03.14.
  */
-public class addExternalParticipant extends JPanel implements ActionListener {
+public class AddExternalParticipant extends JPanel implements ActionListener {
     private JTextField nameField, emailField;
     private JButton inviteButton, cancelButton;
     private JLabel nameLabel, emailLabel, mailErrorLabel, nameErrorLabel;
