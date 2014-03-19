@@ -202,7 +202,6 @@ public class AppointmentStorage extends ServerStorage {
 			while (rs.next()) {
 				listId.add(rs.getInt("appointmentid"));
 			}
-
 			ArrayList<Appointment> listAppointment = new ArrayList<Appointment>();
 			for (int id : listId) {
 				sql = "SELECT * FROM appointment WHERE id = " + id;

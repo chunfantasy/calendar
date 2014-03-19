@@ -1,6 +1,6 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
+import no.ntnu.pu.control.CalendarControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +22,8 @@ public class MonthView extends CalenderView{
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    AppointmentControl.createAppointment();
+                    //TODO: Update this
+                    //CalendarControl.createAppointment();
                 }
             }
         });

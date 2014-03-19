@@ -1,6 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import no.ntnu.pu.control.AppointmentControl;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
@@ -42,7 +41,8 @@ public class WeekView extends CalenderView {
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    AppointmentControl.createAppointment();
+                   //TODO:UPDATE THIS; AppointmentControl.createAppointment();
+
                 }
             }
         });
