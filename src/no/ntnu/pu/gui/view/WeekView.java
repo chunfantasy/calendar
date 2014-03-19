@@ -153,8 +153,6 @@ public class WeekView extends CalenderView {
             }
         }
 
-
-
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
         refreshCells();
     }
@@ -174,12 +172,18 @@ public class WeekView extends CalenderView {
             int dayEnd = cal.get(GregorianCalendar.DAY_OF_MONTH);
             int monthEnd = cal.get(GregorianCalendar.MONTH);
             int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
-            String appointmentDate = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
+            String appointmentDateStart = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
+            String appointmentDateEnd = "" + String.valueOf(dayStart) + "." + String.valueOf(monthStart+1);
+
+            int appmentDateStart = Integer.valueOf(""+String.valueOf(dayStart)+String.valueOf(monthStart+1));
+            int appmentDateEnd = Integer.valueOf(""+String.valueOf(dayEnd)+String.valueOf(monthEnd+1));
+
             for(int j = 1; j<8; j++) {
-                String headerDate = cttcm.getColumn(j).toString().substring(cttcm.getColumn(j).toString().length() - 3, cttcm.getColumn(j).toString().length());
-                headerDate.trim();
-                for(int i = hourStart; i < hourEnd; i++){
-                    if(appointmentDate.equals(headerDate)){
+                String[] headerDate = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
+                headerDate[1].trim();
+                int headerDateInt = Integer.valueOf(headerDate[1].split("\\.")[0] + headerDate[1].split("\\.")[1]);
+                for(int i = hourStart; i < hourEnd; i++) {
+                    if(appmentDateEnd >= headerDateInt && appmentDateStart <= headerDateInt){
                         calendarTableModel.setValueAt(appointment, i, j);
                     }
                     else{

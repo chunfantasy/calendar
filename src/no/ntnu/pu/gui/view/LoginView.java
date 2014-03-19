@@ -17,7 +17,7 @@ public class LoginView extends JPanel {
     private JPasswordField passField;
     private JButton btnLogin, btnForgottenPassword;
     private String usernameInput, passwordInput;
-    private static JLabel lblUsername, lblPassword;
+    private static JLabel lblUsername, lblPassword, lblError;
     private static Container pane;
     private static JFrame frmMain;
 
@@ -38,12 +38,12 @@ public class LoginView extends JPanel {
         //Labels
         lblUsername = new JLabel("Brukernavn: ", JLabel.LEFT);
         lblPassword = new JLabel("Passord: ", JLabel.LEFT);
+        lblError = new JLabel("", JLabel.CENTER);
 
         //Textfields (with listeners)
         userField = new JTextField(20);
         passField = new JPasswordField(20);
         userField.addActionListener(new myUserAction());
-        passField.addActionListener(new myPasswordAction());
         passField.addActionListener(new myPasswordAction());
 
         //Buttons (with listeners)
@@ -53,12 +53,13 @@ public class LoginView extends JPanel {
         btnForgottenPassword.addActionListener(new myForgottenAction());
 
         //Adding components to panel
-        panelAdd(1, 0, 0, constraints, lblUsername, panel);
-        panelAdd(1, 0, 1, constraints, lblPassword, panel);
-        panelAdd(2, 1, 0, constraints, userField, panel);
-        panelAdd(2, 1, 1, constraints, passField, panel);
-        panelAdd(1, 1, 2, constraints, btnLogin, panel);
-        panelAdd(1, 2, 2, constraints, btnForgottenPassword, panel);
+        panelAdd(3, 0, 0, constraints, lblError, panel);
+        panelAdd(1, 0, 1, constraints, lblUsername, panel);
+        panelAdd(1, 0, 2, constraints, lblPassword, panel);
+        panelAdd(2, 1, 1, constraints, userField, panel);
+        panelAdd(2, 1, 2, constraints, passField, panel);
+        panelAdd(1, 1, 3, constraints, btnLogin, panel);
+        panelAdd(1, 2, 3, constraints, btnForgottenPassword, panel);
     }
 
     public void panelAdd(int gridwidth, int gridx, int gridy, GridBagConstraints c, Component comp, JPanel panel){
@@ -89,6 +90,7 @@ public class LoginView extends JPanel {
 
     class myUserAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
+            setUsernameInput(userField.getText());
             btnLogin.doClick();
         }
     }
@@ -96,26 +98,25 @@ public class LoginView extends JPanel {
     class myPasswordAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             setPasswordInput(new String(passField.getPassword()));
+            btnLogin.doClick();
         }
     }
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             Person person = PersonControl.getPersonByEmail(usernameInput);
+            setPasswordInput(new String(passField.getPassword()));
             if(passwordInput.equals(person.getPassword())){
                 Person loggedIn = person;
                 frmMain.dispose();
-                MainView mainView = new MainView();
                 CalendarControl.setModel(loggedIn.getCalendar());
-
+                MainView mainView = new MainView();
             }
             else{
-                userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
+                lblError.setText("Feil brukernavn/passord-kombinasjon");
+                userField.setText("");
                 passField.setText("");
             }
-            /**
-            frmMain.dispose();
-            MainView mainView = new MainView();**/
         }
     }
 
