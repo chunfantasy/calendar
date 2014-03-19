@@ -22,14 +22,29 @@ public class PersonControl {
         test.setTitle("Mr.");
         test.setCalendar(new Calendar());
         test.getCalendar().addAppointment(new Appointment(test));
+        test.getCalendar().addAppointment(new Appointment(test));
         ArrayList<Appointment> appointments = test.getCalendar().getAppointments();
+
         appointments.get(0).setTitle("Syrefest");
         appointments.get(0).setId(001);
         appointments.get(0).setAddress("Syregata");
-        appointments.get(0).setStartTime(new Date(114, 2, 19));
+        Long long1start = 1395237600000L;
+        appointments.get(0).setStartTime(new Date(long1start));
         appointments.get(0).setDescription("KJEMPEGØY");
-        appointments.get(0).setEndTime(new Date());
+        Long long1end = 1395244800000L;
+        appointments.get(0).setEndTime(new Date(long1end));
         appointments.get(0).setMeetingRoom(new Room(""));
+
+        appointments.get(1).setTitle("Superfest");
+        appointments.get(1).setId(002);
+        appointments.get(1).setAddress("Supergata");
+        Long long2start = 1395421200000L;
+        appointments.get(1).setStartTime(new Date(long2start));
+        appointments.get(1).setDescription("KJEMPEKJIPT");
+        Long long2end = 1395428400000L;
+        appointments.get(1).setEndTime(new Date(long2end));
+        appointments.get(1).setMeetingRoom(new Room(""));
+
         return test;
         /**TEST TEST TEST**/
         //return serverStorage.getPersonByEmail(email);
