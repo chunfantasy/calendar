@@ -14,6 +14,8 @@ public interface Storage {
 	// Person
 	public Person insertPerson(Person p);
 
+	public boolean updatePerson(Person p);
+
 	public boolean deletePersonById(int id);
 
 	public boolean deletePersonByEmail(String email);
@@ -26,6 +28,8 @@ public interface Storage {
 
 	// Group
 	public Group insertGroup(Group g);
+
+	public boolean updateGroup(Group g);
 
 	public boolean deleteGroupById(int id);
 
@@ -40,6 +44,8 @@ public interface Storage {
 	// Room
 	public Room insertRoom(Room r);
 
+	public boolean updateRoom(Room r);
+
 	public boolean deleteRoomById(int id);
 
 	public Room getRoomById(int id);
@@ -47,10 +53,10 @@ public interface Storage {
 	// Appointment
 	public Appointment insertAppointment(Appointment a);
 
+	public boolean updateAppointment(Appointment a);
+
 	public boolean deleteAppointmentById(int id);
 	
-	public Appointment updateAppointment(Appointment a);
-
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime);
 
