@@ -64,7 +64,7 @@ public class StorageTest {
 		r.setId(1);
 		roomStorage.insertRoom(r);
 
-		Appointment a = new Appointment(p1);
+		Appointment a = new Appointment();
 		a.setTitle("gogogo");
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());

@@ -12,10 +12,9 @@ public class Appointment {
 	private Room meetingRoom;
 	private String description;
 	private ArrayList<Participant> participants;
-    private final Person creator;
+    private Person creator;
 
-	public Appointment(Person creator) {
-		this.creator = creator;
+	public Appointment() {
 		this.participants = new ArrayList<Participant>();
 	}
 
@@ -38,31 +37,31 @@ public class Appointment {
 	public Date getStartTime() {
 		return startTime;
 	}
-	public Long getStartTimeLong() {
+
+    public Long getStartTimeLong() {
 		return startTime.getTime();
 	}
-
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
-	public void setStartTimeByLong(Long inputStartTime) {
+
+    public void setStartTimeByLong(Long inputStartTime) {
 		this.startTime = new Date(inputStartTime);
 	}
-
 	public Date getEndTime() {
 		return endTime;
 	}
-	public Long getEndTimeLong() {
+
+    public Long getEndTimeLong() {
 		return endTime.getTime();
 	}
-
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	public void setEndTimeByLong(Long inputEndTime) {
+
+    public void setEndTimeByLong(Long inputEndTime) {
 		this.endTime = new Date(inputEndTime);
 	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -94,6 +93,10 @@ public class Appointment {
 	public Person getCreator() {
 		return creator;
 	}
+
+    public void setCreator(Person creator) {
+        this.creator = creator;
+    }
 
 	public void addParticipant(Participant p) {
 		if (!this.participants.contains(p))

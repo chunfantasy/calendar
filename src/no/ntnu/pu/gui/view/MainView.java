@@ -79,7 +79,6 @@ public class MainView {
     private void showWeek(){
         monthView.setVisible(false);
         weekView.setVisible(true);
-
     }
 
     private GridBagConstraints GBC (GridBagConstraints c, int x, int y){
@@ -89,7 +88,6 @@ public class MainView {
     }
 
     private class ButtonListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             Object s = e.getSource();
@@ -105,14 +103,11 @@ public class MainView {
                 monthButton.setEnabled(true);
             }
         }
-
     }
-
 
     public static void main(String args[]){
         CalendarControl.setModel(new Calendar());
         new MainView();
     }
-
 
 }

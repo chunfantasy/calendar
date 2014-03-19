@@ -1,7 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-//import no.ntnu.pu.model.Participant;
-
 import no.ntnu.pu.gui.panel.AddParticipant;
 import no.ntnu.pu.gui.panel.AddRoom;
 import no.ntnu.pu.model.Appointment;
@@ -151,7 +149,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public JPanel createContentPane(boolean editing){
         // Appointment
-        model = new Appointment(new Person("LIMA"));
+        model = new Appointment();
 
         totalGUI = new JPanel();
 
@@ -379,7 +377,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 //    }
 
     public static void main(String[] args){
-        new AppointmentView();
+        new AppointmentView(new Appointment());
     }
 
     public Appointment getModel(){

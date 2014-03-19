@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import no.ntnu.pu.control.RoomControl;
 import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Participant;
@@ -121,7 +122,7 @@ public class JSONSerializer {
 				a.setAddress((String) jsonObject.get("address"));
 			}
 			else {
-				a.setMeetingRoom(RoomControl.getRoomById((int) (jsonObject.get("meetingRoom"))));
+				a.setMeetingRoom(RoomControl.getRoomById((Integer) (jsonObject.get("meetingRoom"))));
 			}
 			
 			System.out.println(a.getStartTime());

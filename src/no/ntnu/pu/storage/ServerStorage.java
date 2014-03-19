@@ -255,7 +255,7 @@ public class ServerStorage {
 	protected Appointment setAppointment(ResultSet rs) {
 		try {
 			Person p = new Person("");
-			Appointment a = new Appointment(p);
+			Appointment a = new Appointment();
 			a.setId(rs.getInt("id"));
 			return a;
 		} catch (SQLException e) {
