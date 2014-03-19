@@ -69,7 +69,6 @@ public class StorageTest {
 		a.setStartTime(new Date());
 		a.setEndTime(new Date());
 		a.setMeetingRoom(r);
-		ArrayList<Participant> participants = new ArrayList<>();
 		a.addParticipant(p2);
 		a.addParticipant(p3);
 		a.addParticipant(g);

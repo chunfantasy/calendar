@@ -219,11 +219,11 @@ public class ServerStorage {
 			sql = "SELECT * FROM meetinggroup_person WHERE meetinggroupid = "
 					+ g.getId();
 			rs = stmt.executeQuery(sql);
-			ArrayList<Integer> listId = new ArrayList<>();
+			ArrayList<Integer> listId = new ArrayList<Integer>();
 			while (rs.next()) {
 				listId.add(rs.getInt("personid"));
 			}
-			ArrayList<Person> list = new ArrayList<>();
+			ArrayList<Person> list = new ArrayList<Person>();
 			for (int id : listId) {
 				sql = "SELECT * FROM person WHERE id = " + id;
 				rs = stmt.executeQuery(sql);
