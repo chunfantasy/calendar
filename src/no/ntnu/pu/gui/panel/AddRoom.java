@@ -17,7 +17,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
     private JButton chooseButton;
     private JTextField searchField;
     private JTable roomTable;
-    private JLabel searchLabel;
+    private JLabel searchLabel, capacityLabel;
     private JComboBox roomSize;
     private DefaultTableModel tableModel;
     private JPanel totalGUI;
@@ -69,6 +69,8 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
         roomSize = new JComboBox(SIZES);
         roomSize.addActionListener(this);
+        capacityLabel = new JLabel("Kapasitet: ");
+        capacityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
         chooseButton = new JButton("Velg");
         chooseButton.setFocusable(false);
@@ -101,10 +103,11 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
         setupGBC(1, 1, 0, 0, 0, gbc, searchLabel, true);
-        setupGBC(1, 1, 0.5, 1, 0, gbc, searchField, false);
-        setupGBC(1, 1, 0.5, 2, 0, gbc, roomSize, false);
+        setupGBC(1, 1, 0.5, 1, 0, gbc, searchField, true);
+        setupGBC(1, 1, 0.5, 3, 0, gbc, roomSize, false);
+        setupGBC(1, 1, 0.5, 2, 0, gbc, capacityLabel, true);
         setupGBC(4, 4, 0.5, 0, 1, gbc, scroll, true);
-        setupGBC(1, 1, 0.5, 0, 6, gbc, chooseButton, false);
+        setupGBC(4, 1, 0.5, 1, 6, gbc, chooseButton, false);
 
         totalGUI.setOpaque(true);
         totalGUI.setPreferredSize(new Dimension(400, 300));

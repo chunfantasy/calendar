@@ -74,7 +74,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         addButton.setFocusable(false);
         addButton.setHorizontalAlignment(SwingConstants.CENTER);
 
-        searchField = new JTextField("Søk");
+        searchField = new JTextField("Søk", 31);
 //        searchField.setColumns(10);
         searchField.addFocusListener(this);
         searchField.addActionListener(this);
@@ -102,24 +102,26 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         // ScrollPane
         JScrollPane scroll = new JScrollPane(participantTable);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll.setPreferredSize(new Dimension(250, 150));
+        scroll.setPreferredSize(new Dimension(254, 150));
         participantTable.setFillsViewportHeight(true);
 
         // buttons
         personButton = new JToggleButton("Person");
         personButton.addActionListener(this);
         personButton.setSelected(true);
+        personButton.setFocusable(false);
 
         groupButton = new JToggleButton("Gruppe");
         groupButton.addActionListener(this);
+        groupButton.setFocusable(false);
 
         buttonGroup = new ButtonGroup();
         buttonGroup.add(personButton);
         buttonGroup.add(groupButton);
 
 
-        setupGBC(1, 1, 0.5, 1, 1, gbc, searchLabel, true);
-        setupGBC(1, 1, 0.5, 0, 1, gbc, searchField, true);
+//        setupGBC(1, 1, 0.5, 1, 1, gbc, searchLabel, true);
+        setupGBC(2, 1, 0.5, 0, 1, gbc, searchField, false);
         setupGBC(2, 4, 0.5, 0, 2, gbc, scroll, false);
         setupGBC(2, 1, 0.5, 0, 6, gbc, addButton, false);
 //        setupGBC(1, 1, 0.5, 3, 6, gbc, cancelButton, false);
