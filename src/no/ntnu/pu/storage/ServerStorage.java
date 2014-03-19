@@ -66,9 +66,9 @@ public class ServerStorage {
 			stmt.execute(sql);
 			sql = "DROP TABLE IF EXISTS meetinggroup_person";
 			stmt.execute(sql);
-			sql = "DROP TABLE IF EXISTS person";
-			stmt.execute(sql);
 			sql = "DROP TABLE IF EXISTS appointment";
+			stmt.execute(sql);
+			sql = "DROP TABLE IF EXISTS person";
 			stmt.execute(sql);
 			sql = "DROP TABLE IF EXISTS meetingroom";
 			stmt.execute(sql);
@@ -115,8 +115,10 @@ public class ServerStorage {
 					+ "starttime datetime, " 
 					+ "endtime datetime, "
 					+ "address varchar(30), " 
-					+ "meetingroomid int, "
+					+ "meetingroomid int, " 
+					+ "creatorid int, "
 					+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
+					+ "foreign key(creatorid) references person(id) on delete set null on update cascade, "
 					+ "description varchar(50))";
 			stmt.execute(sql);
 	
@@ -145,10 +147,10 @@ public class ServerStorage {
 					+ "id int auto_increment primary key, " 
 					+ "appointmentid int, "
 					+ "personid int, "
-					+ "decliner int, "
+					+ "declinerid int, "
 					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
 					+ "foreign key(personid) references person(id) on delete cascade on update cascade, "
-					+ "foreign key(decliner) references person(id) on delete cascade on update cascade) ";
+					+ "foreign key(declinerid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			
 			// create table appointment_participant
@@ -249,6 +251,7 @@ public class ServerStorage {
 
 	protected Group setGroup(ResultSet rs) {
 		try {
+			stmt = con.createStatement();
 			Group g = new Group("");
 			g.setId(rs.getInt("id"));
 			g.setEmail(rs.getString("email"));
@@ -292,6 +295,7 @@ public class ServerStorage {
 
 	protected Appointment setAppointment(ResultSet rs) {
 		try {
+			stmt = con.createStatement();
 			Person p = new Person("");
 			Appointment a = new Appointment(p);
 			a.setId(rs.getInt("id"));
@@ -300,12 +304,22 @@ public class ServerStorage {
 			a.setStartTime(new Date(rs.getTimestamp("starttime").getTime()));
 			a.setEndTime(new Date(rs.getTimestamp("endtime").getTime()));
 			a.setTitle(rs.getString("title"));
-
+			
+			int meetingroomId = rs.getInt("meetingroomid");
+			int creatorId = rs.getInt("creatorid");
+			
 			sql = "SELECT * FROM meetingroom WHERE id = "
-					+ rs.getInt("meetingroomid");
+					+ meetingroomId;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				a.setMeetingRoom(this.setRoom(rs));
+			}
+			
+			sql = "SELECT * FROM person WHERE id = "
+					+ creatorId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				a.setCreator(this.setPerson(rs));;
 			}
 
 			sql = "SELECT * FROM appointment_participant WHERE appointmentid = "

@@ -14,8 +14,8 @@ public class AppointmentStorage extends ServerStorage {
 
 	public Appointment insertAppointment(Appointment a) {
 		try {
-			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid) "
-					+ "VALUES(?, ?, ?, ?, ?, ?)";
+			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid, creatorid) "
+					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, a.getTitle());
 			pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
@@ -23,6 +23,7 @@ public class AppointmentStorage extends ServerStorage {
 			pstmt.setString(4, a.getAddress());
 			pstmt.setString(5, a.getDescription());
 			pstmt.setInt(6, a.getMeetingRoom().getId());
+			pstmt.setInt(7, a.getCreator().getId());
 			pstmt.executeUpdate();
 			a.setId(this.getLastId());
 
@@ -168,13 +169,41 @@ public class AppointmentStorage extends ServerStorage {
 		}
 	}
 
+	public ArrayList<Appointment> getAll() {
+		try {
+			sql = "SELECT * FROM appointment";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Appointment> list = new ArrayList<Appointment>();
+			while (rs.next()) {
+				list.add(this.setAppointment(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Appointment getAppointmentById(int id) {
+		try {
+			sql = "SELECT * FROM appointment WHERE id = " + id;
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return this.setAppointment(rs);
+			}
+			else return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime) {
 		try {
 			sql = "SELECT * FROM appointment WHERE starttime >= '"
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
-			System.out.println(sql);
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList<Appointment>();
 			while (rs.next()) {
