@@ -95,7 +95,7 @@ public class WeekView extends CalenderView {
         refreshCalendar(realWeek, realMonth,realYear);
     }
 
-    private void refreshCalendar( int week,  int month, int year) {
+    public void refreshCalendar( int week,  int month, int year) {
 
         while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.MONDAY){
             gregCal.add(GregorianCalendar.DATE, -1);
@@ -156,6 +156,7 @@ public class WeekView extends CalenderView {
     }
 
     private void refreshCells() {
+        appointments = CalendarControl.getModel().getAppointments();
         if(appointments != null && appointments.size()>0){
             for(Appointment appointment : appointments){
                 Date startTime = appointment.getStartTime();
