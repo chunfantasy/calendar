@@ -32,7 +32,9 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
         }else if(value instanceof Alarm){
             Alarm a = (Alarm) value;
-            setText(a.getAppointment().getTitle()+" "+a.getTime());
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTime(a.getTime());
+            setText(a.getAppointment().getTitle()+" "+(cal.get(GregorianCalendar.HOUR_OF_DAY) < 10 ? "0" + cal.get(GregorianCalendar.HOUR_OF_DAY) : cal.get(GregorianCalendar.HOUR_OF_DAY)) + ":" + (cal.get(GregorianCalendar.MINUTE) < 10 ? "0" + cal.get(GregorianCalendar.MINUTE) : cal.get(GregorianCalendar.MINUTE)));
             if(cellHasFocus){
                 this.setBorder(BorderFactory.createMatteBorder(
                         0, 6, 3, 0, ALARM_COLOR));

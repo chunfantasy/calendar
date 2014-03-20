@@ -32,8 +32,8 @@ public class WeekView extends CalenderView {
         super();
 
         /**Initialize subclass-specific components**/
-        if(CalendarControl.getAppointments() != null && CalendarControl.getAppointments().size() > 0){
-            appointments = CalendarControl.getAppointments();
+        if(CalendarControl.getModel().getAppointments() != null && CalendarControl.getAppointments().size() > 0){
+            appointments = CalendarControl.getModel().getAppointments();
         }
         weekLabel = new JLabel("Uke 1");
         dateSpanLabel = new JLabel("(01.01 - 07.01)");
