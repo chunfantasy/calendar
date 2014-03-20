@@ -10,10 +10,9 @@ public class GroupStorage extends ServerStorage {
 
 	public GroupStorage() {
 		super();
-		System.out
-				.println("Database: Database connected by GroupStorage");
+		System.out.println("Database: Database connected by GroupStorage");
 	}
-	
+
 	public Group insertGroup(Group g) {
 		try {
 			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
@@ -34,10 +33,10 @@ public class GroupStorage extends ServerStorage {
 				}
 			}
 			con.commit();
-			System.out.println("Database: Group inserted");
+			System.out.println("Database: Group inserted done");
 			return g;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -90,13 +89,15 @@ public class GroupStorage extends ServerStorage {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out
+						.println("FAIL: Database: Group updated failed!!!!!!");
 				return false;
 			}
+			System.out.println("Database: Group updated done");
 			con.commit();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group updated failed!!!!!!");
 			return false;
 		}
 	}
@@ -106,9 +107,10 @@ public class GroupStorage extends ServerStorage {
 			sql = "DELETE FROM meetinggroup WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Group deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -118,9 +120,10 @@ public class GroupStorage extends ServerStorage {
 			sql = "DELETE FROM meetinggroup WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Group deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -133,9 +136,10 @@ public class GroupStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
+			System.out.println("Database: Group gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -145,11 +149,14 @@ public class GroupStorage extends ServerStorage {
 			sql = "SELECT * FROM meetinggroup WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Group gotten done");
 				return this.setGroup(rs);
-			} else
+			} else {
+				System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -159,11 +166,14 @@ public class GroupStorage extends ServerStorage {
 			sql = "SELECT * FROM meetinggroup WHERE email = " + email;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Group gotten done");
 				return this.setGroup(rs);
-			} else
+			} else {
+				System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -176,9 +186,10 @@ public class GroupStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
+			System.out.println("Database: Group gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 			return null;
 		}
 	}

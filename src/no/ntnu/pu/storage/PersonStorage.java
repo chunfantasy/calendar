@@ -9,10 +9,9 @@ public class PersonStorage extends ServerStorage {
 
 	public PersonStorage() {
 		super();
-		System.out
-				.println("Database: Database connected by PersonStorage");
+		System.out.println("Database: Database connected by PersonStorage");
 	}
-	
+
 	public Person insertPerson(Person p) {
 		try {
 			sql = "INSERT INTO person(email, name, title, password, phonenumbers) VALUES(?, ?, ?, ?, ?)";
@@ -25,10 +24,10 @@ public class PersonStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: Person inserted");
+			System.out.println("Database: Person inserted done");
 			return p;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -45,9 +44,10 @@ public class PersonStorage extends ServerStorage {
 			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: Person updated");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person updated failed!!!!!!");
 			return false;
 		}
 	}
@@ -57,9 +57,10 @@ public class PersonStorage extends ServerStorage {
 			sql = "DELETE FROM person WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Person deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -69,9 +70,10 @@ public class PersonStorage extends ServerStorage {
 			sql = "DELETE FROM person WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Person deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -84,9 +86,10 @@ public class PersonStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setPerson(rs));
 			}
+			System.out.println("Database: Person gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -96,11 +99,15 @@ public class PersonStorage extends ServerStorage {
 			sql = "SELECT * FROM person WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Person gotten done");
 				return this.setPerson(rs);
-			} else
+			} else {
+				System.out
+						.println("FAIL: Database: Person gotten failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -110,11 +117,15 @@ public class PersonStorage extends ServerStorage {
 			sql = "SELECT * FROM person WHERE email = '" + email + "'";
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Person gotten done");
 				return this.setPerson(rs);
-			} else
+			} else {
+				System.out
+						.println("FAIL: Database: Person gotten failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -127,9 +138,10 @@ public class PersonStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setPerson(rs));
 			}
+			System.out.println("Database: Person gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person gotten failed!!!!!!");
 			return null;
 		}
 	}

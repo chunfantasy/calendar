@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import no.ntnu.pu.model.ChangeNotification;
+import no.ntnu.pu.model.Person;
 
 public class ChangeNotificationStorage extends ServerStorage {
 
@@ -23,10 +24,11 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			c.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: ChangeNotification inserted");
+			System.out.println("Database: ChangeNotification inserted done");
 			return c;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: ChangeNotification inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -40,9 +42,11 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.setString(3, c.getChangedProperties().toString());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: ChangeNotification updated done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: ChangeNotification updated failed!!!!!!");
 			return true;
 		}
 	}
@@ -52,9 +56,11 @@ public class ChangeNotificationStorage extends ServerStorage {
 			sql = "DELETE FROM changenotification WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: ChangeNotification deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: ChangeNotification deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -67,6 +73,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setChangeNotification(rs));
 			}
+			System.out.println("Database: ChangeNotification gotten done");
 			return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -79,11 +86,34 @@ public class ChangeNotificationStorage extends ServerStorage {
 			sql = "SELECT * FROM changenotification WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: ChangeNotification gotten done");
 				return this.setChangeNotification(rs);
-			} else
+			} else {
+				System.out
+						.println("FAIL: Database: ChangeNotification gotten fail!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: ChangeNotification gotten fail!!!!!!");
+			return null;
+		}
+	}
+
+	public ArrayList<ChangeNotification> getChangeNotificationByRecipient(Person p) {
+		try {
+			sql = "SELECT * FROM changenotification WHERE recipientid = "
+					+ p.getId();
+			rs = stmt.executeQuery(sql);
+			ArrayList<ChangeNotification> list = new ArrayList<ChangeNotification>();
+			while (rs.next()) {
+				list.add(this.setChangeNotification(rs));
+			}
+			System.out.println("Database: ChangeNotification gotten");
+			return list;
+		} catch (SQLException e) {
+			System.out
+					.println("FAIL: Database: ChangeNotification gotten fail!!!!!!");
 			return null;
 		}
 	}

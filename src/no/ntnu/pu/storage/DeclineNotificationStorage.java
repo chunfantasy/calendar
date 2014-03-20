@@ -4,15 +4,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import no.ntnu.pu.model.DeclineNotification;
+import no.ntnu.pu.model.Person;
 
-public class DeclineNotificationStorage extends ServerStorage{
-	
+public class DeclineNotificationStorage extends ServerStorage {
+
 	public DeclineNotificationStorage() {
 		super();
 		System.out
 				.println("Database: Database connected by DeclineNotificationStorage");
 	}
-	
+
 	public DeclineNotification insertDeclineNotification(DeclineNotification d) {
 		try {
 			sql = "INSERT INTO declinenotification(appointmentid, recipientid, declinerid) VALUES(?, ?, ?)";
@@ -23,10 +24,11 @@ public class DeclineNotificationStorage extends ServerStorage{
 			pstmt.executeUpdate();
 			d.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: DeclineNotification inserted");
+			System.out.println("Database: DeclineNotification inserted done");
 			return d;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: DeclineNotification inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -40,9 +42,11 @@ public class DeclineNotificationStorage extends ServerStorage{
 			pstmt.setInt(3, d.getDecliner().getId());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: DeclineNotification updated done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: DeclineNotification updated failed!!!!!!");
 			return true;
 		}
 	}
@@ -52,9 +56,11 @@ public class DeclineNotificationStorage extends ServerStorage{
 			sql = "DELETE FROM declinenotification WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: DeclineNotification deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: DeclineNotification deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -67,9 +73,12 @@ public class DeclineNotificationStorage extends ServerStorage{
 			while (rs.next()) {
 				list.add(this.setDeclineNotification(rs));
 			}
+			System.out.println("Database: DeclineNotification gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: DeclineNotification deleted failed!!!!!!");
+
 			return null;
 		}
 	}
@@ -79,11 +88,36 @@ public class DeclineNotificationStorage extends ServerStorage{
 			sql = "SELECT * FROM declinenotification WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: DeclineNotification gotten done");
 				return this.setDeclineNotification(rs);
-			} else
+			} else {
+				System.out
+						.println("FAIL: Database: DeclineNotification deleted failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: DeclineNotification deleted failed!!!!!!");
+
+			return null;
+		}
+	}
+
+	public ArrayList<DeclineNotification> getDeclineNotificationByRecipient(
+			Person p) {
+		try {
+			sql = "SELECT * FROM declinenotification WHERE recipientid = "
+					+ p.getId();
+			rs = stmt.executeQuery(sql);
+			ArrayList<DeclineNotification> list = new ArrayList<DeclineNotification>();
+			while (rs.next()) {
+				list.add(this.setDeclineNotification(rs));
+			}
+			System.out.println("Database: DeclineNotification gotten");
+			return list;
+		} catch (SQLException e) {
+			System.out
+					.println("FAIL: Database: DeclineNotification gotten fail!!!!!!");
 			return null;
 		}
 	}

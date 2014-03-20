@@ -17,7 +17,7 @@ public class AppointmentStorage extends ServerStorage {
 		System.out
 				.println("Database: Database connected by AppointmentStorage");
 	}
-	
+
 	public Appointment insertAppointment(Appointment a) {
 		try {
 			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid, creatorid) "
@@ -58,23 +58,12 @@ public class AppointmentStorage extends ServerStorage {
 				}
 			}
 			con.commit();
-			System.out.println("Database: Appointment inserted");
+			System.out.println("Database: Appointment inserted done");
 			return a;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: Appointment inserted failed!!!!!!");
 			return null;
-		}
-	}
-
-	public boolean deleteAppointmentById(int id) {
-		try {
-			sql = "DELETE FROM appointment WHERE id = " + id;
-			stmt.execute(sql);
-			con.commit();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
 		}
 	}
 
@@ -165,13 +154,30 @@ public class AppointmentStorage extends ServerStorage {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out
+						.println("FAIL: Database: Appointment updated failed!!!!!!");
 				return false;
 			}
+			System.out.println("Database: Appointment updated done");
 			con.commit();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: Appointment updated failed!!!!!!");
+			return false;
+		}
+	}
+
+	public boolean deleteAppointmentById(int id) {
+		try {
+			sql = "DELETE FROM appointment WHERE id = " + id;
+			stmt.execute(sql);
+			con.commit();
+			System.out.println("Database: Appointment deleted done");
+			return true;
+		} catch (SQLException e) {
+			System.out
+					.println("FAIL: Database: Appointment deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -184,9 +190,11 @@ public class AppointmentStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
+			System.out.println("Database: Appointment gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: Appointment gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -196,11 +204,15 @@ public class AppointmentStorage extends ServerStorage {
 			sql = "SELECT * FROM appointment WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Appointment gotten done");
 				return this.setAppointment(rs);
-			}
-			else return null;
+			} else
+				System.out
+						.println("FAIL: Database: Appointment gotten failed!!!!!!");
+			return null;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: Appointment gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -216,9 +228,11 @@ public class AppointmentStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
+			System.out.println("Database: Appointment gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out
+					.println("FAIL: Database: Appointment gotten failed!!!!!!");
 			return null;
 		}
 	}
@@ -231,8 +245,11 @@ public class AppointmentStorage extends ServerStorage {
 			else if (p instanceof Group)
 				sql = "SELECT * FROM appointment_participant WHERE meetinggroupid = "
 						+ ((Group) p).getId();
-			else
+			else {
+				System.out
+						.println("FAIL: Database: Appointment gotten failed!!!!!!");
 				return null;
+			}
 			rs = stmt.executeQuery(sql);
 			ArrayList<Integer> listId = new ArrayList<Integer>();
 			while (rs.next()) {
@@ -245,9 +262,10 @@ public class AppointmentStorage extends ServerStorage {
 				if (rs.next())
 					listAppointment.add(this.setAppointment(rs));
 			}
+			System.out.println("Database: Appointment gotten done");
 			return listAppointment;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Appointment gotten failed!!!!!!");
 			return null;
 		}
 	}
