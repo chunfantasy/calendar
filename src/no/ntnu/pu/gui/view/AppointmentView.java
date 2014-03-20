@@ -40,7 +40,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public AppointmentView(Appointment appointment){
 
-        boolean isEdited = true;
         frame = new JFrame("Endre avtale");
         participantListModel = new DefaultListModel<Participant>();
         ArrayList<Person> allParticipant = PersonControl.getAll();
@@ -54,8 +53,8 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     }
 
     public AppointmentView(){
-        boolean isEdited = false;
         frame = new JFrame("Legg til ny avtale");
+        participantListModel = new DefaultListModel<Participant>();
 
         makeAndShowGUI(false);
     }
@@ -70,7 +69,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         addRoomView = new AddRoom().createContentPane();
         addParticipantView = new AddParticipant().createContentPane();
         externalView = new AddExternalParticipant().createContentPane();
-        appointmentView = createContentPane(false);
+        appointmentView = createContentPane(editing);
         appointmentView.setPreferredSize(new Dimension(400, 300));
 
         mainButton = new JToggleButton("Vis avtale");
@@ -440,6 +439,12 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 startMinCB.setSelectedIndex(endMinCB.getSelectedIndex());
             }
         }
+        if (e.getSource() == removeButton){
+            if (participantList.getSelectedValue() != null){
+                participantListModel.removeElementAt(participantList.getSelectedIndex());
+            }
+        }
+
 
 
 
@@ -473,15 +478,19 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     }
 
 
+//    public static void main(String[] args){
+//        Appointment ap = new Appointment();
+//        ap.setCreator(new Person("Hei"));
+//        ap.addParticipant(new Person("Per"));
+//        ap.addParticipant(new Person("Haakon"));
+//        ap.addParticipant(new Person("Chun"));
+//        ap.addParticipant(new Person("Anders"));
+//        ap.addParticipant(new Person("Petter"));
+//        new AppointmentView(ap);
+//    }
+
     public static void main(String[] args){
-        Appointment ap = new Appointment();
-        ap.setCreator(new Person("Hei"));
-        ap.addParticipant(new Person("Per"));
-        ap.addParticipant(new Person("Haakon"));
-        ap.addParticipant(new Person("Chun"));
-        ap.addParticipant(new Person("Anders"));
-        ap.addParticipant(new Person("Petter"));
-        new AppointmentView(ap);
+        new AppointmentView();
     }
 
     public Appointment getModel(){

@@ -5,9 +5,7 @@ import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.storage.AppointmentStorage;
-import no.ntnu.pu.storage.ServerStorage;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,5 +42,14 @@ public class CalendarControl {
 	public static void updateAppointment(Appointment appointment) {
 		storage.updateAppointment(appointment);
 	}
+
+    public static Calendar getCalendarByPerson(Person person){
+        Calendar calendar = new Calendar();
+        ArrayList<Appointment> appointments = storage.getAppointmentByParticipant(person);
+        for(Appointment appointment : appointments){
+            calendar.addAppointment(appointment);
+        }
+        return calendar;
+    }
 
 }

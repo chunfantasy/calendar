@@ -51,7 +51,7 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
         }else if(value instanceof Appointment){
             Appointment app = (Appointment) value;
-            setText(app.getTitle()+ " klokken "+app.getStartTime());
+            setText(app.getTitle()+ " klokken "+app.getStartTime().getHours()+":"+app.getStartTime().getMinutes()+" den "+ app.getStartTime().getDay()+"."+app.getStartTime().getMonth());
             setCellBorder(APPOINTMENT_COLOR,cellHasFocus);
         }
 

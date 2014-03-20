@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class AddExternalParticipant extends JPanel implements ActionListener {
     private JTextField nameField, emailField;
     private JButton inviteButton;
-    private JLabel nameLabel, emailLabel;
+    private JLabel nameLabel, emailLabel, sentLabel;
     private JPanel totalGUI;
     private boolean emailBackground, nameBackground;
 
@@ -55,6 +55,7 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getSource() == nameField){
+                    sentLabel.setVisible(false);
                     if (nameBackground){
                         nameField.setBackground(new JTextField().getBackground());
                         nameBackground = false;
@@ -84,6 +85,7 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getSource() == emailField){
+                    sentLabel.setVisible(false);
                     if (emailBackground){
                         emailField.setBackground(new JTextField().getBackground());
                         emailBackground = false;
@@ -99,11 +101,15 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
         inviteButton.addActionListener(this);
         inviteButton.setFocusable(false);
 
-        setupGBC(1, 0, 0, gbc, nameLabel, false);
-        setupGBC(2, 1, 0, gbc, nameField, true);
-        setupGBC(1, 0, 1, gbc, emailLabel, false);
-        setupGBC(2, 1, 1, gbc, emailField, true);
-        setupGBC(1, 1, 2, gbc, inviteButton, true);
+        sentLabel = new JLabel();
+        sentLabel.setVisible(false);
+
+        setupGBC(2, 0, 0, gbc, sentLabel, false);
+        setupGBC(1, 0, 1, gbc, nameLabel, false);
+        setupGBC(2, 1, 1, gbc, nameField, true);
+        setupGBC(1, 0, 2, gbc, emailLabel, false);
+        setupGBC(2, 1, 2, gbc, emailField, true);
+        setupGBC(1, 1, 3, gbc, inviteButton, true);
 
         totalGUI.setPreferredSize(new Dimension(400, 300));
         return totalGUI;
@@ -126,8 +132,12 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
         EmailValidator ev = new EmailValidator();
         if (e.getSource() == emailField){
             if (nameField.getText().length() > 0 && ev.validate(emailField.getText().trim())){
+                System.out.println("hallo");
                 PersonControl.insertPerson(new Person(nameField.getText()));
                 // todo: legg person til i liste
+                new SendMail(new Email("Gigakalender", emailField.getText(), "Invitasjon til party", "Hei " + nameField.getText() + "!\nDu er herved invitert til et møte i lag med oss hos i Gruppe 12"));
+                sentLabel.setText("Mail ble sendt til " + nameField.getText() + " : " + emailField.getText());
+                sentLabel.setVisible(true);
             }
             if (!ev.validate(emailField.getText().trim())){
                 emailField.setBackground(new Color(250, 0, 0));
@@ -144,6 +154,14 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
             if (!ev.validate(emailField.getText().trim())){
                 emailField.setBackground(new Color(250, 0, 0));
                 emailBackground = true;
+            }
+            if (nameField.getText().length() > 0 && ev.validate(emailField.getText().trim())){
+                System.out.println("hallo");
+                PersonControl.insertPerson(new Person(nameField.getText()));
+                // todo: legg person til i liste
+                new SendMail(new Email("Gigakalender", emailField.getText(), "Invitasjon til party", "Hei " + nameField.getText() + "!\nDu er herved invitert til et møte i lag med oss hos i Gruppe 12"));
+                sentLabel.setText("Mail ble sendt til " + nameField.getText() + " : " + emailField.getText());
+                sentLabel.setVisible(true);
             }
         }
 

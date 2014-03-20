@@ -1,12 +1,13 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.CalendarControl;
-import no.ntnu.pu.model.Calendar;
+import no.ntnu.pu.model.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 public class MainView {
     private JPanel container, calendarView, notificationView, meetingsView;
@@ -79,6 +80,7 @@ public class MainView {
     private void showWeek(){
         monthView.setVisible(false);
         weekView.setVisible(true);
+
     }
 
     private GridBagConstraints GBC (GridBagConstraints c, int x, int y){
@@ -88,6 +90,7 @@ public class MainView {
     }
 
     private class ButtonListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Object s = e.getSource();
@@ -103,11 +106,6 @@ public class MainView {
                 monthButton.setEnabled(true);
             }
         }
-    }
-
-    public static void main(String args[]){
-        CalendarControl.setModel(new Calendar());
-        new MainView();
     }
 
 }
