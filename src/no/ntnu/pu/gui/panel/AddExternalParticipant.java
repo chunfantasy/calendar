@@ -45,6 +45,13 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
         nameField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
+                if (e.getSource() == nameField){
+                    sentLabel.setVisible(false);
+                    if (nameBackground){
+                        nameField.setBackground(new JTextField().getBackground());
+                        nameBackground = false;
+                    }
+                }
             }
 
             @Override
@@ -54,13 +61,7 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getSource() == nameField){
-                    sentLabel.setVisible(false);
-                    if (nameBackground){
-                        nameField.setBackground(new JTextField().getBackground());
-                        nameBackground = false;
-                    }
-                }
+
             }
         });
         nameLabel = new JLabel("Navn ");
@@ -79,11 +80,6 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
 
             @Override
             public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
                 if (e.getSource() == emailField){
                     sentLabel.setVisible(false);
                     if (emailBackground){
@@ -91,6 +87,10 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
                         emailBackground = false;
                     }
                 }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
             }
         });
 
@@ -131,14 +131,13 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         EmailValidator ev = new EmailValidator();
         if (e.getSource() == emailField){
-            if (nameField.getText().length() > 0 && ev.validate(emailField.getText().trim())){
-                System.out.println("hallo");
-                PersonControl.insertPerson(new Person(nameField.getText()));
-                // todo: legg person til i liste
-                new SendMail(new Email("Gigakalender", emailField.getText(), "Invitasjon til party", "Hei " + nameField.getText() + "!\nDu er herved invitert til et møte i lag med oss hos i Gruppe 12"));
-                sentLabel.setText("Mail ble sendt til " + nameField.getText() + " : " + emailField.getText());
-                sentLabel.setVisible(true);
-            }
+            inviteButton.doClick();
+//            if (nameField.getText().length() > 0 && ev.validate(emailField.getText().trim())){
+            // todo: legg person til i liste
+//                new SendMail(new Email("Gigakalender", emailField.getText(), "Invitasjon til party", "Hei " + nameField.getText() + "!\nDu er herved invitert til et møte i lag med oss hos i Gruppe 12"));
+//                sentLabel.setText("Mail ble sendt til " + nameField.getText() + " : " + emailField.getText());
+//                sentLabel.setVisible(true);
+//            }
             if (!ev.validate(emailField.getText().trim())){
                 emailField.setBackground(new Color(250, 0, 0));
                 emailBackground = true;
@@ -156,8 +155,6 @@ public class AddExternalParticipant extends JPanel implements ActionListener {
                 emailBackground = true;
             }
             if (nameField.getText().length() > 0 && ev.validate(emailField.getText().trim())){
-                System.out.println("hallo");
-                PersonControl.insertPerson(new Person(nameField.getText()));
                 // todo: legg person til i liste
                 new SendMail(new Email("Gigakalender", emailField.getText(), "Invitasjon til party", "Hei " + nameField.getText() + "!\nDu er herved invitert til et møte i lag med oss hos i Gruppe 12"));
                 sentLabel.setText("Mail ble sendt til " + nameField.getText() + " : " + emailField.getText());

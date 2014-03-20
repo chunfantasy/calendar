@@ -1,6 +1,5 @@
 package no.ntnu.pu.gui.view;
 
-import javafx.scene.PerspectiveCamera;
 import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.model.*;
@@ -11,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Date;
 
 public class MainView {
     private JPanel container, calendarView, notificationView, meetingsView;
@@ -137,7 +135,7 @@ public class MainView {
             if(e.getStateChange() == ItemEvent.SELECTED){
                 System.out.print(((Person) e.getItem()).getId());
                 PersonControl.setModel((Person) e.getItem());
-                //CalendarControl.refresh();
+                CalendarControl.refresh();
             }
         }
     }

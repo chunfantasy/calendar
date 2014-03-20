@@ -49,6 +49,5 @@ public class PersonControl {
 
     public static void setModel(Person model) {
         PersonControl.model = model;
-        CalendarControl.setModel(model.getCalendar());
     }
 }
