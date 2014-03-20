@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Date;
 
 public class MainView {
@@ -54,7 +56,7 @@ public class MainView {
         weekButton.addActionListener(new ButtonListener());
         newAppointmentButton.addActionListener(new ButtonListener());
         refreshButton.addActionListener(new ButtonListener());
-        dropdown.addActionListener(new ButtonListener());
+        dropdown.addItemListener(new DropDownListener());
 
         calendarView.add(monthView);
         calendarView.add(weekView);
@@ -124,8 +126,16 @@ public class MainView {
                 monthButton.setEnabled(true);
             }else if(s.equals(refreshButton)){
                 CalendarControl.refresh();
-            }else if(s.equals(dropdown)){
-                PersonControl.setModel((Person) dropdown.getSelectedItem());
+            }
+        }
+    }
+
+    private class DropDownListener implements ItemListener{
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if(e.getStateChange() == ItemEvent.SELECTED){
+                PersonControl.setModel((Person) e.getItem());
             }
         }
     }

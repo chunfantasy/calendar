@@ -35,6 +35,7 @@ public class MeetingsView extends SidePanel{
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("Changed"+evt);
         if(evt.getPropertyName()== Calendar.APPOINTMENT_PROPERTY){
             if(evt.getNewValue() instanceof Appointment){
                 addMeeting((Appointment) evt.getNewValue());

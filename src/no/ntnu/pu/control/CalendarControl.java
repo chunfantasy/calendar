@@ -11,11 +11,8 @@ import java.util.List;
 
 public class CalendarControl {
 	private static AppointmentStorage storage = new AppointmentStorage();
-    private static Calendar model;
 
-    public static Calendar getModel() {
-        return model;
-    }
+    private static Calendar model;
 
     public static ArrayList<Appointment> getAll(){
         return storage.getAll();
@@ -29,19 +26,24 @@ public class CalendarControl {
         return model.getNotifications();
     }
 
-    public static void setModel(Calendar model) {
-        CalendarControl.model = model;
-    }
-	
-	public static void addAppointment(Appointment appointment) {
+  	public static void addAppointment(Appointment appointment) {
 		storage.insertAppointment(appointment);
 	}
-	public static void deleteAppointment(Appointment appointment) {
+
+    public static void deleteAppointment(Appointment appointment) {
 		storage.deleteAppointmentById(appointment.getId());
 	}
-	public static void updateAppointment(Appointment appointment) {
+    public static void updateAppointment(Appointment appointment) {
 		storage.updateAppointment(appointment);
 	}
+    public static void setModel(Calendar model) {
+        CalendarControl.model = model;
+        refresh();
+    }
+
+    public static Calendar getModel() {
+        return model;
+    }
 
     public static Calendar getCalendarByPerson(Person person){
         Calendar calendar = new Calendar();
@@ -55,6 +57,22 @@ public class CalendarControl {
     }
 
     public static void refresh(){
-        model = getCalendarByPerson(PersonControl.getModel());
+        System.out.println("Refreshing");
+        for(Appointment a : model.getAppointments()){
+            System.out.println("Removed" + a.getTitle());
+            model.removeAppointment(a);
+        }
+        System.out.println(storage.getAppointmentByParticipant(PersonControl.getModel()));
+
+        for(Appointment a : storage.getAppointmentByParticipant(PersonControl.getModel())){
+            System.out.println("Added" + a.getTitle());
+            model.addAppointment(a);
+        }
+        for(Notification n: model.getNotifications()){
+            model.removeNotification(n);
+        }
+        for(Notification n : NotificationControl.getNotificationsByParticipant(PersonControl.getModel())){
+            model.addNotification(n);
+        }
     }
 }

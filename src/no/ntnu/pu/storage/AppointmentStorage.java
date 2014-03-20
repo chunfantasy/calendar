@@ -251,7 +251,7 @@ public class AppointmentStorage extends ServerStorage {
 				return null;
 			}
 			rs = stmt.executeQuery(sql);
-			ArrayList<Integer> listId = new ArrayList<Integer>();
+            ArrayList<Integer> listId = new ArrayList<Integer>();
 			while (rs.next()) {
 				listId.add(rs.getInt("appointmentid"));
 			}

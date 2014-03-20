@@ -73,7 +73,6 @@ public class StorageTest {
 
 		g = groupStorage.getGroupById(1);
 
-		p1.setEmail("email111");
 		personStorage.updatePerson(p1);
 
 		Room r = new Room("P15");
