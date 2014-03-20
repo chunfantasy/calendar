@@ -34,10 +34,10 @@ public class GroupStorage extends ServerStorage {
 				}
 			}
 			con.commit();
-			System.out.println("Database: Group inserted");
+			System.out.println("Database: Group inserted done");
 			return g;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Group inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -93,6 +93,7 @@ public class GroupStorage extends ServerStorage {
 				e.printStackTrace();
 				return false;
 			}
+			System.out.println("Database: Group updated done");
 			con.commit();
 			return true;
 		} catch (SQLException e) {

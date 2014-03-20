@@ -23,10 +23,10 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			c.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: ChangeNotification inserted");
+			System.out.println("Database: ChangeNotification inserted done");
 			return c;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: ChangeNotification inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -40,6 +40,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.setString(3, c.getChangedProperties().toString());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: ChangeNotification updated done");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -25,10 +25,10 @@ public class PersonStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: Person inserted");
+			System.out.println("Database: Person inserted done");
 			return p;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Person inserted failed!!!!!!");
 			return null;
 		}
 	}

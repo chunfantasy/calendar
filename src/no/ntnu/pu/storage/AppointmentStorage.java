@@ -58,10 +58,10 @@ public class AppointmentStorage extends ServerStorage {
 				}
 			}
 			con.commit();
-			System.out.println("Database: Appointment inserted");
+			System.out.println("Database: Appointment inserted done");
 			return a;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Appointment inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -71,6 +71,7 @@ public class AppointmentStorage extends ServerStorage {
 			sql = "DELETE FROM appointment WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Appointment updated done");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
