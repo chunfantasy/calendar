@@ -59,15 +59,11 @@ public abstract class SidePanel extends JPanel implements PropertyChangeListener
                 if(index >= 0){
                     Object o = list.getModel().getElementAt(index);
 
-                    //Open the MeetingPanel
-                    //TODO: Display the correct meeting.
-                    MeetingPanel mp = new MeetingPanel();
+                    //Open the AppointmentView
                     if(o instanceof Appointment){
-                        System.out.println(((Appointment) o).getTitle());
-                        //mp.setModel(o);
+                        new AppointmentView((Appointment) o);
                     }else{
-                        //mp.setModel(((Notification) o).getAppointment());
-                        System.out.println(((Notification) o).getAppointment().getTitle());
+                        new AppointmentView(((Notification) o).getAppointment());
                     }
                 }
             }

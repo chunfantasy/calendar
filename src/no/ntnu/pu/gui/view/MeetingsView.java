@@ -16,6 +16,7 @@ public class MeetingsView extends SidePanel{
 
     public MeetingsView(){
         super();
+        CalendarControl.getModel().addPropertyChangeListener(this);
         this.setBorder(meetingsBorder);
 
         for(Appointment a: CalendarControl.getAppointments()){
@@ -24,6 +25,7 @@ public class MeetingsView extends SidePanel{
    }
 
     public void addMeeting(Appointment meeting){
+        System.out.print(meeting);
         model.addElement(meeting);
     }
 
@@ -34,7 +36,7 @@ public class MeetingsView extends SidePanel{
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(evt.getPropertyName()== Calendar.APPOINTMENT_PROPERTY){
-            if(evt.getNewValue() instanceof Notification){
+            if(evt.getNewValue() instanceof Appointment){
                 addMeeting((Appointment) evt.getNewValue());
             }else{
                 removeMeeting((Appointment) evt.getOldValue());
