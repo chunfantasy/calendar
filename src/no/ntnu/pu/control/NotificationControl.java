@@ -19,24 +19,29 @@ public class NotificationControl{
     private static InvitationStorage invitationStorage = new InvitationStorage();
 
 
+    public static void addAlarm(Alarm a){
+        alarmStorage.insertAlarm(a);
+    }
+
     public static void sendInvitation(Appointment a){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
-            p.getCalendar().addNotification(new Invitation(a.getCreator(), p, a));
+            Invitation in = new Invitation(a.getCreator(), p, a);
+            invitationStorage.insertInvitation(in);
         }
     }
 
-	public void sendChangeNotification(Appointment a, ArrayList changedProp){
+	public static void sendChangeNotification(Appointment a, ArrayList changedProp){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
-            p.getCalendar().addNotification(new ChangeNotification(changedProp,p, a));
+            changeNotificationStorage.insertChangeNotification(new ChangeNotification(changedProp,p, a));
         }
 	}
 
-    public void sendDeclineNotification(Appointment a, Person decliner){
+    public static void sendDeclineNotification(Appointment a, Person decliner){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
-            p.getCalendar().addNotification(new DeclineNotification(decliner, p, a));
+            declineNotificationStorage.insertDeclineNotification(new DeclineNotification(decliner, p, a));
         }
     }
 

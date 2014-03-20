@@ -3,6 +3,7 @@ package no.ntnu.pu.gui.view;
 
 import com.sun.swing.internal.plaf.synth.resources.synth_sv;
 import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.gui.panel.AddExternalParticipant;
 import no.ntnu.pu.gui.panel.AddParticipant;
@@ -443,6 +444,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             CalendarControl.addAppointment(model);
             System.out.println(model.getTitle());
             System.out.println(model.getParticipants());
+            NotificationControl.sendInvitation(model);
             frame.dispose();
 
 //            model.setStartTime(startField.getText());
