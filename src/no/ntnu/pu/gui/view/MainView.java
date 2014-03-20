@@ -54,7 +54,7 @@ public class MainView {
         weekButton.addActionListener(new ButtonListener());
         newAppointmentButton.addActionListener(new ButtonListener());
         refreshButton.addActionListener(new ButtonListener());
-
+        dropdown.addActionListener(new ButtonListener());
 
         calendarView.add(monthView);
         calendarView.add(weekView);
@@ -124,6 +124,8 @@ public class MainView {
                 monthButton.setEnabled(true);
             }else if(s.equals(refreshButton)){
                 CalendarControl.refresh();
+            }else if(s.equals(dropdown)){
+                PersonControl.setModel((Person) dropdown.getSelectedItem());
             }
         }
     }

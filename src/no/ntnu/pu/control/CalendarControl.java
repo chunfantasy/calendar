@@ -43,7 +43,7 @@ public class CalendarControl {
 		storage.updateAppointment(appointment);
 	}
 
-    public static void getCalendarByPerson(Person person){
+    public static Calendar getCalendarByPerson(Person person){
         Calendar calendar = new Calendar();
         for(Appointment a : storage.getAppointmentByParticipant(person)){
             calendar.addAppointment(a);
@@ -51,17 +51,10 @@ public class CalendarControl {
         for(Notification n : NotificationControl.getNotificationsByParticipant(person)){
             calendar.addNotification(n);
         }
-        model = calendar;
+        return calendar;
     }
 
     public static void refresh(){
-        for(Appointment a: model.getAppointments())
-            model.removeAppointment(a);
-        for(Notification n: model.getNotifications())
-            model.removeNotification(n);
-        for(Appointment a : getAll())
-            model.addAppointment(a);
-        for(Notification n : NotificationControl.getNotificationsByParticipant())
-            model.addNotification(n);
+        model = getCalendarByPerson(PersonControl.getModel());
     }
 }
