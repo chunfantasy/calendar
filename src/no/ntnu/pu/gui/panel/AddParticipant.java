@@ -199,6 +199,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
             }
         }
         ArrayList<Group> grp = GroupControl.getAll();
+        System.out.print(grp);
         for(int i = 0; i< grp.size(); i++){
             Group[] obj = {grp.get(i)};
             groupTableModel.addRow(obj);

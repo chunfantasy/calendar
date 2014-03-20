@@ -150,12 +150,14 @@ public class GroupStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
+                System.out.println(11111);
 				list.add(this.setGroup(rs));
 			}
 			con.close();
 			System.out.println("Database: Group gotten done");
 			return list;
 		} catch (SQLException e) {
+            e.printStackTrace();
 			System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 			return null;
 		}
