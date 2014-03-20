@@ -100,7 +100,7 @@ public class InvitationStorage extends ServerStorage {
 		}
 	}
 
-	public ArrayList<Invitation> getByRecipient(Person p) {
+	public ArrayList<Invitation> getInvitationByRecipient(Person p) {
 		try {
 			sql = "SELECT * FROM invitation WHERE recipientid = " + p.getId();
 			rs = stmt.executeQuery(sql);
