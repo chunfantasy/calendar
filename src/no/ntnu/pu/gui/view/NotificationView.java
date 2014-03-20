@@ -16,6 +16,7 @@ public class NotificationView extends SidePanel{
 
     public NotificationView(){
         super();
+        CalendarControl.getModel().addPropertyChangeListener(this);
         this.setBorder(notificationBorder);
 
         for(Notification n: CalendarControl.getNotifications()){

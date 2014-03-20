@@ -106,4 +106,5 @@ public class Appointment {
 	public void removeParticipant(Participant p) {
 		this.participants.remove(p);
 	}
+
 }
