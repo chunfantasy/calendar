@@ -1,5 +1,6 @@
 package no.ntnu.pu.storage;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -15,11 +16,13 @@ public class AppointmentStorage extends ServerStorage {
 	public AppointmentStorage() {
 		super();
 		System.out
-				.println("Database: Database connected by AppointmentStorage");
+				.println("Database: Database will be connected by AppointmentStorage");
 	}
 
 	public Appointment insertAppointment(Appointment a) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid, creatorid) "
 					+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
@@ -58,6 +61,7 @@ public class AppointmentStorage extends ServerStorage {
 				}
 			}
 			con.commit();
+			con.close();
 			System.out.println("Database: Appointment inserted done");
 			return a;
 		} catch (SQLException e) {
@@ -69,6 +73,8 @@ public class AppointmentStorage extends ServerStorage {
 
 	public boolean updateAppointment(Appointment a) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
 					+ "WHERE id = " + a.getId();
 			pstmt = con.prepareStatement(sql);
@@ -160,6 +166,7 @@ public class AppointmentStorage extends ServerStorage {
 			}
 			System.out.println("Database: Appointment updated done");
 			con.commit();
+			con.close();
 			return true;
 		} catch (SQLException e) {
 			System.out
@@ -170,9 +177,12 @@ public class AppointmentStorage extends ServerStorage {
 
 	public boolean deleteAppointmentById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "DELETE FROM appointment WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			con.close();
 			System.out.println("Database: Appointment deleted done");
 			return true;
 		} catch (SQLException e) {
@@ -184,12 +194,15 @@ public class AppointmentStorage extends ServerStorage {
 
 	public ArrayList<Appointment> getAll() {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM appointment";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Appointment> list = new ArrayList<Appointment>();
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
+			con.close();
 			System.out.println("Database: Appointment gotten done");
 			return list;
 		} catch (SQLException e) {
@@ -201,12 +214,17 @@ public class AppointmentStorage extends ServerStorage {
 
 	public Appointment getAppointmentById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM appointment WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				Appointment appointment = this.setAppointment(rs);
+				con.close();
 				System.out.println("Database: Appointment gotten done");
-				return this.setAppointment(rs);
+				return appointment;
 			} else
+				con.close();
 				System.out
 						.println("FAIL: Database: Appointment gotten failed!!!!!!");
 			return null;
@@ -220,6 +238,8 @@ public class AppointmentStorage extends ServerStorage {
 	public ArrayList<Appointment> getAppointmentByTime(Date startTime,
 			Date endTime) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM appointment WHERE starttime >= '"
 					+ new Timestamp(startTime.getTime()) + "' AND endtime <= '"
 					+ new Timestamp(endTime.getTime()) + "'";
@@ -228,6 +248,7 @@ public class AppointmentStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setAppointment(rs));
 			}
+			con.close();
 			System.out.println("Database: Appointment gotten done");
 			return list;
 		} catch (SQLException e) {
@@ -239,6 +260,8 @@ public class AppointmentStorage extends ServerStorage {
 
 	public ArrayList<Appointment> getAppointmentByParticipant(Participant p) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			if (p instanceof Person)
 				sql = "SELECT * FROM appointment_participant WHERE personid = "
 						+ ((Person) p).getId();
@@ -262,6 +285,7 @@ public class AppointmentStorage extends ServerStorage {
 				if (rs.next())
 					listAppointment.add(this.setAppointment(rs));
 			}
+			con.close();
 			System.out.println("Database: Appointment gotten done");
 			return listAppointment;
 		} catch (SQLException e) {

@@ -1,5 +1,6 @@
 package no.ntnu.pu.storage;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -11,11 +12,13 @@ public class AlarmStorage extends ServerStorage {
 
 	public AlarmStorage() {
 		super();
-		System.out.println("Database: Database connected by AlarmStorage");
+		System.out.println("Database: Database will be connected by AlarmStorage");
 	}
 
 	public Alarm insertAlarm(Alarm a) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "INSERT INTO alarm(appointmentid, recipientid, date) VALUES(?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, a.getAppointment().getId());
@@ -24,6 +27,7 @@ public class AlarmStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			a.setId(this.getLastId());
 			con.commit();
+			con.close();
 			System.out.println("Database: Alarm inserted done");
 			return a;
 		} catch (SQLException e) {
@@ -34,6 +38,8 @@ public class AlarmStorage extends ServerStorage {
 
 	public boolean updateAlarm(Alarm a) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "UPDATE alarm SET appointmentid = ?, recipientid =?, date = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, a.getAppointment().getId());
@@ -41,6 +47,7 @@ public class AlarmStorage extends ServerStorage {
 			pstmt.setTimestamp(3, new Timestamp(a.getTime().getTime()));
 			pstmt.executeUpdate();
 			con.commit();
+			con.close();
 			System.out.println("Database: Alarm updated done");
 			return true;
 		} catch (SQLException e) {
@@ -51,9 +58,12 @@ public class AlarmStorage extends ServerStorage {
 
 	public boolean deleteAlarmById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "DELETE FROM alarm WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			con.close();
 			System.out.println("Database: Alarm deleted done");
 			return true;
 		} catch (SQLException e) {
@@ -64,6 +74,8 @@ public class AlarmStorage extends ServerStorage {
 
 	public ArrayList<Alarm> getAll() {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM alarm";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Alarm> list = new ArrayList<Alarm>();
@@ -71,6 +83,7 @@ public class AlarmStorage extends ServerStorage {
 				list.add(this.setAlarm(rs));
 			}
 			System.out.println("Database: Alarm gotten");
+			con.close();
 			return list;
 		} catch (SQLException e) {
 			System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");
@@ -80,12 +93,17 @@ public class AlarmStorage extends ServerStorage {
 
 	public Alarm getAlarmById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM alarm WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				Alarm alarm = this.setAlarm(rs);
+				con.close();
 				System.out.println("Database: Alarm gotten");
-				return this.setAlarm(rs);
+				return alarm;
 			} else
+				con.close();
 				System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");
 			return null;
 		} catch (SQLException e) {
@@ -96,12 +114,15 @@ public class AlarmStorage extends ServerStorage {
 
 	public ArrayList<Alarm> getAlarmByRecipient(Person p) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM alarm WHERE recipientid = " + p.getId();
 			rs = stmt.executeQuery(sql);
 			ArrayList<Alarm> list = new ArrayList<Alarm>();
 			while (rs.next()) {
 				list.add(this.setAlarm(rs));
 			}
+			con.close();
 			System.out.println("Database: Alarm gotten");
 			return list;
 		} catch (SQLException e) {

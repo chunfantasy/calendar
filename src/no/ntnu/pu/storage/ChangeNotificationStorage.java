@@ -1,5 +1,6 @@
 package no.ntnu.pu.storage;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -11,11 +12,13 @@ public class ChangeNotificationStorage extends ServerStorage {
 	public ChangeNotificationStorage() {
 		super();
 		System.out
-				.println("Database: Database connected by ChangeNotificationStorage");
+				.println("Database: Database will be connected by ChangeNotificationStorage");
 	}
 
 	public ChangeNotification insertChangeNotification(ChangeNotification c) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "INSERT INTO changenotification(appointmentid, recipientid, changedproperties) VALUES(?, ?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, c.getAppointment().getId());
@@ -24,6 +27,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			c.setId(this.getLastId());
 			con.commit();
+			con.close();
 			System.out.println("Database: ChangeNotification inserted done");
 			return c;
 		} catch (SQLException e) {
@@ -35,6 +39,8 @@ public class ChangeNotificationStorage extends ServerStorage {
 
 	public boolean updateChangeNotification(ChangeNotification c) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "UPDATE changenotification SET appointmentid = ?, recipientid =?, changedproperties = ?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, c.getAppointment().getId());
@@ -42,6 +48,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			pstmt.setString(3, c.getChangedProperties().toString());
 			pstmt.executeUpdate();
 			con.commit();
+			con.close();
 			System.out.println("Database: ChangeNotification updated done");
 			return true;
 		} catch (SQLException e) {
@@ -53,9 +60,12 @@ public class ChangeNotificationStorage extends ServerStorage {
 
 	public boolean deleteChangeNotificationById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "DELETE FROM changenotification WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			con.close();
 			System.out.println("Database: ChangeNotification deleted done");
 			return true;
 		} catch (SQLException e) {
@@ -67,12 +77,15 @@ public class ChangeNotificationStorage extends ServerStorage {
 
 	public ArrayList<ChangeNotification> getAll() {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM changenotification";
 			rs = stmt.executeQuery(sql);
 			ArrayList<ChangeNotification> list = new ArrayList<ChangeNotification>();
 			while (rs.next()) {
 				list.add(this.setChangeNotification(rs));
 			}
+			con.close();
 			System.out.println("Database: ChangeNotification gotten done");
 			return list;
 		} catch (SQLException e) {
@@ -83,12 +96,18 @@ public class ChangeNotificationStorage extends ServerStorage {
 
 	public ChangeNotification getChangeNotificationById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM changenotification WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				ChangeNotification changeNotification = this
+						.setChangeNotification(rs);
+				con.close();
 				System.out.println("Database: ChangeNotification gotten done");
-				return this.setChangeNotification(rs);
+				return changeNotification;
 			} else {
+				con.close();
 				System.out
 						.println("FAIL: Database: ChangeNotification gotten fail!!!!!!");
 				return null;
@@ -100,8 +119,11 @@ public class ChangeNotificationStorage extends ServerStorage {
 		}
 	}
 
-	public ArrayList<ChangeNotification> getChangeNotificationByRecipient(Person p) {
+	public ArrayList<ChangeNotification> getChangeNotificationByRecipient(
+			Person p) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM changenotification WHERE recipientid = "
 					+ p.getId();
 			rs = stmt.executeQuery(sql);
@@ -109,6 +131,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setChangeNotification(rs));
 			}
+			con.close();
 			System.out.println("Database: ChangeNotification gotten");
 			return list;
 		} catch (SQLException e) {
