@@ -1,6 +1,8 @@
 package no.ntnu.pu.gui.view;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +37,7 @@ public class MonthView extends CalenderView{
         panelAdd(3, 0.0, 0.0, 0, 1, calendarTableHeader, GridBagConstraints.CENTER);
 
         /**Set Border**/
-        setBorder(BorderFactory.createTitledBorder("Månedsvisning"));
+        setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),"Månedsvisning"));
 
         String[] headers = {"Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"};
         for (int i = 0; i<7; i++){

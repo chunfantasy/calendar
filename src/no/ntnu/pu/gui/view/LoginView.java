@@ -109,8 +109,7 @@ public class LoginView extends JPanel {
                 if(new String(passField.getPassword()).equals(PersonControl.getPersonByEmail(userField.getText()).getPassword())){
                     Person loggedIn = PersonControl.getPersonByEmail(userField.getText());
                     frmMain.dispose();
-                    PersonControl.setModel(loggedIn);
-                    CalendarControl.setModel(loggedIn.getCalendar());
+                    CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
                     MainView mainView = new MainView();
                 }
             }

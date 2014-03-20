@@ -1,5 +1,6 @@
 package no.ntnu.pu.storage;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -10,11 +11,14 @@ public class GroupStorage extends ServerStorage {
 
 	public GroupStorage() {
 		super();
-		System.out.println("Database: Database connected by GroupStorage");
+		System.out
+				.println("Database: Database will be connected by GroupStorage");
 	}
 
 	public Group insertGroup(Group g) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, g.getEmail());
@@ -33,6 +37,7 @@ public class GroupStorage extends ServerStorage {
 				}
 			}
 			con.commit();
+			con.close();
 			System.out.println("Database: Group inserted done");
 			return g;
 		} catch (SQLException e) {
@@ -43,6 +48,8 @@ public class GroupStorage extends ServerStorage {
 
 	public boolean updateGroup(Group g) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "UPDATE meetinggroup SET email = ?, name = ? WHERE id = "
 					+ g.getId();
 			pstmt = con.prepareStatement(sql);
@@ -93,6 +100,7 @@ public class GroupStorage extends ServerStorage {
 						.println("FAIL: Database: Group updated failed!!!!!!");
 				return false;
 			}
+			con.close();
 			System.out.println("Database: Group updated done");
 			con.commit();
 			return true;
@@ -104,9 +112,12 @@ public class GroupStorage extends ServerStorage {
 
 	public boolean deleteGroupById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "DELETE FROM meetinggroup WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			con.close();
 			System.out.println("Database: Group deleted done");
 			return true;
 		} catch (SQLException e) {
@@ -117,9 +128,12 @@ public class GroupStorage extends ServerStorage {
 
 	public boolean deleteGroupByEmail(String email) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "DELETE FROM meetinggroup WHERE email = '" + email + "'";
 			stmt.execute(sql);
 			con.commit();
+			con.close();
 			System.out.println("Database: Group deleted done");
 			return true;
 		} catch (SQLException e) {
@@ -130,12 +144,15 @@ public class GroupStorage extends ServerStorage {
 
 	public ArrayList<Group> getAll() {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM meetinggroup";
 			rs = stmt.executeQuery(sql);
 			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
+			con.close();
 			System.out.println("Database: Group gotten done");
 			return list;
 		} catch (SQLException e) {
@@ -146,12 +163,17 @@ public class GroupStorage extends ServerStorage {
 
 	public Group getGroupById(int id) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM meetinggroup WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				Group group = this.setGroup(rs);
+				con.close();
 				System.out.println("Database: Group gotten done");
-				return this.setGroup(rs);
+				return group;
 			} else {
+				con.close();
 				System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 				return null;
 			}
@@ -163,12 +185,17 @@ public class GroupStorage extends ServerStorage {
 
 	public Group getGroupByEmail(String email) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM meetinggroup WHERE email = " + email;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				Group group = this.setGroup(rs);
+				con.close();
 				System.out.println("Database: Group gotten done");
-				return this.setGroup(rs);
+				return group;
 			} else {
+				con.close();
 				System.out.println("FAIL: Database: Group gotten failed!!!!!!");
 				return null;
 			}
@@ -180,12 +207,15 @@ public class GroupStorage extends ServerStorage {
 
 	public ArrayList<Group> getGroupByName(String name) {
 		try {
+			Connection con = this.connect();
+			stmt = con.createStatement();
 			sql = "SELECT * FROM meetinggroup WHERE name = " + name;
 			rs = stmt.executeQuery(sql);
 			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
 				list.add(this.setGroup(rs));
 			}
+			con.close();
 			System.out.println("Database: Group gotten done");
 			return list;
 		} catch (SQLException e) {
