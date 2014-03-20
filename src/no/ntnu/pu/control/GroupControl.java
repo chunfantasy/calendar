@@ -9,6 +9,10 @@ public class GroupControl{
 
     public static GroupStorage serverStorage = new GroupStorage() ;
 
+    public static ArrayList<Group> getAll(){
+        return serverStorage.getAll();
+    }
+
     public static Group getGroupById(int id){
         return serverStorage.getGroupById(id);
     }

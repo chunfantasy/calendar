@@ -6,9 +6,9 @@
 .settings/*
 .idea
 calender.iml
+*.orig
 
 # Package Files #
 *.jar
 *.war
 *.ear
-/bin

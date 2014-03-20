@@ -1,18 +1,20 @@
 package no.ntnu.pu.model;
 
-public class ChangeNotification extends Notification {
-	private String[] changedProperties;
+import java.util.List;
 
-    public ChangeNotification(String[] changedProperties, Person recipient, Appointment appointment){
+public class ChangeNotification extends Notification {
+	private List<String> changedProperties;
+
+    public ChangeNotification(List<String> changedProperties, Person recipient, Appointment appointment){
         super(recipient, appointment);
         this.changedProperties = changedProperties;
     }
 
-    public void setChangedProperties(String[] changedProperties) {
+    public void setChangedProperties(List<String> changedProperties) {
         this.changedProperties = changedProperties;
     }
 
-    public String[] getChangedProperties() {
+    public List<String> getChangedProperties() {
         return changedProperties;
     }
 }

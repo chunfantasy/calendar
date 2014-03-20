@@ -2,7 +2,7 @@ package no.ntnu.pu.model;
 
 public class Room {
 
-	private int id;
+	private int id, capacity;
 	private String roomname;
 
 	public Room(String roomname) {
@@ -24,4 +24,13 @@ public class Room {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
 }

@@ -1,19 +1,27 @@
 package no.ntnu.pu.storage;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import no.ntnu.pu.model.Room;
 
 public class RoomStorage extends ServerStorage {
 
+	public RoomStorage() {
+		super();
+		System.out.println("Database: Database connected by RoomStorage");
+	}
+
 	public Room insertRoom(Room r) {
 		try {
-			sql = "INSERT INTO meetingroom(roomname) VALUES(?)";
+			sql = "INSERT INTO meetingroom(capacity, roomname) VALUES(?, ?)";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
+			pstmt.setInt(1, r.getCapacity());
+			pstmt.setString(2, r.getRoomname());
 			pstmt.executeUpdate();
 			r.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: Room inserted");
 			return r;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -23,9 +31,10 @@ public class RoomStorage extends ServerStorage {
 
 	public boolean updateRoom(Room r) {
 		try {
-			sql = "UPDATE meetingroom SET roomname = ?";
+			sql = "UPDATE meetingroom SET capacity = ?, roomname = ?";
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, r.getRoomname());
+			pstmt.setInt(1, r.getCapacity());
+			pstmt.setString(2, r.getRoomname());
 			pstmt.executeUpdate();
 			con.commit();
 			return true;
@@ -44,6 +53,21 @@ public class RoomStorage extends ServerStorage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	public ArrayList<Room> getAll() {
+		try {
+			sql = "SELECT * FROM meetingroom";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Room> list = new ArrayList<Room>();
+			while (rs.next()) {
+				list.add(this.setRoom(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

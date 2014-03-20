@@ -41,7 +41,7 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
         }else if(value instanceof ChangeNotification){
             ChangeNotification cn = (ChangeNotification) value;
-            setText(String.valueOf(cn.getChangedProperties().length)+" felt er endret i "+ cn.getAppointment().getTitle());
+            setText(String.valueOf(cn.getChangedProperties().size())+" felt er endret i "+ cn.getAppointment().getTitle());
             setCellBorder(CHANGENOTI_COLOR,cellHasFocus);
 
         }else if(value instanceof DeclineNotification){
