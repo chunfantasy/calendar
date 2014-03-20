@@ -22,7 +22,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
     private DefaultTableModel tableModel;
     private JPanel totalGUI;
     private static JFrame frame;
-    private Appointment model;
+    private static Appointment model;
     private String[] SIZES = {"5", "10", "15", "20", "50", "100", "200"};
     private String[] HEADER  = {"Romnavn", "Romkode", "Kapasitet"};
     private Object[][] data = {{new Room("Fraglejens"), "p72", 8}, {new Room("Isbjørn"), "s15", 15}, {new Room("Qalypso"), "r21", 4}};
@@ -88,7 +88,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
         // Table
         roomTable = new JTable();
-        
+
         roomTable.setModel(tableModel);
         roomTable.setShowGrid(false);
         // selection
@@ -154,6 +154,10 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
     }
 
+    public Appointment getModel(){
+        return model;
+    }
+
     public void actionPerformed(ActionEvent e) {
         // searchField - search for specific word
         if (e.getSource() == searchField){
@@ -191,7 +195,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
     public void updateModel(int value){
-            // todo
+        // todo
         if (tableModel.getRowCount() > 0){
             for(int i = tableModel.getRowCount()-1; i>-1; i--){
                 tableModel.removeRow(i);
@@ -218,7 +222,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
                 searchField.setText("Søk");
             }
         }
-        
+
         if (e.getSource() == roomTable){
             roomTable.clearSelection();
         }

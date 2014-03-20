@@ -91,14 +91,10 @@ public class StorageTest {
 		a.setMeetingRoom(r);
 		a.addParticipant(p2);
 		a.addParticipant(p3);
-		a.addParticipant(g);
 		a.setCreator(p1);
 		appointmentStorage.insertAppointment(a);
 
 		a.setTitle("comecomecome");
-		a.addParticipant(g);
-		a.addParticipant(g);
-		a.addParticipant(g);
 		a.addParticipant(p2);
 		appointmentStorage.updateAppointment(a);
 

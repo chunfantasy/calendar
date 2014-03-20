@@ -1,6 +1,8 @@
 package no.ntnu.pu.gui.view;
 
 
+import com.sun.swing.internal.plaf.synth.resources.synth_sv;
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.gui.panel.AddExternalParticipant;
 import no.ntnu.pu.gui.panel.AddParticipant;
@@ -21,6 +23,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class AppointmentView extends JPanel implements ListSelectionListener, ActionListener, FocusListener{
 
@@ -37,20 +41,20 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private JPanel totalGUI, container, addRoomView, addParticipantView, appointmentView, externalView;
     private ArrayList<Integer> thrirtyOne, thrity, twentyNine, twentyEight, hours, years;
     private ArrayList<String> minutes, months;
+    private AddParticipant addParticipant;
+    private AddRoom addRoom;
+    private boolean addPersSel, addRoomSel;
 
     public AppointmentView(Appointment appointment){
 
         frame = new JFrame("Endre avtale");
-        setModel(appointment);
         participantListModel = new DefaultListModel<Participant>();
-        ArrayList<Person> allParticipant = PersonControl.getAll();
-        ArrayList<Participant> array = appointment.getParticipants();
-        System.out.println(array);
-        for (Participant p : array){
-            participantListModel.addElement(p);
-        }
+        setModel(appointment);
+        model = appointment;
+        updateModel();
         makeAndShowGUI(true);
-
+//        if (model.getCreator() == CalendarControl.getModel());
+        checkCreator();
     }
 
     public AppointmentView(){
@@ -67,8 +71,10 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         c = new GridBagConstraints();
 
         // Different Views
-        addRoomView = new AddRoom().createContentPane();
-        addParticipantView = new AddParticipant().createContentPane();
+        addRoom = new AddRoom();
+        addRoomView = addRoom.createContentPane();
+        addParticipant = new AddParticipant();
+        addParticipantView = addParticipant.createContentPane();
         externalView = new AddExternalParticipant().createContentPane();
         appointmentView = createContentPane(editing);
         appointmentView.setPreferredSize(new Dimension(400, 300));
@@ -128,6 +134,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         frame.pack();
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
     }
 
@@ -303,6 +310,28 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         return list;
     }
 
+    public void checkCreator(){
+        roomButton.setEnabled(false);
+        externalButton.setEnabled(false);
+        participantButton.setEnabled(false);
+        removeButton.setEnabled(false);
+        saveButton.setEnabled(false);
+        deleteButton.setEnabled(false);
+        appointmentField.setEnabled(false);
+        placeField.setEnabled(false);
+        descField.setEnabled(false);
+        startDayCB.setEnabled(false);
+        startMonthCB.setEnabled(false);
+        startYearCB.setEnabled(false);
+        startHourCB.setEnabled(false);
+        startMinCB.setEnabled(false);
+        endDayCB.setEnabled(false);
+        endMonthCB.setEnabled(false);
+        endYearCB.setEnabled(false);
+        endHourCB.setEnabled(false);
+        endMinCB.setEnabled(false);
+    }
+
     private void setDropDownLists(){
         thrirtyOne = createDropDownList(1, 31);
         thrity = createDropDownList(1, 30);
@@ -320,7 +349,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         addParticipantView.setVisible(false);
         externalView.setVisible(false);
         appointmentView.setVisible(true);
-        container.setBorder(new TitledBorder("Legg til avtale"));
+        container.setBorder(new TitledBorder("Avtaleinformasjon"));
     }
 
     public void showRoom(){
@@ -355,32 +384,71 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         model = appointment;
     }
 
+    public void updateModel(){
+        ArrayList<Person> array = model.getParticipants();
+        for (Participant p : array){
+            if (!participantListModel.contains(p)){
+                participantListModel.addElement(p);
+            }
+        }
+    }
+
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == roomButton){
 //            AddRoom.createAndShowGUI(model);
+            addRoomSel = true;
             showRoom();
         }
         if (e.getSource() == participantButton){
+            addParticipant.updateModel();
+            addPersSel = true;
             showParticipant();
+
         }
         if (e.getSource() == mainButton){
+            if (addRoomSel){
+                model = addRoom.getModel();
+                addRoomSel = false;
+            }
+            if (addPersSel){
+                model = addParticipant.getModel();
+                updateModel();
+                addPersSel = false;
+            }
             showAppointment();
         }
         if (e.getSource() == externalButton){
             showExternal();
         }
         if (e.getSource() == saveButton){
-            model.setDescription("");
+            model.setDescription(descField.getText());
             model.setAddress(placeField.getText());
             model.setTitle(appointmentField.getText());
+            // personControl.getModel();
+            model.setCreator(PersonControl.getPersonById(1));
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, (Integer)startHourCB.getSelectedItem());
+            cal.set(Calendar.DAY_OF_MONTH, (Integer)startDayCB.getSelectedItem());
+            cal.set(Calendar.YEAR, (Integer)startYearCB.getSelectedItem());
+            cal.set(Calendar.MONTH, startMonthCB.getSelectedIndex());
+            Date startTime = cal.getTime();
+            cal.set(Calendar.HOUR_OF_DAY, (Integer)endHourCB.getSelectedItem());
+            cal.set(Calendar.DAY_OF_MONTH, (Integer)endDayCB.getSelectedItem());
+            cal.set(Calendar.YEAR, (Integer)endYearCB.getSelectedItem());
+            cal.set(Calendar.MONTH, endMonthCB.getSelectedIndex());
+            Date endTime = cal.getTime();
+            model.setStartTime(startTime);
+            model.setEndTime(endTime);
+            CalendarControl.addAppointment(model);
+            System.out.println(model.getTitle());
+            System.out.println(model.getParticipants());
+            frame.dispose();
+
 //            model.setStartTime(startField.getText());
 //            model.setEndTime(endField.getText());
-            model.setMeetingRoom(null);
             // setParticipants
-            for (int i = 0; i<participantListModel.getSize(); i++){
-                model.addParticipant(participantListModel.getElementAt(i));
-            }
+
         }
         if (e.getSource()== cancelButton){
             frame.dispose();
@@ -434,6 +502,13 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 startHourCB.setSelectedIndex(endHourCB.getSelectedIndex());
             }
         }
+        if (e.getSource() == startHourCB){
+            int start = (Integer)startHourCB.getSelectedItem();
+            int end = (Integer)endHourCB.getSelectedItem();
+            if (start > end){
+                endHourCB.setSelectedIndex(startHourCB.getSelectedIndex());
+            }
+        }
         if (e.getSource() == startMinCB){
             int start = (Integer)startMinCB.getSelectedIndex();
             int end = (Integer)endMinCB.getSelectedIndex();
@@ -450,17 +525,14 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         }
         if (e.getSource() == removeButton){
             if (participantList.getSelectedValue() != null){
+                model.removeParticipant(participantList.getSelectedValue());
                 participantListModel.removeElementAt(participantList.getSelectedIndex());
             }
         }
-
-
-
-
-
-
-
-
+        if (e.getSource() == deleteButton){
+            CalendarControl.deleteAppointment(model);
+            frame.dispose();
+        }
     }
 
     public void valueChanged(ListSelectionEvent e) {
@@ -482,26 +554,20 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     }
 
-    public void setEnabledButton(){
-        addRoomButton.setEnabled(true);
-        addParticipantButton.setEnabled(true);
-    }
-
+//    public static void main(String[] args){
+//        Appointment ap = new Appointment();
+//        ap.setCreator(new Person("Hei"));
+//        ap.addParticipant(new Person("Per"));
+//        ap.addParticipant(new Person("Haakon"));
+//        ap.addParticipant(new Person("Chun"));
+//        ap.addParticipant(new Person("Anders"));
+//        ap.addParticipant(new Person("Petter"));
+//        new AppointmentView(ap);
+//    }
 
     public static void main(String[] args){
-        Appointment ap = new Appointment();
-        ap.setCreator(new Person("Hei"));
-        ap.addParticipant(new Person("Per"));
-        ap.addParticipant(new Person("Haakon"));
-        ap.addParticipant(new Person("Chun"));
-        ap.addParticipant(new Person("Anders"));
-        ap.addParticipant(new Person("Petter"));
-        new AppointmentView(ap);
+        new AppointmentView();
     }
-
-//    public static void main(String[] args){
-//        new AppointmentView();
-//    }
 
     public Appointment getModel(){
         return this.model;

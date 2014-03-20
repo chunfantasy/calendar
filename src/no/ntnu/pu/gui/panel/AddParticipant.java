@@ -1,7 +1,13 @@
 package no.ntnu.pu.gui.panel;
 
+import no.ntnu.pu.control.GroupControl;
+import no.ntnu.pu.control.PersonControl;
+import no.ntnu.pu.gui.view.AppointmentView;
+import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.Group;
 import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
+import no.ntnu.pu.storage.PersonStorage;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -20,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 
 public class AddParticipant extends JPanel implements ActionListener, ListSelectionListener, FocusListener {
@@ -31,6 +38,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
     private ButtonGroup buttonGroup;
     private DefaultTableModel personTableModel, groupTableModel;
     private static JFrame frame;
+    private static Appointment model;
     private JPanel totalGUI;
     private Object[][] Personer = {{"Bernt"}, {"Gerd"}, {"Gjørdis"}, {"Olga"}, {"Per Hege"}, {"Arnold"}, {"Ludvig"}}, Grupper = {{"Juventus"}, {"Inter"}, {"Napoli"}, {"Milan"}, {"Roma"}};
     private String[] HEADER = {"Navn"};
@@ -43,6 +51,8 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         GridBagConstraints gbc;
         totalGUI.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
+
+        model = AppointmentView.getAppointment();
 
         // Look&Feel
         try{ UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
@@ -60,6 +70,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
                 return false;
             }
         };
+        updateModel();
 
         // groupTableModel
         groupTableModel = new DefaultTableModel(Grupper, HEADER){
@@ -67,6 +78,7 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
                 return false;
             }
         };
+        updateGroupModel();
 
         // Buttons
         addButton = new JButton("Legg til");
@@ -86,7 +98,6 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         // participantTable
         participantTable = new JTable();
         // setup
-        participantTable.setAutoCreateRowSorter(true);
         participantTable.setModel(personTableModel);
         participantTable.setShowGrid(false);
         // Selection
@@ -145,6 +156,59 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         frame.pack();
     }
 
+    public void updateModel(){
+        ArrayList<Person> all = PersonControl.getAll();
+        Appointment mod = AppointmentView.getAppointment();
+
+        // Finds all persons who're not already invited
+        ArrayList<Person> participants = mod.getParticipants();
+        if (all.size() == participants.size()){
+            for(int i = personTableModel.getRowCount()-1; i>-1;i--){
+                personTableModel.removeRow(i);
+            }
+        }
+        if (all.size() != participants.size()){
+            for(int i = 0; i<all.size()-1; i++){
+                for(int j = 0; j<participants.size();j++){
+                    String firstN = participants.get(j).getName().trim();
+                    String secondN = all.get(i).getName().trim();
+                    if (firstN.equals(secondN)){
+                        System.out.println("fjernet");
+                        all.remove(i);
+                    }
+                }
+            }
+            // Clears current tableModel
+            if (personTableModel.getRowCount() > 0){
+                for(int i = personTableModel.getRowCount()-1; i>-1; i--){
+                    personTableModel.removeRow(i);
+                }
+            }
+            // Fills in tableModel
+            for(int i = 0; i<all.size(); i++) {
+                Person[] obj = {all.get(i)};
+                personTableModel.addRow(obj);
+            }
+        }
+    }
+
+    public void updateGroupModel(){
+        if (groupTableModel.getRowCount() > 0){
+            for(int i = groupTableModel.getRowCount()-1; i>-1; i--){
+                groupTableModel.removeRow(i);
+            }
+        }
+        ArrayList<Group> grp = GroupControl.getAll();
+        System.out.print(grp);
+        for(int i = 0; i< grp.size(); i++){
+            Group[] obj = {grp.get(i)};
+            groupTableModel.addRow(obj);
+        }
+    }
+
+
+
+
 
 
     public void setupGBC(int gridwidth, int gridheight, double weightx, int x, int y, GridBagConstraints c, Component comp, boolean fill){
@@ -161,16 +225,22 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         totalGUI.add(comp, c);
     }
 
+    public Appointment getModel(){
+        return model;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         // Person - Group toggle
         if(e.getSource() == personButton){
+            updateModel();
             participantTable.setModel(personTableModel);
             searchField.setText("Søk");
             participantTable.getColumnModel().getColumn(0).setHeaderRenderer(new MyTableHeaderRenderer());
             participantTable.getTableHeader().repaint();
         }
         if (e.getSource() == groupButton){
+            updateModel();
             participantTable.setModel(groupTableModel);
             searchField.setText("Søk");
             participantTable.getColumnModel().getColumn(0).setHeaderRenderer(new MyTableHeaderRenderer());
@@ -178,21 +248,44 @@ public class AddParticipant extends JPanel implements ActionListener, ListSelect
         }
         // searchField - search for specific word
         if (e.getSource() == searchField){
-            DefaultTableModel searchList = null;
-            if (personButton.isSelected()){
-                searchList = personTableModel;
-            } else {
-                searchList = groupTableModel;
-            }
             String text = searchField.getText();
-            for (int row = 0; row<participantTable.getRowCount(); row++){
-                if (text.equals(searchList.getValueAt(row, 0))){
-                    // this will automatically set the view of the scroll in the location of the value
-                    participantTable.scrollRectToVisible(participantTable.getCellRect(row, 0, true));
-
-                    // this will automatically set the focus of the searched/selected row/value
-                    participantTable.setRowSelectionInterval(row, row);
+            if (personButton.isSelected()){
+                for (int row = 0; row<personTableModel.getRowCount(); row++){
+                    Person p = (Person)personTableModel.getValueAt(row, 0);
+                    if (text.equals(p.getName())){
+                        // this will automatically set the view of the scroll in the location of the value
+                        participantTable.scrollRectToVisible(participantTable.getCellRect(row, 0, true));
+                        // this will automatically set the focus of the searched/selected row/value
+                        participantTable.setRowSelectionInterval(row, row);
+                    }
                 }
+            } else {
+                for (int row = 0; row<groupTableModel.getRowCount(); row++){
+                    Group g = (Group)groupTableModel.getValueAt(row, 0);
+                    if (text.equals(g.getName())){
+                        // this will automatically set the view of the scroll in the location of the value
+                        participantTable.scrollRectToVisible(participantTable.getCellRect(row, 0, true));
+                        // this will automatically set the focus of the searched/selected row/value
+                        participantTable.setRowSelectionInterval(row, row);
+                    }
+                }
+            }
+
+
+
+        }
+        if (e.getSource() == addButton){
+            if (personButton.isSelected()){
+                model.addParticipant((Person)participantTable.getValueAt(participantTable.getSelectedRow(), 0));
+                personTableModel.removeRow(participantTable.getSelectedRow());
+            }
+            if (groupButton.isSelected()){
+                Group grp = (Group)participantTable.getValueAt(participantTable.getSelectedRow(), 0);
+                ArrayList<Person> persons = grp.getPersons();
+                for (Person p : persons){
+                    model.addParticipant(p);
+                }
+                groupTableModel.removeRow(participantTable.getSelectedRow());
             }
         }
 
