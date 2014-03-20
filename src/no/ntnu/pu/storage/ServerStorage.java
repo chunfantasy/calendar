@@ -212,61 +212,53 @@ public class ServerStorage {
 		}
 	}
 
-//	public boolean delete(Object o) {
-//		try {
-//			this.connect();
-//			if (o instanceof Person) {
-//				sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
-//				stmt.executeUpdate(sql);
-//				con.commit();
-//				this.close();
-//				return true;
-//			}
-//
-//			else if (o instanceof Room) {
-//				sql = "DELETE FROM meetingroom WHERE id = "
-//						+ ((Room) o).getId();
-//				stmt.executeUpdate(sql);
-//				con.commit();
-//				this.close();
-//				return true;
-//			}
-//
-//			else if (o instanceof Appointment) {
-//				sql = "DELETE FROM appointment WHERE id = "
-//						+ ((Appointment) o).getId();
-//				stmt.executeUpdate(sql);
-//				con.commit();
-//				this.close();
-//				return true;
-//			}
-//
-//			else if (o instanceof Group) {
-//				sql = "DELETE FROM meetinggroup WHERE id = "
-//						+ ((Group) o).getId();
-//				stmt.executeUpdate(sql);
-//				con.commit();
-//				this.close();
-//				return true;
-//			}
-//
-//			else {
-//				this.close();
-//				return false;
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-//	}
+	public boolean delete(Object o) {
+		try {
+			Connection con = this.connect();
+			if (o instanceof Person) {
+				sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				con.close();
+				return true;
+			}
 
-//	public void close() {
-//		try {
-//			this.con.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
+			else if (o instanceof Room) {
+				sql = "DELETE FROM meetingroom WHERE id = "
+						+ ((Room) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				con.close();
+				return true;
+			}
+
+			else if (o instanceof Appointment) {
+				sql = "DELETE FROM appointment WHERE id = "
+						+ ((Appointment) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				con.close();
+				return true;
+			}
+
+			else if (o instanceof Group) {
+				sql = "DELETE FROM meetinggroup WHERE id = "
+						+ ((Group) o).getId();
+				stmt.executeUpdate(sql);
+				con.commit();
+				con.close();
+				return true;
+			}
+
+			else {
+				con.close();
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public int getLastId() {
 		try {
