@@ -24,21 +24,18 @@ public abstract class SidePanel extends JPanel implements PropertyChangeListener
     protected DefaultListModel model;
 
     public SidePanel(){
-        this.setPreferredSize(new Dimension(300,300));
+        this.setPreferredSize(new Dimension(300,200));
         model = new DefaultListModel();
-        ListCellRenderer renderer = new SidePanelCellRenderer();
-
         model.ensureCapacity(10);
+
+        ListCellRenderer renderer = new SidePanelCellRenderer();
 
         list = new JList(model);
 
         list.setCellRenderer(renderer);
-
         list.setBackground(super.getBackground());
-
         list.addMouseListener(new ListClickListener());
-
-        list.setPreferredSize(new Dimension(280,270));
+        list.setPreferredSize(new Dimension(280,170));
         add(list);
     }
 
