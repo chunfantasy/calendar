@@ -300,6 +300,8 @@ public class ServerStorage {
 
     protected Group setGroup(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Group g = new Group("");
             g.setId(rs.getInt("id"));
             g.setEmail(rs.getString("email"));
@@ -344,6 +346,8 @@ public class ServerStorage {
 
     protected Appointment setAppointment(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Appointment a = new Appointment();
             a.setId(rs.getInt("id"));
             a.setAddress(rs.getString("address"));
@@ -389,13 +393,6 @@ public class ServerStorage {
                     a.addParticipant(this.setPerson(rs));
                 }
             }
-            for (int id : listGroupId) {
-                sql = "SELECT * FROM meetinggroup WHERE id = " + id;
-                rs = stmt.executeQuery(sql);
-                if (rs.next()) {
-                    a.addParticipant(this.setGroup(rs));
-                }
-            }
             return a;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -405,6 +402,8 @@ public class ServerStorage {
 
     protected Alarm setAlarm(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
             Alarm a = new Alarm(new Date(), person, appointment);
@@ -431,6 +430,8 @@ public class ServerStorage {
 
     protected ChangeNotification setChangeNotification(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
             List<String> list = new ArrayList<String>();
@@ -468,6 +469,8 @@ public class ServerStorage {
 
     protected DeclineNotification setDeclineNotification(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
             DeclineNotification d = new DeclineNotification(person, person,
@@ -500,6 +503,8 @@ public class ServerStorage {
 
     protected Invitation setInvitation(ResultSet rs) {
         try {
+            Connection con = this.connect();
+            stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
             Invitation i = new Invitation(person, person, appointment);

@@ -11,11 +11,11 @@ public class Appointment {
 	private String address;
 	private Room meetingRoom;
 	private String description;
-	private ArrayList<Participant> participants;
+	private ArrayList<Person> participants;
     private Person creator;
 
 	public Appointment() {
-		this.participants = new ArrayList<Participant>();
+		this.participants = new ArrayList<Person>();
 	}
 
 	public int getId() {
@@ -86,7 +86,7 @@ public class Appointment {
 		this.description = description;
 	}
 
-	public ArrayList<Participant> getParticipants() {
+	public ArrayList<Person> getParticipants() {
 		return participants;
 	}
 
@@ -98,7 +98,7 @@ public class Appointment {
         this.creator = creator;
     }
 
-	public void addParticipant(Participant p) {
+	public void addParticipant(Person p) {
 		if (!this.participants.contains(p))
 			this.participants.add(p);
 	}

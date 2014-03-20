@@ -84,9 +84,9 @@ public class JSONSerializer {
 		participants.add(p2);
 		participants.add(p3);
 		participants.add(g);
-        for(Participant p:participants){
+        /**for(Participant p:participants){
             a.addParticipant(p);
-        }
+        }**/
 
 		try {
 			 
