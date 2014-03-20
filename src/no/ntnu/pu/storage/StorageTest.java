@@ -26,7 +26,7 @@ public class StorageTest {
 		serverStorage.initiate();
 
 		Person p1;
-		p1 = new Person("a");
+		p1 = new Person("Anders ");
 		p1.setEmail("email1");
 		p1.setTitle("title1");
 		p1.setPassword("test");
