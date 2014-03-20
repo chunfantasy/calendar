@@ -138,7 +138,7 @@ public class ServerStorage {
 					+ "endtime datetime, "
 					+ "address varchar(30), " 
 					+ "meetingroomid int, " 
-					+ "creatorid int, "
+					+ "creatorid int null, "
 					+ "foreign key(meetingroomid) references meetingroom(id) on delete set null on update cascade, "
 					+ "foreign key(creatorid) references person(id) on delete set null on update cascade, "
 					+ "description varchar(50))";
@@ -191,7 +191,7 @@ public class ServerStorage {
 			stmt.execute(sql);
 			System.out.println("Database: Table declinenotification created");
 			
-			// create table appointment_participant
+			// create table changenotification
 			sql = "CREATE TABLE changenotification ("
 					+ "id int auto_increment primary key, " 
 					+ "appointmentid int, "
