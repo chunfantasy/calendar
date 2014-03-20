@@ -7,6 +7,7 @@ import no.ntnu.pu.model.Person;
 import no.ntnu.pu.storage.AppointmentStorage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class CalendarControl {
@@ -58,9 +59,12 @@ public class CalendarControl {
 
     public static void refresh(){
         System.out.println("Refreshing");
-        for(Appointment a : model.getAppointments()){
-            System.out.println("Removed" + a.getTitle());
-            model.removeAppointment(a);
+        for(int i = model.getAppointments().size()-1;i >= 0;i--){
+            model.removeAppointment(model.getAppointments().get(i));
+        }
+
+        for(int i = model.getNotifications().size()-1;i >= 0; i--){
+            model.removeNotification(model.getNotifications().get(i));
         }
         System.out.println(storage.getAppointmentByParticipant(PersonControl.getModel()));
 
@@ -68,10 +72,8 @@ public class CalendarControl {
             System.out.println("Added" + a.getTitle());
             model.addAppointment(a);
         }
-        for(Notification n: model.getNotifications()){
-            model.removeNotification(n);
-        }
         for(Notification n : NotificationControl.getNotificationsByParticipant(PersonControl.getModel())){
+            System.out.println("Added" + n.getAppointment().getTitle());
             model.addNotification(n);
         }
     }

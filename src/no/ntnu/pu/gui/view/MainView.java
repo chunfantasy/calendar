@@ -136,6 +136,7 @@ public class MainView {
         public void itemStateChanged(ItemEvent e) {
             if(e.getStateChange() == ItemEvent.SELECTED){
                 PersonControl.setModel((Person) e.getItem());
+                CalendarControl.refresh();
             }
         }
     }

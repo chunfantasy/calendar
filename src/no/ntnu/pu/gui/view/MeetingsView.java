@@ -25,7 +25,7 @@ public class MeetingsView extends SidePanel{
    }
 
     public void addMeeting(Appointment meeting){
-        System.out.print(meeting);
+        System.out.print(meeting + "Has been Added to list");
         model.addElement(meeting);
     }
 
