@@ -45,10 +45,12 @@ public class CalendarControl {
 
     public static void getCalendarByPerson(Person person){
         Calendar calendar = new Calendar();
-        ArrayList<Appointment> appointments = storage.getAppointmentByParticipant(person);
-        for(Appointment appointment : appointments){
-            calendar.addAppointment(appointment);
-        }NotificationControl
+        for(Appointment a : storage.getAppointmentByParticipant(person)){
+            calendar.addAppointment(a);
+        }
+        for(Notification n : NotificationControl.getNotificationsByParticipant(person)){
+            calendar.addNotification(n);
+        }
         model = calendar;
     }
 
