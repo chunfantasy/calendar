@@ -128,7 +128,7 @@ public class CalenderView extends JPanel {
                 }
                 else if(value != null && value instanceof Appointment){
                     setBackground(new Color(164, 170, 255));
-                    if(calendarTable.getValueAt(row - 1, column) == null){
+                    if(calendarTable.getValueAt(row - 1, column) != value){
                         setText(((Appointment) value).getTitle());
                     }
                     else{
