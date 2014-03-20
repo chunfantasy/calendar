@@ -126,8 +126,8 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            if(userField.getText().length() == 0){
-                lblError.setText("Feil brukernavn og/eller passord");
+            if(userField.getText().length() == 0 || PersonControl.getPersonByEmail(userField.getText()) == null){
+                lblError.setText("Brukeren eksisterer ikke");
                 userField.setText("");
                 passField.setText("");
             }
