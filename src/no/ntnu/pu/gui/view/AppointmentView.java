@@ -33,7 +33,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private JFrame frame;
     private ButtonGroup grp;
     private DefaultListModel<Participant> participantListModel;
-    private Appointment model;
+    private static Appointment model;
     private JPanel totalGUI, container, addRoomView, addParticipantView, appointmentView, externalView;
     private ArrayList<Integer> thrirtyOne, thrity, twentyNine, twentyEight, hours, years;
     private ArrayList<String> minutes, months;
@@ -41,6 +41,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     public AppointmentView(Appointment appointment){
 
         frame = new JFrame("Endre avtale");
+        setModel(appointment);
         participantListModel = new DefaultListModel<Participant>();
         ArrayList<Person> allParticipant = PersonControl.getAll();
         ArrayList<Participant> array = appointment.getParticipants();
@@ -55,7 +56,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     public AppointmentView(){
         frame = new JFrame("Legg til ny avtale");
         participantListModel = new DefaultListModel<Participant>();
-
+        setModel(new Appointment());
         makeAndShowGUI(false);
     }
 
@@ -132,7 +133,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public JPanel createContentPane(boolean editing){
         // Appointment
-        model = new Appointment();
 
         totalGUI = new JPanel();
 
@@ -347,6 +347,15 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         container.setBorder(new TitledBorder("Inviter eksterne deltakere"));
     }
 
+    public static Appointment getAppointment(){
+        return model;
+    }
+
+    public static void setModel(Appointment appointment){
+        model = appointment;
+    }
+
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == roomButton){
 //            AddRoom.createAndShowGUI(model);
@@ -451,6 +460,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
 
 
+
     }
 
     public void valueChanged(ListSelectionEvent e) {
@@ -478,20 +488,20 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     }
 
 
-//    public static void main(String[] args){
-//        Appointment ap = new Appointment();
-//        ap.setCreator(new Person("Hei"));
-//        ap.addParticipant(new Person("Per"));
-//        ap.addParticipant(new Person("Haakon"));
-//        ap.addParticipant(new Person("Chun"));
-//        ap.addParticipant(new Person("Anders"));
-//        ap.addParticipant(new Person("Petter"));
-//        new AppointmentView(ap);
-//    }
-
     public static void main(String[] args){
-        new AppointmentView();
+        Appointment ap = new Appointment();
+        ap.setCreator(new Person("Hei"));
+        ap.addParticipant(new Person("Per"));
+        ap.addParticipant(new Person("Haakon"));
+        ap.addParticipant(new Person("Chun"));
+        ap.addParticipant(new Person("Anders"));
+        ap.addParticipant(new Person("Petter"));
+        new AppointmentView(ap);
     }
+
+//    public static void main(String[] args){
+//        new AppointmentView();
+//    }
 
     public Appointment getModel(){
         return this.model;
