@@ -1,11 +1,9 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.CalendarControl;
-import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.model.*;
 import no.ntnu.pu.net.SendMail;
-import no.ntnu.pu.storage.AppointmentStorage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,9 +110,14 @@ public class LoginView extends JPanel {
                     CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
                     MainView mainView = new MainView();
                 }
+                else{
+                    lblError.setText("Feil passord");
+                    userField.setText("");
+                    passField.setText("");
+                }
             }
             else{
-                lblError.setText("Feil brukernavn og/eller passord");
+                lblError.setText("Brukeren eksisterer ikke");
                 userField.setText("");
                 passField.setText("");
             }
@@ -123,13 +126,16 @@ public class LoginView extends JPanel {
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            if(userField.getText().length() == 0){
-                lblError.setText("Feil brukernavn og/eller passord");
+            if(userField.getText().length() == 0 || PersonControl.getPersonByEmail(userField.getText()) == null){
+                lblError.setText("Brukeren eksisterer ikke");
                 userField.setText("");
                 passField.setText("");
             }
             else{
-                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", PersonControl.getPersonByEmail(usernameInput).getPassword()));
+                String mottakerEpost = userField.getText();
+                Person mottaker = PersonControl.getPersonByEmail(mottakerEpost);
+                String passord = mottaker.getPassword();
+                new SendMail(new Email("Gigakalender", mottakerEpost, "DITT PASSORD", passord));
             }
         }
     }
