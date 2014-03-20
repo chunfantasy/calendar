@@ -5,12 +5,14 @@ import no.ntnu.pu.model.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Lima on 12.03.14.
  */
 public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
+    private String[] months = {"januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"};
     private static final Color ALARM_COLOR = new Color(205, 0, 0);
     private static final Color INVITATION_COLOR = new Color(65, 121, 205);
     private static final Color CHANGENOTI_COLOR= new Color(205, 201, 0);
@@ -30,7 +32,9 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
         }else if(value instanceof Alarm){
             Alarm a = (Alarm) value;
-            setText(a.getAppointment().getTitle()+" "+a.getTime());
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTime(a.getTime());
+            setText(a.getAppointment().getTitle()+" "+(cal.get(GregorianCalendar.HOUR_OF_DAY) < 10 ? "0" + cal.get(GregorianCalendar.HOUR_OF_DAY) : cal.get(GregorianCalendar.HOUR_OF_DAY)) + ":" + (cal.get(GregorianCalendar.MINUTE) < 10 ? "0" + cal.get(GregorianCalendar.MINUTE) : cal.get(GregorianCalendar.MINUTE)));
             if(cellHasFocus){
                 this.setBorder(BorderFactory.createMatteBorder(
                         0, 6, 3, 0, ALARM_COLOR));
@@ -51,8 +55,10 @@ public class SidePanelCellRenderer extends JLabel implements ListCellRenderer {
 
         }else if(value instanceof Appointment){
             Appointment app = (Appointment) value;
-            setText(app.getTitle()+ " klokken "+app.getStartTime().getHours()+":"+app.getStartTime().getMinutes()+" den "+ app.getStartTime().getDay()+"."+app.getStartTime().getMonth());
-            setCellBorder(APPOINTMENT_COLOR,cellHasFocus);
+            GregorianCalendar cal = new GregorianCalendar();
+            cal.setTime(app.getStartTime());
+            setText(app.getTitle() + " klokken " + (cal.get(GregorianCalendar.HOUR_OF_DAY) < 10 ? "0" + (cal.get(GregorianCalendar.HOUR_OF_DAY)) : cal.get(GregorianCalendar.HOUR_OF_DAY)) + ":" + (cal.get(GregorianCalendar.MINUTE) < 10 ? "0" + (cal.get(GregorianCalendar.MINUTE)) : cal.get(GregorianCalendar.MINUTE)) + " den " + cal.get(GregorianCalendar.DAY_OF_MONTH) + ". " + months[cal.get(GregorianCalendar.MONTH)] + ", " + cal.get(GregorianCalendar.YEAR));
+            setCellBorder(APPOINTMENT_COLOR, cellHasFocus);
         }
 
         setOpaque(true);
