@@ -50,6 +50,7 @@ public class MainView {
             dropdown.addItem(p);
         }
 
+
         monthButton.addActionListener(new ButtonListener());
         weekButton.addActionListener(new ButtonListener());
         newAppointmentButton.addActionListener(new ButtonListener());
@@ -64,7 +65,7 @@ public class MainView {
         buttonGroup.add(weekButton);
         buttonGroup.add(monthButton);
 
-        container.add(dropdown, GBC(gbc,0,0));
+        container.add(dropdown, GBC(gbc, 0, 0));
         container.add(notificationView, GBC(gbc, 0, 1));
         container.add(meetingsView, GBC(gbc, 0, 2));
         container.add(newAppointmentButton, GBC(gbc, 1, 0));
@@ -80,6 +81,8 @@ public class MainView {
         c.gridwidth = 4;
         c.gridheight = 2;
         container.add(calendarView, c);
+
+        dropdown.setSelectedItem(PersonControl.getModel().toString());
 
         frame.getContentPane().add(container);
         frame.setSize(1024, 768);
