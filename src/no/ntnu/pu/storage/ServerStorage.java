@@ -327,7 +327,6 @@ public class ServerStorage {
 	protected Appointment setAppointment(ResultSet rs) {
 		try {
 			stmt = con.createStatement();
-			Person p = new Person("");
 			Appointment a = new Appointment();
 			a.setId(rs.getInt("id"));
 			a.setAddress(rs.getString("address"));
