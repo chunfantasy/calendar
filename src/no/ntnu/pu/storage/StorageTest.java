@@ -26,7 +26,7 @@ public class StorageTest {
 		DeclineNotificationStorage declineNotificationStorage = new DeclineNotificationStorage();
 		AppointmentStorage appointmentStorage = new AppointmentStorage();
 
-		//serverStorage.initiate();
+		serverStorage.initiate();
 
 		Person p1, p2, p3, p4, p5, p6;
 		p1 = new Person("Anders");

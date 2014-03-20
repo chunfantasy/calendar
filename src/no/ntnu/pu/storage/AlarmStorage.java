@@ -82,7 +82,7 @@ public class AlarmStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setAlarm(rs));
 			}
-			System.out.println("Database: Alarm gotten");
+			System.out.println("Database: Alarm gotten done");
 			con.close();
 			return list;
 		} catch (SQLException e) {
@@ -100,7 +100,7 @@ public class AlarmStorage extends ServerStorage {
 			if (rs.next()) {
 				Alarm alarm = this.setAlarm(rs);
 				con.close();
-				System.out.println("Database: Alarm gotten");
+				System.out.println("Database: Alarm gotten done");
 				return alarm;
 			} else
 				con.close();
@@ -123,7 +123,7 @@ public class AlarmStorage extends ServerStorage {
 				list.add(this.setAlarm(rs));
 			}
 			con.close();
-			System.out.println("Database: Alarm gotten");
+			System.out.println("Database: Alarm gotten done");
 			return list;
 		} catch (SQLException e) {
 			System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");
