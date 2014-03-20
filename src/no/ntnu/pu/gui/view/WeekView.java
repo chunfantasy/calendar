@@ -4,6 +4,8 @@ import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -68,7 +70,7 @@ public class WeekView extends CalenderView {
         panelAdd(5, 0.0, 0.0, 0, 2, calendarTableHeader, GridBagConstraints.CENTER);
 
         /**Set border**/
-        setBorder(BorderFactory.createTitledBorder("Ukevisning"));
+        setBorder(new TitledBorder(LineBorder.createGrayLineBorder(),"Ukevisning"));
 
         for (int i = 0; i<8; i++){
             calendarTableModel.addColumn(headers[i]);
