@@ -11,7 +11,8 @@ public class InvitationStorage extends ServerStorage {
 
 	public InvitationStorage() {
 		super();
-		System.out.println("Database: Database will be connected by IvitationStorage");
+		System.out
+				.println("Database: Database will be connected by IvitationStorage");
 	}
 
 	public Invitation insertInvitation(Invitation i) {
@@ -40,7 +41,8 @@ public class InvitationStorage extends ServerStorage {
 		try {
 			Connection con = this.connect();
 			stmt = con.createStatement();
-			sql = "UPDATE invitation SET appointmentid = ?, recipientid =?, senderid = ?";
+			sql = "UPDATE invitation SET appointmentid = ?, recipientid =?, senderid = ? WEHRE id = "
+					+ i.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, i.getAppointment().getId());
 			pstmt.setInt(2, i.getRecipient().getId());

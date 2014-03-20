@@ -41,7 +41,8 @@ public class DeclineNotificationStorage extends ServerStorage {
 		try {
 			Connection con = this.connect();
 			stmt = con.createStatement();
-			sql = "UPDATE declinenotification SET appointmentid = ?, recipientid =?, declinerid = ?";
+			sql = "UPDATE declinenotification SET appointmentid = ?, recipientid =?, declinerid = ? WEHRE id = "
+					+ d.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, d.getAppointment().getId());
 			pstmt.setInt(2, d.getRecipient().getId());
@@ -103,7 +104,8 @@ public class DeclineNotificationStorage extends ServerStorage {
 			sql = "SELECT * FROM declinenotification WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				DeclineNotification declineNotification = this.setDeclineNotification(rs);
+				DeclineNotification declineNotification = this
+						.setDeclineNotification(rs);
 				con.close();
 				System.out.println("Database: DeclineNotification gotten done");
 				return declineNotification;

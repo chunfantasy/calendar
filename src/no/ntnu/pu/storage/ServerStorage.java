@@ -40,7 +40,7 @@ public class ServerStorage {
 		try {
 			// mysql -h mysql.stud.ntnu.no/chunf_calendar
 			// -u chunf_calender -pgroup12
-			 con = DriverManager.getConnection(
+			Connection con = DriverManager.getConnection(
 			 "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
 			 "chunf_calendar", "group12");
 //			con = DriverManager.getConnection(

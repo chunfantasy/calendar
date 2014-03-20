@@ -10,7 +10,8 @@ public class RoomStorage extends ServerStorage {
 
 	public RoomStorage() {
 		super();
-		System.out.println("Database: Database will be connected by RoomStorage");
+		System.out
+				.println("Database: Database will be connected by RoomStorage");
 	}
 
 	public Room insertRoom(Room r) {
@@ -37,7 +38,8 @@ public class RoomStorage extends ServerStorage {
 		try {
 			Connection con = this.connect();
 			stmt = con.createStatement();
-			sql = "UPDATE meetingroom SET capacity = ?, roomname = ?";
+			sql = "UPDATE meetingroom SET capacity = ?, roomname = ? WHERE id = "
+					+ r.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, r.getCapacity());
 			pstmt.setString(2, r.getRoomname());

@@ -12,7 +12,8 @@ public class AlarmStorage extends ServerStorage {
 
 	public AlarmStorage() {
 		super();
-		System.out.println("Database: Database will be connected by AlarmStorage");
+		System.out
+				.println("Database: Database will be connected by AlarmStorage");
 	}
 
 	public Alarm insertAlarm(Alarm a) {
@@ -40,7 +41,8 @@ public class AlarmStorage extends ServerStorage {
 		try {
 			Connection con = this.connect();
 			stmt = con.createStatement();
-			sql = "UPDATE alarm SET appointmentid = ?, recipientid =?, date = ?";
+			sql = "UPDATE alarm SET appointmentid = ?, recipientid =?, date = ? WHERE id = "
+					+ a.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, a.getAppointment().getId());
 			pstmt.setInt(2, a.getRecipient().getId());
@@ -104,7 +106,7 @@ public class AlarmStorage extends ServerStorage {
 				return alarm;
 			} else
 				con.close();
-				System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");
+			System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");
 			return null;
 		} catch (SQLException e) {
 			System.out.println("FAIL: Database: Alarm gotten fail!!!!!!");

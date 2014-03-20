@@ -41,7 +41,8 @@ public class ChangeNotificationStorage extends ServerStorage {
 		try {
 			Connection con = this.connect();
 			stmt = con.createStatement();
-			sql = "UPDATE changenotification SET appointmentid = ?, recipientid =?, changedproperties = ?";
+			sql = "UPDATE changenotification SET appointmentid = ?, recipientid =?, changedproperties = ? WEHRE id = "
+					+ c.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, c.getAppointment().getId());
 			pstmt.setInt(2, c.getRecipient().getId());

@@ -90,7 +90,7 @@ public class StorageTest {
 		for (int i = 0; i < 10; i++) {
 			room = new Room("G" + i);
 			Random random = new Random();
-			room.setCapacity(random.nextInt());
+			room.setCapacity((random.nextInt(10) + 1) * 3);
 			roomStorage.insertRoom(room);
 		}
 
@@ -103,7 +103,6 @@ public class StorageTest {
 		a.setEndTime(new Date(114, 2, 19, 16, 0, 0));
 		a.setMeetingRoom(room);
 		appointmentStorage.insertAppointment(a);
-
 
 		room = roomStorage.getRoomById(6);
 		a.setCreator(p1);
@@ -121,6 +120,6 @@ public class StorageTest {
 		a.setEndTime(new Date(114, 2, 20, 3, 0, 0));
 		a.setMeetingRoom(room);
 		appointmentStorage.insertAppointment(a);
-		
+
 	}
 }
