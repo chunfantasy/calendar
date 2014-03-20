@@ -13,6 +13,16 @@ public class PersonControl {
 
     public static PersonStorage storage = new PersonStorage();
 
+    public static Person getModel() {
+        return model;
+    }
+
+    public static void setModel(Person model) {
+        PersonControl.model = model;
+    }
+
+    public static Person model;
+
     public static ArrayList<Person> getAll(){
         return storage.getAll();
     }
