@@ -44,7 +44,7 @@ public class PersonStorage extends ServerStorage {
 			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			con.commit();
-			System.out.println("Database: Person updated");
+			System.out.println("Database: Person updated done");
 			return true;
 		} catch (SQLException e) {
 			System.out.println("FAIL: Database: Person updated failed!!!!!!");
