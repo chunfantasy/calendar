@@ -27,16 +27,11 @@ public class ServerStorage {
 	protected String sql;
 
 	public ServerStorage() {
-		try {
-			this.connect();
-			stmt = con.createStatement();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
 	}
 
 	// Connect to the database
-	public void connect() {
+	public Connection connect() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -45,18 +40,24 @@ public class ServerStorage {
 		try {
 			// mysql -h mysql.stud.ntnu.no/chunf_calendar
 			// -u chunf_calender -pgroup12
-			con = DriverManager.getConnection(
-					"jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
-					"chunf_calendar", "group12");
+			 con = DriverManager.getConnection(
+			 "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
+			 "chunf_calendar", "group12");
+//			con = DriverManager.getConnection(
+//					"jdbc:mysql://localhost:3306/calendar",
+//					"root", "123");
 			con.setAutoCommit(false);
+			return con;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 
 	// initiate database
 	public void initiate() {
 		try {
+			Connection con = this.connect();
 			stmt = con.createStatement();
 
 			//@formatter:off
@@ -82,15 +83,15 @@ public class ServerStorage {
 			sql = "DROP TABLE IF EXISTS appointment";
 			stmt.execute(sql);
 			System.out.println("Database: Table appointment dropped");
-			sql = "DROP TABLE IF EXISTS person";
-			stmt.execute(sql);
-			System.out.println("Database: Table person dropped");
 			sql = "DROP TABLE IF EXISTS meetingroom";
 			stmt.execute(sql);
 			System.out.println("Database: Table meetingroom dropped");
 			sql = "DROP TABLE IF EXISTS meetinggroup";
 			stmt.execute(sql);
 			System.out.println("Database: Table meetinggroup dropped");
+			sql = "DROP TABLE IF EXISTS person";
+			stmt.execute(sql);
+			System.out.println("Database: Table person dropped");
 	
 	
 			// create table person
@@ -204,60 +205,68 @@ public class ServerStorage {
 			//@formatter:on
 
 			con.commit();
+			con.close();
 			System.out.println("Database: All tables reset");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public boolean delete(Object o) {
-		try {
-			if (o instanceof Person) {
-				sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
-				stmt.executeUpdate(sql);
-				con.commit();
-				return true;
-			}
+//	public boolean delete(Object o) {
+//		try {
+//			this.connect();
+//			if (o instanceof Person) {
+//				sql = "DELETE FROM person WHERE id = " + ((Person) o).getId();
+//				stmt.executeUpdate(sql);
+//				con.commit();
+//				this.close();
+//				return true;
+//			}
+//
+//			else if (o instanceof Room) {
+//				sql = "DELETE FROM meetingroom WHERE id = "
+//						+ ((Room) o).getId();
+//				stmt.executeUpdate(sql);
+//				con.commit();
+//				this.close();
+//				return true;
+//			}
+//
+//			else if (o instanceof Appointment) {
+//				sql = "DELETE FROM appointment WHERE id = "
+//						+ ((Appointment) o).getId();
+//				stmt.executeUpdate(sql);
+//				con.commit();
+//				this.close();
+//				return true;
+//			}
+//
+//			else if (o instanceof Group) {
+//				sql = "DELETE FROM meetinggroup WHERE id = "
+//						+ ((Group) o).getId();
+//				stmt.executeUpdate(sql);
+//				con.commit();
+//				this.close();
+//				return true;
+//			}
+//
+//			else {
+//				this.close();
+//				return false;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//	}
 
-			else if (o instanceof Room) {
-				sql = "DELETE FROM meetingroom WHERE id = "
-						+ ((Room) o).getId();
-				stmt.executeUpdate(sql);
-				con.commit();
-				return true;
-			}
-
-			else if (o instanceof Appointment) {
-				sql = "DELETE FROM appointment WHERE id = "
-						+ ((Appointment) o).getId();
-				stmt.executeUpdate(sql);
-				con.commit();
-				return true;
-			}
-
-			else if (o instanceof Group) {
-				sql = "DELETE FROM meetinggroup WHERE id = "
-						+ ((Group) o).getId();
-				stmt.executeUpdate(sql);
-				con.commit();
-				return true;
-			}
-
-			else
-				return false;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	public void close() {
-		try {
-			this.con.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void close() {
+//		try {
+//			this.con.close();
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public int getLastId() {
 		try {
@@ -265,8 +274,9 @@ public class ServerStorage {
 			if (this.rs.next()) {
 				int id = rs.getInt(1);
 				return id;
-			} else
+			} else {
 				return -1;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return -1;
@@ -508,8 +518,7 @@ public class ServerStorage {
 			stmt = con.createStatement();
 			Person person = new Person("");
 			Appointment appointment = new Appointment();
-			Invitation i = new Invitation(person, person,
-					appointment);
+			Invitation i = new Invitation(person, person, appointment);
 			i.setId(rs.getInt("id"));
 			int appointmentId = rs.getInt("appointmentid");
 			int recipientId = rs.getInt("recipientid");

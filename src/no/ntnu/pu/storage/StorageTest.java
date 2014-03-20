@@ -3,6 +3,7 @@ package no.ntnu.pu.storage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import no.ntnu.pu.model.Alarm;
 import no.ntnu.pu.model.Appointment;
@@ -25,103 +26,101 @@ public class StorageTest {
 		DeclineNotificationStorage declineNotificationStorage = new DeclineNotificationStorage();
 		AppointmentStorage appointmentStorage = new AppointmentStorage();
 
-		serverStorage.initiate();
+		//serverStorage.initiate();
 
-		Person p1;
+		Person p1, p2, p3, p4, p5, p6;
 		p1 = new Person("Anders");
-		p1.setEmail("email1");
-		p1.setTitle("title1");
+		p1.setEmail("anders@email.com");
+		p1.setTitle("tittle");
 		p1.setPassword("test");
-		p1.addPhoneNumber("198739834275");
-		p1.addPhoneNumber("547345809");
-		String aaa = p1.getPhoneNumbers().toString();
-		String aaaaa[] = aaa.substring(1, aaa.length() - 1).split(", ");
+		p1.addPhoneNumber("4712345678");
+		p1.addPhoneNumber("4712345670");
 		p1 = personStorage.insertPerson(p1);
 
-		Person p2 = new Person("b");
-		p2.setEmail("email2");
-		p2.setTitle("title2");
+		p2 = new Person("Chun");
+		p2.setEmail("chun@email.com");
+		p2.setTitle("title");
 		p2.setPassword("test");
+		p2.addPhoneNumber("4712345678");
+		p2.addPhoneNumber("4712345670");
 		p2 = personStorage.insertPerson(p2);
 
-		Person p3 = new Person("c");
-		p3.setEmail("email3");
-		p3.setTitle("title3");
+		p3 = new Person("Petter");
+		p3.setEmail("anders@email.com");
+		p3.setTitle("title");
 		p3.setPassword("test");
+		p3.addPhoneNumber("4712345678");
+		p3.addPhoneNumber("4712345670");
 		p3 = personStorage.insertPerson(p3);
 
-		Person p = new Person("");
-		p = personStorage.getPersonByEmail("email2");
+		p4 = new Person("Håkon");
+		p4.setEmail("haakon@email.com");
+		p4.setTitle("title");
+		p4.setPassword("test");
+		p4.addPhoneNumber("4712345678");
+		p4.addPhoneNumber("4712345670");
+		p4 = personStorage.insertPerson(p4);
 
-		Group g = new Group("super group 12");
-		Group g2 = new Group("super group 13");
-		Group g3 = new Group("super group 14");
+		p5 = new Person("Said");
+		p5.setEmail("said@email.com");
+		p5.setTitle("title");
+		p5.setPassword("test");
+		p5.addPhoneNumber("4712345678");
+		p5.addPhoneNumber("4712345670");
+		p5 = personStorage.insertPerson(p5);
+
+		p6 = new Person("Nils");
+		p6.setEmail("nils@email.com");
+		p6.setTitle("title");
+		p6.setPassword("test");
+		p6.addPhoneNumber("4712345678");
+		p6.addPhoneNumber("4712345670");
+		p6 = personStorage.insertPerson(p6);
+
+		Group g = new Group("Group12");
 		g.addPerson(p1);
-		g = groupStorage.insertGroup(g);
-		g = groupStorage.insertGroup(g2);
-		g = groupStorage.insertGroup(g3);
+		g.addPerson(p1);
 		g.addPerson(p3);
-		groupStorage.updateGroup(g);
+		g.addPerson(p4);
+		g.addPerson(p5);
+		g.addPerson(p6);
+		groupStorage.insertGroup(g);
 
-		g.removePerson(p1);
-		g.removePerson(p1);
-		g.removePerson(p1);
-		groupStorage.updateGroup(g);
+		Room room;
+		for (int i = 0; i < 10; i++) {
+			room = new Room("G" + i);
+			Random random = new Random();
+			room.setCapacity(random.nextInt());
+			roomStorage.insertRoom(room);
+		}
 
-		g.addPerson(p2);
-		groupStorage.updateGroup(g);
-
-		g = groupStorage.getGroupById(1);
-
-		p1.setEmail("email111");
-		personStorage.updatePerson(p1);
-
-		Room r = new Room("P15");
-		r.setId(1);
-		r.setCapacity(10);
-		roomStorage.insertRoom(r);
-		
-		r.setCapacity(20);
-		roomStorage.updateRoom(r);
-
+		room = roomStorage.getRoomById(5);
 		Appointment a = new Appointment();
-		a.setTitle("gogogo");
-		a.setStartTime(new Date());
-		a.setEndTime(new Date());
-		a.setMeetingRoom(r);
+		a.setCreator(p1);
 		a.addParticipant(p2);
 		a.addParticipant(p3);
-		a.addParticipant(g);
-		a.setCreator(p1);
+		a.setStartTime(new Date(114, 2, 19, 10, 0, 0));
+		a.setEndTime(new Date(114, 2, 19, 16, 0, 0));
+		a.setMeetingRoom(room);
 		appointmentStorage.insertAppointment(a);
 
-		a.setTitle("comecomecome");
+
+		room = roomStorage.getRoomById(6);
+		a.setCreator(p1);
+		a.addParticipant(p3);
+		a.addParticipant(p4);
+		a.setStartTime(new Date(114, 2, 20, 10, 0, 0));
+		a.setEndTime(new Date(114, 2, 20, 16, 0, 0));
+		a.setMeetingRoom(room);
+		appointmentStorage.insertAppointment(a);
+
+		room = roomStorage.getRoomById(7);
+		a.setCreator(p2);
 		a.addParticipant(g);
-		a.addParticipant(g);
-		a.addParticipant(g);
-		a.addParticipant(p2);
-		appointmentStorage.updateAppointment(a);
-
-		appointmentStorage.updateAppointment(a);
-		a = appointmentStorage.getAppointmentById(a.getId());
-
-		Alarm alarm = new Alarm(new Date(), p1, a);
-		alarmStorage.insertAlarm(alarm);
-		alarm.setRecipient(p2);
-		alarmStorage.updateAlarm(alarm);
-
-		List<String> properties = new ArrayList<String>();
-		properties.add("asefgthklhj");
-		properties.add("etyuhgjjkjdg");
-		ChangeNotification change = new ChangeNotification(properties, p1, a);
-		changeNotificationStorage.insertChangeNotification(change);
-
-		DeclineNotification decline = new DeclineNotification(p1, p2, a);
-		declineNotificationStorage.insertDeclineNotification(decline);
+		a.setStartTime(new Date(114, 2, 20, 9, 0, 0));
+		a.setEndTime(new Date(114, 2, 20, 3, 0, 0));
+		a.setMeetingRoom(room);
+		appointmentStorage.insertAppointment(a);
 		
-		Invitation invitation = new Invitation(p1, p2, a);
-		invitationStorage.insertInvitation(invitation);
-		//System.out.println(invitationStorage.getByRecipient(p2).get(0).getSender().getEmail());
-
 	}
 }
