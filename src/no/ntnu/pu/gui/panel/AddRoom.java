@@ -1,10 +1,6 @@
 package no.ntnu.pu.gui.panel;
 
-
-import javafx.scene.control.ColorPicker;
-import no.ntnu.pu.gui.view.AppointmentView;
 import no.ntnu.pu.model.Appointment;
-import no.ntnu.pu.model.Room;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -55,8 +51,6 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
             }
         };
 
-        // Icons
-//        ImageIcon icon = new ImageIcon(getClass().getResource("search.png"));
 
 
         searchField = new JTextField("Søk");
@@ -78,7 +72,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
         // Table
         roomTable = new JTable();
-
+        
         roomTable.setAutoCreateRowSorter(true);
         roomTable.setModel(tableModel);
         roomTable.setShowGrid(false);
@@ -172,7 +166,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
 
 
     public void updateModel(int value){
-        // todo
+            // todo
     }
 
     @Override
@@ -189,7 +183,7 @@ public class AddRoom extends JPanel implements ActionListener, FocusListener {
                 searchField.setText("Søk");
             }
         }
-
+        
         if (e.getSource() == roomTable){
             roomTable.clearSelection();
         }

@@ -5,27 +5,36 @@ package no.ntnu.pu.model;
  */
 
 public abstract class Notification {
-    public Appointment appointment;
-    public Person recipient;
+	public int id;
+	public Appointment appointment;
+	public Person recipient;
 
-    public Notification(Person recipient, Appointment appointment){
-        this.appointment = appointment;
-        this.recipient = recipient;
-    }
+	public Notification(Person recipient, Appointment appointment) {
+		this.appointment = appointment;
+		this.recipient = recipient;
+	}
 
-    public Appointment getAppointment() {
-        return appointment;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Person getRecipient() {
-        return recipient;
-    }
+	public Appointment getAppointment() {
+		return appointment;
+	}
 
-    public void setRecipient(Person recipient) {
-        this.recipient = recipient;
-    }
+	public void setAppointment(Appointment appointment) {
+		this.appointment = appointment;
+	}
+
+	public Person getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(Person recipient) {
+		this.recipient = recipient;
+	}
 }

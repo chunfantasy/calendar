@@ -19,6 +19,7 @@ public class Person implements Participant {
 
 	public Person(String Name) {
 		name = Name;
+        calendar = new Calendar();
 		phoneNumbers = new ArrayList<String>();
 	}
 
@@ -76,5 +77,10 @@ public class Person implements Participant {
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

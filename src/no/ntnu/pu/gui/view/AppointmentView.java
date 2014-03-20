@@ -1,6 +1,8 @@
 package no.ntnu.pu.gui.view;
 
 
+import no.ntnu.pu.control.PersonControl;
+import no.ntnu.pu.gui.panel.AddExternalParticipant;
 import no.ntnu.pu.gui.panel.AddParticipant;
 import no.ntnu.pu.gui.panel.AddRoom;
 import no.ntnu.pu.model.Appointment;
@@ -8,7 +10,6 @@ import no.ntnu.pu.model.Participant;
 import no.ntnu.pu.model.Person;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 public class AppointmentView extends JPanel implements ListSelectionListener, ActionListener, FocusListener{
 
     private JButton addParticipantButton, removeButton, saveButton, deleteButton, addRoomButton, cancelButton;
-    private JToggleButton mainButton, roomButton, participantButton;
+    private JToggleButton mainButton, roomButton, participantButton, externalButton;
     private JTextField appointmentField, placeField, descField;
     private JLabel appointmentLabel, placeLabel, participantsLabel, startDateLabel, endDateLabel, startTimeLabel, endTimeLabel, descLabel;
     private JList<Participant> participantList;
@@ -33,81 +34,32 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private ButtonGroup grp;
     private DefaultListModel<Participant> participantListModel;
     private Appointment model;
-    private JPanel totalGUI, container, addRoomView, addParticipantView, appointmentView;
+    private JPanel totalGUI, container, addRoomView, addParticipantView, appointmentView, externalView;
     private ArrayList<Integer> thrirtyOne, thrity, twentyNine, twentyEight, hours, years;
     private ArrayList<String> minutes, months;
 
     public AppointmentView(Appointment appointment){
 
-        boolean isEdited = true;
         frame = new JFrame("Endre avtale");
-
-        // GridBagLayout
-        GridBagConstraints c;
-        setLayout(new GridBagLayout());
-        c = new GridBagConstraints();
-
-        // Different Views
-        addRoomView = new AddRoom().createContentPane();
-        addParticipantView = new AddParticipant().createContentPane();
-        appointmentView = createContentPane(false);
-        appointmentView.setPreferredSize(new Dimension(400, 300));
-
-        mainButton = new JToggleButton("Vis avtale");
-        mainButton.addActionListener(this);
-        mainButton.setFocusable(false);
-        mainButton.setSelected(true);
-
-        roomButton = new JToggleButton("Book rom");
-        roomButton.addActionListener(this);
-        roomButton.setFocusable(false);
-
-
-        participantButton = new JToggleButton("Deltakere");
-        participantButton.addActionListener(this);
-        participantButton.setFocusable(false);
-
-        grp = new ButtonGroup();
-        grp.add(mainButton);
-        grp.add(roomButton);
-        grp.add(participantButton);
-
-        container = new JPanel(new GridBagLayout());
-
-        // Setup GridBagLayout
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.weightx = 0.5;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        container.add(mainButton, c);
-
-        c.gridx = 1;
-        container.add(participantButton, c);
-
-        c.gridx = 2;
-        container.add(roomButton, c);
-
-        c.gridy = 1;
-        c.gridx = 0;
-        c.gridwidth = 3;
-        container.add(appointmentView, c);
-        container.add(addRoomView, c);
-        container.add(addParticipantView, c);
-        showAppointment();
-        frame.getContentPane().add(container);
-        frame.setDefaultLookAndFeelDecorated(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
+        participantListModel = new DefaultListModel<Participant>();
+        ArrayList<Person> allParticipant = PersonControl.getAll();
+        ArrayList<Participant> array = appointment.getParticipants();
+        System.out.println(array);
+        for (Participant p : array){
+            participantListModel.addElement(p);
+        }
+        makeAndShowGUI(true);
 
     }
 
     public AppointmentView(){
-        boolean isEdited = false;
         frame = new JFrame("Legg til ny avtale");
+        participantListModel = new DefaultListModel<Participant>();
 
+        makeAndShowGUI(false);
+    }
+
+    public void makeAndShowGUI(boolean editing){
         // GridBagLayout
         GridBagConstraints c;
         setLayout(new GridBagLayout());
@@ -116,7 +68,8 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         // Different Views
         addRoomView = new AddRoom().createContentPane();
         addParticipantView = new AddParticipant().createContentPane();
-        appointmentView = createContentPane(false);
+        externalView = new AddExternalParticipant().createContentPane();
+        appointmentView = createContentPane(editing);
         appointmentView.setPreferredSize(new Dimension(400, 300));
 
         mainButton = new JToggleButton("Vis avtale");
@@ -128,15 +81,19 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         roomButton.addActionListener(this);
         roomButton.setFocusable(false);
 
-
         participantButton = new JToggleButton("Deltakere");
         participantButton.addActionListener(this);
         participantButton.setFocusable(false);
+
+        externalButton = new JToggleButton("Legg til eksterne deltakere");
+        externalButton.addActionListener(this);
+        externalButton.setFocusable(false);
 
         grp = new ButtonGroup();
         grp.add(mainButton);
         grp.add(roomButton);
         grp.add(participantButton);
+        grp.add(externalButton);
 
         container = new JPanel(new GridBagLayout());
 
@@ -154,12 +111,16 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         c.gridx = 2;
         container.add(roomButton, c);
 
+        c.gridx = 3;
+        container.add(externalButton, c);
+
         c.gridy = 1;
         c.gridx = 0;
-        c.gridwidth = 3;
+        c.gridwidth = 4;
         container.add(appointmentView, c);
         container.add(addRoomView, c);
         container.add(addParticipantView, c);
+        container.add(externalView, c);
         showAppointment();
         frame.getContentPane().add(container);
         frame.setDefaultLookAndFeelDecorated(true);
@@ -171,7 +132,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
     public JPanel createContentPane(boolean editing){
         // Appointment
-        model = new Appointment(new Person("Hei"));
+        model = new Appointment();
 
         totalGUI = new JPanel();
 
@@ -183,9 +144,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         totalGUI.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
 
-
-        // participantListModel
-        participantListModel = new DefaultListModel<Participant>();
 
         // Icons
         ImageIcon calIcon = new ImageIcon(getClass().getResource("calendar.png"));
@@ -360,6 +318,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     public void showAppointment(){
         addRoomView.setVisible(false);
         addParticipantView.setVisible(false);
+        externalView.setVisible(false);
         appointmentView.setVisible(true);
         container.setBorder(new TitledBorder("Legg til avtale"));
     }
@@ -367,6 +326,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     public void showRoom(){
         addParticipantView.setVisible(false);
         appointmentView.setVisible(false);
+        externalView.setVisible(false);
         addRoomView.setVisible(true);
         container.setBorder(new TitledBorder("Velg rom"));
     }
@@ -374,8 +334,17 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     public void showParticipant(){
         addRoomView.setVisible(false);
         appointmentView.setVisible(false);
+        externalView.setVisible(false);
         addParticipantView.setVisible(true);
         container.setBorder(new TitledBorder("Legg til deltaker"));
+    }
+
+    public void showExternal(){
+        addRoomView.setVisible(false);
+        appointmentView.setVisible(false);
+        addParticipantView.setVisible(false);
+        externalView.setVisible(true);
+        container.setBorder(new TitledBorder("Inviter eksterne deltakere"));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -388,6 +357,9 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         }
         if (e.getSource() == mainButton){
             showAppointment();
+        }
+        if (e.getSource() == externalButton){
+            showExternal();
         }
         if (e.getSource() == saveButton){
             model.setDescription("");
@@ -404,6 +376,81 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         if (e.getSource()== cancelButton){
             frame.dispose();
         }
+        if (e.getSource() == endDayCB){
+            int start = (Integer)startDayCB.getSelectedItem();
+            int end = (Integer)endDayCB.getSelectedItem();
+            if (start > end){
+                startDayCB.setSelectedIndex(endDayCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startDayCB){
+            int start = (Integer)startDayCB.getSelectedItem();
+            int end = (Integer)endDayCB.getSelectedItem();
+            if (start > end){
+                endDayCB.setSelectedIndex(startDayCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endMonthCB){
+            int start = (Integer)startMonthCB.getSelectedIndex();
+            int end = (Integer)endMonthCB.getSelectedIndex();
+            if (start > end){
+                startMonthCB.setSelectedIndex(endMonthCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startMonthCB){
+            int start = (Integer)startMonthCB.getSelectedIndex();
+            int end = (Integer)endMonthCB.getSelectedIndex();
+            if (start > end){
+                endMonthCB.setSelectedIndex(startMonthCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endYearCB){
+            int start = (Integer)startYearCB.getSelectedItem();
+            int end = (Integer)endYearCB.getSelectedItem();
+            if (start > end){
+                startYearCB.setSelectedIndex(endYearCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startYearCB){
+            int start = (Integer)startYearCB.getSelectedItem();
+            int end = (Integer)endYearCB.getSelectedItem();
+            if (start > end){
+                endYearCB.setSelectedIndex(startYearCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endHourCB){
+            int start = (Integer)startHourCB.getSelectedItem();
+            int end = (Integer)endHourCB.getSelectedItem();
+            if (start > end){
+                startHourCB.setSelectedIndex(endHourCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == startMinCB){
+            int start = (Integer)startMinCB.getSelectedIndex();
+            int end = (Integer)endMinCB.getSelectedIndex();
+            if (start > end){
+                endMinCB.setSelectedIndex(startMinCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == endMinCB){
+            int start = (Integer)startMinCB.getSelectedIndex();
+            int end = (Integer)endMinCB.getSelectedIndex();
+            if (start > end){
+                startMinCB.setSelectedIndex(endMinCB.getSelectedIndex());
+            }
+        }
+        if (e.getSource() == removeButton){
+            if (participantList.getSelectedValue() != null){
+                participantListModel.removeElementAt(participantList.getSelectedIndex());
+            }
+        }
+
+
+
+
+
+
+
     }
 
     public void valueChanged(ListSelectionEvent e) {
@@ -431,8 +478,23 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     }
 
 
+//    public static void main(String[] args){
+//        Appointment ap = new Appointment();
+//        ap.setCreator(new Person("Hei"));
+//        ap.addParticipant(new Person("Per"));
+//        ap.addParticipant(new Person("Haakon"));
+//        ap.addParticipant(new Person("Chun"));
+//        ap.addParticipant(new Person("Anders"));
+//        ap.addParticipant(new Person("Petter"));
+//        new AppointmentView(ap);
+//    }
+
     public static void main(String[] args){
-        new AppointmentView(new Appointment(new Person("Hei")));
+        new AppointmentView();
+    }
+
+    public Appointment getModel(){
+        return this.model;
     }
 }
 
