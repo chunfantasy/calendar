@@ -9,6 +9,7 @@ import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.ChangeNotification;
 import no.ntnu.pu.model.DeclineNotification;
 import no.ntnu.pu.model.Group;
+import no.ntnu.pu.model.Invitation;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
@@ -20,6 +21,7 @@ public class StorageTest {
 		RoomStorage roomStorage = new RoomStorage();
 		AlarmStorage alarmStorage = new AlarmStorage();
 		ChangeNotificationStorage changeNotificationStorage = new ChangeNotificationStorage();
+		InvitationStorage invitationStorage = new InvitationStorage();
 		DeclineNotificationStorage declineNotificationStorage = new DeclineNotificationStorage();
 		AppointmentStorage appointmentStorage = new AppointmentStorage();
 
@@ -116,7 +118,10 @@ public class StorageTest {
 
 		DeclineNotification decline = new DeclineNotification(p1, p2, a);
 		declineNotificationStorage.insertDeclineNotification(decline);
-		System.out.println(declineNotificationStorage.getAll().get(0).getDecliner().getEmail());
+		
+		Invitation invitation = new Invitation(p1, p2, a);
+		invitationStorage.insertInvitation(invitation);
+		System.out.println(invitationStorage.getAll().get(0).getSender().getEmail());
 
 	}
 }

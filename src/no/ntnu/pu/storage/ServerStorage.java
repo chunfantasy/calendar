@@ -15,6 +15,7 @@ import no.ntnu.pu.model.Appointment;
 import no.ntnu.pu.model.ChangeNotification;
 import no.ntnu.pu.model.DeclineNotification;
 import no.ntnu.pu.model.Group;
+import no.ntnu.pu.model.Invitation;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
@@ -63,6 +64,9 @@ public class ServerStorage {
 			sql = "DROP TABLE IF EXISTS alarm";
 			stmt.execute(sql);
 			System.out.println("Database: Table alarm dropped");
+			sql = "DROP TABLE IF EXISTS invitation";
+			stmt.execute(sql);
+			System.out.println("Database: Table invitation dropped");
 			sql = "DROP TABLE IF EXISTS changenotification";
 			stmt.execute(sql);
 			System.out.println("Database: Table changenotification dropped");
@@ -151,7 +155,7 @@ public class ServerStorage {
 					+ "foreign key(meetinggroupid) references meetinggroup(id) on delete set null on update cascade) ";
 			stmt.execute(sql);
 			System.out.println("Database: Table appointment_participant created");
-			
+
 			// create table alarm
 			sql = "CREATE TABLE alarm ("
 					+ "id int auto_increment primary key, " 
@@ -162,6 +166,18 @@ public class ServerStorage {
 					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade) ";
 			stmt.execute(sql);
 			System.out.println("Database: Table alarm created");
+			
+			// create table invitation
+			sql = "CREATE TABLE invitation ("
+					+ "id int auto_increment primary key, " 
+					+ "appointmentid int, "
+					+ "recipientid int, "
+					+ "senderid int, "
+					+ "foreign key(appointmentid) references appointment(id) on delete cascade on update cascade, "
+					+ "foreign key(recipientid) references person(id) on delete cascade on update cascade, "
+					+ "foreign key(senderid) references person(id) on delete cascade on update cascade) ";
+			stmt.execute(sql);
+			System.out.println("Database: Table invitation created");
 			
 			// create table declinenotification
 			sql = "CREATE TABLE declinenotification ("
@@ -327,7 +343,6 @@ public class ServerStorage {
 	protected Appointment setAppointment(ResultSet rs) {
 		try {
 			stmt = con.createStatement();
-			Person p = new Person("");
 			Appointment a = new Appointment();
 			a.setId(rs.getInt("id"));
 			a.setAddress(rs.getString("address"));
@@ -421,17 +436,19 @@ public class ServerStorage {
 			Person person = new Person("");
 			Appointment appointment = new Appointment();
 			List<String> list = new ArrayList<String>();
-			ChangeNotification c = new ChangeNotification(list,	person, appointment);
+			ChangeNotification c = new ChangeNotification(list, person,
+					appointment);
 			c.setId(rs.getInt("id"));
-			
+
 			String changedProperties = rs.getString("changedproperties");
-			changedProperties = changedProperties.substring(1, changedProperties.length() - 1);
+			changedProperties = changedProperties.substring(1,
+					changedProperties.length() - 1);
 			String[] s = changedProperties.split(", ");
 			for (String changedProperty : s) {
 				list.add(changedProperty);
 			}
 			c.setChangedProperties(list);
-			
+
 			int appointmentId = rs.getInt("appointmentid");
 			int recipientId = rs.getInt("recipientid");
 
@@ -480,6 +497,39 @@ public class ServerStorage {
 				d.setDecliner(this.setPerson(rs));
 
 			return d;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	protected Invitation setInvitation(ResultSet rs) {
+		try {
+			stmt = con.createStatement();
+			Person person = new Person("");
+			Appointment appointment = new Appointment();
+			Invitation i = new Invitation(person, person,
+					appointment);
+			i.setId(rs.getInt("id"));
+			int appointmentId = rs.getInt("appointmentid");
+			int recipientId = rs.getInt("recipientid");
+			int senderId = rs.getInt("senderid");
+
+			sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				i.setAppointment(this.setAppointment(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + recipientId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				i.setRecipient(this.setPerson(rs));
+
+			sql = "SELECT * FROM person WHERE id = " + senderId;
+			rs = stmt.executeQuery(sql);
+			if (rs.next())
+				i.setSender(this.setPerson(rs));
+			return i;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

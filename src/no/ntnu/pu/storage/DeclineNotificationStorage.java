@@ -23,10 +23,10 @@ public class DeclineNotificationStorage extends ServerStorage{
 			pstmt.executeUpdate();
 			d.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: DeclineNotification inserted");
+			System.out.println("Database: DeclineNotification inserted done");
 			return d;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: DeclineNotification inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -40,6 +40,7 @@ public class DeclineNotificationStorage extends ServerStorage{
 			pstmt.setInt(3, d.getDecliner().getId());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: DeclineNotification updated done");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

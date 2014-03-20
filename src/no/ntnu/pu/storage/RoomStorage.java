@@ -21,10 +21,10 @@ public class RoomStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			r.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: Room inserted");
+			System.out.println("Database: Room inserted done");
 			return r;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Room inserted failed!!!!!!");
 			return null;
 		}
 	}
