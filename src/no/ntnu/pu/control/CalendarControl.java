@@ -5,6 +5,7 @@ import no.ntnu.pu.model.Calendar;
 import no.ntnu.pu.model.Notification;
 import no.ntnu.pu.model.Person;
 import no.ntnu.pu.storage.AppointmentStorage;
+import no.ntnu.pu.storage.PersonStorage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,7 +40,6 @@ public class CalendarControl {
 	}
     public static void setModel(Calendar model) {
         CalendarControl.model = model;
-        refresh();
     }
 
     public static Calendar getModel() {
@@ -66,8 +66,9 @@ public class CalendarControl {
         for(int i = model.getNotifications().size()-1;i >= 0; i--){
             model.removeNotification(model.getNotifications().get(i));
         }
-        System.out.println(storage.getAppointmentByParticipant(PersonControl.getModel()));
-
+        int id = PersonControl.getModel().getId();
+        System.out.println("APPOINTMENTS:"+storage.getAppointmentByParticipant(PersonControl.getModel()));
+        System.out.println(PersonControl.getModel().getId());
         for(Appointment a : storage.getAppointmentByParticipant(PersonControl.getModel())){
             System.out.println("Added" + a.getTitle());
             model.addAppointment(a);

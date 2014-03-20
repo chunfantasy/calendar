@@ -135,8 +135,9 @@ public class MainView {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if(e.getStateChange() == ItemEvent.SELECTED){
+                System.out.print(((Person) e.getItem()).getId());
                 PersonControl.setModel((Person) e.getItem());
-                CalendarControl.refresh();
+                //CalendarControl.refresh();
             }
         }
     }
