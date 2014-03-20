@@ -1,10 +1,11 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;
-import no.ntnu.pu.model.Email;
-import no.ntnu.pu.model.Person;
+import no.ntnu.pu.model.*;
 import no.ntnu.pu.net.SendMail;
+import no.ntnu.pu.storage.AppointmentStorage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -106,9 +107,9 @@ public class LoginView extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if(PersonControl.getPersonByEmail(userField.getText()) != null){
                 if(new String(passField.getPassword()).equals(PersonControl.getPersonByEmail(userField.getText()).getPassword())){
-                    Person loggedIn = PersonControl.getPersonByEmail(usernameInput);
+                    Person loggedIn = PersonControl.getPersonByEmail(userField.getText());
                     frmMain.dispose();
-                    CalendarControl.setModel(loggedIn.getCalendar());
+                    CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
                     MainView mainView = new MainView();
                 }
             }
