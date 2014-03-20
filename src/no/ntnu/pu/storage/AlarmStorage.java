@@ -23,10 +23,10 @@ public class AlarmStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			a.setId(this.getLastId());
 			con.commit();
-			System.out.println("Database: Alarm inserted");
+			System.out.println("Database: Alarm inserted done");
 			return a;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Alarm inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -40,6 +40,7 @@ public class AlarmStorage extends ServerStorage {
 			pstmt.setTimestamp(3, new Timestamp(a.getTime().getTime()));
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: Alarm updated done");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
