@@ -24,21 +24,18 @@ public abstract class SidePanel extends JPanel implements PropertyChangeListener
     protected DefaultListModel model;
 
     public SidePanel(){
-        this.setPreferredSize(new Dimension(300,300));
+        this.setPreferredSize(new Dimension(300,200));
         model = new DefaultListModel();
-        ListCellRenderer renderer = new SidePanelCellRenderer();
-
         model.ensureCapacity(10);
+
+        ListCellRenderer renderer = new SidePanelCellRenderer();
 
         list = new JList(model);
 
         list.setCellRenderer(renderer);
-
         list.setBackground(super.getBackground());
-
         list.addMouseListener(new ListClickListener());
-
-        list.setPreferredSize(new Dimension(280,270));
+        list.setPreferredSize(new Dimension(280,170));
         add(list);
     }
 
@@ -59,15 +56,11 @@ public abstract class SidePanel extends JPanel implements PropertyChangeListener
                 if(index >= 0){
                     Object o = list.getModel().getElementAt(index);
 
-                    //Open the MeetingPanel
-                    //TODO: Display the correct meeting.
-                    MeetingPanel mp = new MeetingPanel();
+                    //Open the AppointmentView
                     if(o instanceof Appointment){
-                        System.out.println(((Appointment) o).getTitle());
-                        //mp.setModel(o);
+                        new AppointmentView((Appointment) o);
                     }else{
-                        //mp.setModel(((Notification) o).getAppointment());
-                        System.out.println(((Notification) o).getAppointment().getTitle());
+                        new AppointmentView(((Notification) o).getAppointment());
                     }
                 }
             }

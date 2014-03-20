@@ -1,8 +1,7 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.model.Appointment;
-import no.ntnu.pu.model.Calendar;
-import no.ntnu.pu.model.Notification;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
@@ -11,8 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.util.GregorianCalendar;
+import java.util.*;
+import java.util.List;
 
 public class WeekView extends CalenderView {
 
@@ -25,11 +24,15 @@ public class WeekView extends CalenderView {
             lastDayOfWeek,
             firstMonth,
             lastMonth;
+    private List<Appointment> appointments;
 
     public WeekView(){
         super();
 
         /**Initialize subclass-specific components**/
+        if(CalendarControl.getAppointments() != null && CalendarControl.getAppointments().size() > 0){
+            appointments = CalendarControl.getAppointments();
+        }
         weekLabel = new JLabel("Uke 1");
         dateSpanLabel = new JLabel("(01.01 - 07.01)");
         cttcm = calendarTableHeader.getColumnModel();
@@ -40,9 +43,15 @@ public class WeekView extends CalenderView {
         yearComboBox.addActionListener(new year_Action());
         calendarTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                   //TODO:UPDATE THIS; AppointmentControl.createAppointment();
-
+                if (e.getClickCount() == 2 && calendarTable.getSelectedColumn() != 0) {
+                    if(calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn()) == null){
+                        AppointmentView appointmentView = new AppointmentView();
+                    }
+                    else{
+                        Appointment appointment = (Appointment)calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+                        AppointmentView appointmentView = new AppointmentView(appointment);
+                    }
+                    refreshCells();
                 }
             }
         });
@@ -61,7 +70,6 @@ public class WeekView extends CalenderView {
         /**Set border**/
         setBorder(BorderFactory.createTitledBorder("Ukevisning"));
 
-
         for (int i = 0; i<8; i++){
             calendarTableModel.addColumn(headers[i]);
         }
@@ -69,6 +77,7 @@ public class WeekView extends CalenderView {
         calendarTable.setRowHeight(25);
         calendarTableModel.setRowCount(24);
         calendarTableModel.setColumnCount(8);
+
 
         for(int i = 0; i<24; i++){
             if(i < 10){
@@ -140,21 +149,52 @@ public class WeekView extends CalenderView {
             }
         }
 
-        for(int i = 0; i<24; i++) {
-            for(int j = 1; j<8; j++) {
-                calendarTableModel.setValueAt(null, i, j);
-            }
-        }
-        /**
-        for(int i = 0; i < loggedIn.getAppointments().size(); i++){
-            for(int j = 0; j<24; j++) {
-                for(int k = 1; k<8; k++) {
-                    calendarTableModel.setValueAt(loggedIn.getAppointments().get(i), j, k);
+        calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
+        refreshCells();
+    }
+
+    private void refreshCells() {
+        if(appointments != null && appointments.size()>0){
+            for(Appointment appointment : appointments){
+                Date startTime = appointment.getStartTime();
+                Date endTime = appointment.getEndTime();
+                GregorianCalendar cal = new GregorianCalendar();
+                cal.setTime(startTime);
+                int dayStart = cal.get(GregorianCalendar.DAY_OF_MONTH);
+                int monthStart = cal.get(GregorianCalendar.MONTH);
+                int hourStart = cal.get(GregorianCalendar.HOUR_OF_DAY);
+                int yearStart = cal.get(GregorianCalendar.YEAR);
+                cal.setTime(endTime);
+                int dayEnd = cal.get(GregorianCalendar.DAY_OF_MONTH);
+                int monthEnd = cal.get(GregorianCalendar.MONTH);
+                int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
+                int yearEnd = cal.get(GregorianCalendar.YEAR);
+
+                int appointmentDateStart = Integer.valueOf(""+String.valueOf(dayStart)+String.valueOf(monthStart+1));
+                int appointmentDateEnd = Integer.valueOf(""+String.valueOf(dayEnd)+String.valueOf(monthEnd+1));
+
+                for(int j = 1; j<8; j++) {
+                    String[] headerDate = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
+                    headerDate[1].trim();
+                    int headerDateInt = Integer.valueOf(headerDate[1].split("\\.")[0] + headerDate[1].split("\\.")[1]);
+                    for(int i = hourStart; i < hourEnd; i++) {
+                        if(appointmentDateEnd >= headerDateInt && appointmentDateStart <= headerDateInt && yearStart <= currentYear && yearEnd >= currentYear){
+                            calendarTableModel.setValueAt(appointment, i, j);
+                        }
+                        else{
+                            calendarTableModel.setValueAt(null, i, j);
+                        }
+                    }
                 }
             }
-        }**/
-
-        calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new calendarTableRenderer());
+        }
+        else{
+            for(int i = 1; i < 8; i++){
+                for(int j = 0; j < 24; j++){
+                   calendarTableModel.setValueAt(null, j, i);
+                }
+            }
+        }
     }
 
     class previous_Action implements ActionListener {
@@ -194,18 +234,6 @@ public class WeekView extends CalenderView {
                 if(var != 0){
                     refreshCalendar(currentWeek, currentMonth,currentYear);
                 }
-            }
-        }
-    }
-
-    /** PROPERTYCHANGE **/
-    public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(Calendar.APPOINTMENT_PROPERTY)){
-            if(evt.getNewValue() instanceof Appointment){
-                //Appointment added
-            }
-            else{
-                //Appointment removed
             }
         }
     }

@@ -1,9 +1,11 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;
-import no.ntnu.pu.model.Email;
-import no.ntnu.pu.model.Person;
+import no.ntnu.pu.model.*;
 import no.ntnu.pu.net.SendMail;
+import no.ntnu.pu.storage.AppointmentStorage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +18,7 @@ public class LoginView extends JPanel {
     private JPasswordField passField;
     private JButton btnLogin, btnForgottenPassword;
     private String usernameInput, passwordInput;
-    private static JLabel lblUsername, lblPassword;
+    private static JLabel lblUsername, lblPassword, lblError;
     private static Container pane;
     private static JFrame frmMain;
 
@@ -34,28 +36,31 @@ public class LoginView extends JPanel {
         panel.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
-        //Labels
-        lblUsername = new JLabel("Brukernavn: ", JLabel.LEFT);
+        /**Labels**/
+        lblUsername = new JLabel("E-post: ", JLabel.LEFT);
         lblPassword = new JLabel("Passord: ", JLabel.LEFT);
+        lblError = new JLabel("", JLabel.CENTER);
 
-        //Textfields (with listeners)
+        /**Textfields (with listeners)**/
         userField = new JTextField(20);
         passField = new JPasswordField(20);
+        userField.addActionListener(new myUserAction());
         passField.addActionListener(new myPasswordAction());
 
-        //Buttons (with listeners)
+        /**Buttons (with listeners)**/
         btnLogin = new JButton("Logg inn");
         btnLogin.addActionListener(new myLoginAction());
         btnForgottenPassword = new JButton("Glemt passord?");
         btnForgottenPassword.addActionListener(new myForgottenAction());
 
-        //Adding components to panel
-        panelAdd(1, 0, 0, constraints, lblUsername, panel);
-        panelAdd(1, 0, 1, constraints, lblPassword, panel);
-        panelAdd(2, 1, 0, constraints, userField, panel);
-        panelAdd(2, 1, 1, constraints, passField, panel);
-        panelAdd(1, 1, 2, constraints, btnLogin, panel);
-        panelAdd(1, 2, 2, constraints, btnForgottenPassword, panel);
+        /**Adding components to panel**/
+        panelAdd(3, 0, 0, constraints, lblError, panel);
+        panelAdd(1, 0, 1, constraints, lblUsername, panel);
+        panelAdd(1, 0, 2, constraints, lblPassword, panel);
+        panelAdd(2, 1, 1, constraints, userField, panel);
+        panelAdd(2, 1, 2, constraints, passField, panel);
+        panelAdd(1, 1, 3, constraints, btnLogin, panel);
+        panelAdd(1, 2, 3, constraints, btnForgottenPassword, panel);
     }
 
     public void panelAdd(int gridwidth, int gridx, int gridy, GridBagConstraints c, Component comp, JPanel panel){
@@ -84,51 +89,53 @@ public class LoginView extends JPanel {
         this.passwordInput = passwordInput;
     }
 
+    class myUserAction implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+            setUsernameInput(userField.getText());
+            btnLogin.doClick();
+        }
+    }
+
     class myPasswordAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             setPasswordInput(new String(passField.getPassword()));
+            btnLogin.doClick();
         }
     }
 
     class myLoginAction implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            /**Person person = PersonControl.getPersonByEmail(usernameInput);
-            if(passwordInput.equals(person.getPassword())){
-                Person loggedIn = person;
-                frmMain.dispose();
-                MainView mainView = new MainView();
-
+            if(PersonControl.getPersonByEmail(userField.getText()) != null){
+                if(new String(passField.getPassword()).equals(PersonControl.getPersonByEmail(userField.getText()).getPassword())){
+                    Person loggedIn = PersonControl.getPersonByEmail(userField.getText());
+                    frmMain.dispose();
+                    CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
+                    MainView mainView = new MainView();
+                }
             }
             else{
-                userField.setText("FEIL BRUKERNAVN ELLER PASSORD");
+                lblError.setText("Feil brukernavn og/eller passord");
+                userField.setText("");
                 passField.setText("");
-            }**/
-            frmMain.dispose();
-            MainView mainView = new MainView();
+            }
         }
     }
 
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
-            String feilmelding = "Skriv inn brukernavn og passord";
-            setUsernameInput(userField.getText());
-            if(usernameInput.length() == 0 || usernameInput.equals(feilmelding)){
-                userField.setText(feilmelding);
+            if(userField.getText().length() == 0){
+                lblError.setText("Feil brukernavn og/eller passord");
+                userField.setText("");
+                passField.setText("");
             }
             else{
-                /**
-                Person person;
-                person = PersonControl.getPersonByEmail(usernameInput);
-                new SendMail(new Email("Kalender", person.getEmail(), "DITT PASSORD", person.getPassword()));
-                **/
-                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", "hei"));
-
+                new SendMail(new Email("Gigakalender", usernameInput, "DITT PASSORD", PersonControl.getPersonByEmail(usernameInput).getPassword()));
             }
         }
     }
 
     public static void main(String args[]){
-        frmMain = new JFrame("LoginView");
+        frmMain = new JFrame("Logg inn");
         pane = frmMain.getContentPane();
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());

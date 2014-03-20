@@ -8,6 +8,12 @@ import no.ntnu.pu.model.Person;
 
 public class GroupStorage extends ServerStorage {
 
+	public GroupStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by GroupStorage");
+	}
+	
 	public Group insertGroup(Group g) {
 		try {
 			sql = "INSERT INTO meetinggroup(email, name) VALUES(?, ?)";
@@ -28,6 +34,7 @@ public class GroupStorage extends ServerStorage {
 				}
 			}
 			con.commit();
+			System.out.println("Database: Group inserted");
 			return g;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -115,6 +122,21 @@ public class GroupStorage extends ServerStorage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	public ArrayList<Group> getAll() {
+		try {
+			sql = "SELECT * FROM meetinggroup";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Group> list = new ArrayList<Group>();
+			while (rs.next()) {
+				list.add(this.setGroup(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

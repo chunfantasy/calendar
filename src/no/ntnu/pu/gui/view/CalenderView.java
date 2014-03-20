@@ -9,6 +9,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.GregorianCalendar;
 
 public class CalenderView extends JPanel {
@@ -123,6 +125,15 @@ public class CalenderView extends JPanel {
             if(calendarTable.getColumnCount() == 8){
                 if(column == 0){
                     setBackground(Color.LIGHT_GRAY);
+                }
+                else if(value != null && value instanceof Appointment){
+                    setBackground(new Color(164, 170, 255));
+                    if(calendarTable.getValueAt(row - 1, column) == null){
+                        setText(((Appointment) value).getTitle());
+                    }
+                    else{
+                        setText("");
+                    }
                 }
                 else if(selected){
                     setBackground(new Color(220, 255, 220));

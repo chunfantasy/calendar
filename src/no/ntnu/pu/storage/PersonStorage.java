@@ -7,6 +7,12 @@ import no.ntnu.pu.model.Person;
 
 public class PersonStorage extends ServerStorage {
 
+	public PersonStorage() {
+		super();
+		System.out
+				.println("Database: Database connected by PersonStorage");
+	}
+	
 	public Person insertPerson(Person p) {
 		try {
 			sql = "INSERT INTO person(email, name, title, password, phonenumbers) VALUES(?, ?, ?, ?, ?)";
@@ -19,6 +25,7 @@ public class PersonStorage extends ServerStorage {
 			pstmt.executeUpdate();
 			p.setId(this.getLastId());
 			con.commit();
+			System.out.println("Database: Person inserted");
 			return p;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -28,13 +35,14 @@ public class PersonStorage extends ServerStorage {
 
 	public boolean updatePerson(Person p) {
 		try {
-			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ? WHERE id = "
+			sql = "UPDATE  person SET email = ?, name= ?, title = ?, password = ?, phonenumbers = ? WHERE id = "
 					+ p.getId();
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, p.getEmail());
 			pstmt.setString(2, p.getName());
 			pstmt.setString(3, p.getTitle());
 			pstmt.setString(4, p.getPassword());
+			pstmt.setString(5, p.getPhoneNumbers().toString());
 			pstmt.executeUpdate();
 			con.commit();
 			return true;
@@ -65,6 +73,21 @@ public class PersonStorage extends ServerStorage {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	public ArrayList<Person> getAll() {
+		try {
+			sql = "SELECT * FROM person";
+			rs = stmt.executeQuery(sql);
+			ArrayList<Person> list = new ArrayList<Person>();
+			while (rs.next()) {
+				list.add(this.setPerson(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
