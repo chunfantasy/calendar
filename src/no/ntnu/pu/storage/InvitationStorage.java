@@ -4,15 +4,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import no.ntnu.pu.model.Invitation;
+import no.ntnu.pu.model.Person;
 
-public class InvitationStorage extends ServerStorage{
-	
+public class InvitationStorage extends ServerStorage {
+
 	public InvitationStorage() {
 		super();
-		System.out
-				.println("Database: Database connected by IvitationStorage");
+		System.out.println("Database: Database connected by IvitationStorage");
 	}
-	
+
 	public Invitation insertInvitation(Invitation i) {
 		try {
 			sql = "INSERT INTO invitation(appointmentid, recipientid, senderid) VALUES(?, ?, ?)";
@@ -26,7 +26,8 @@ public class InvitationStorage extends ServerStorage{
 			System.out.println("Database: Invitation inserted done");
 			return i;
 		} catch (SQLException e) {
-			System.out.println("FAIL: Database: Invitation inserted failed!!!!!!");
+			System.out
+					.println("FAIL: Database: Invitation inserted failed!!!!!!");
 			return null;
 		}
 	}
@@ -43,7 +44,8 @@ public class InvitationStorage extends ServerStorage{
 			System.out.println("Database: Invitation updated");
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Database: Invitation updated failed!!!!!!");
+			System.out
+					.println("FAIL: Database: Invitation updated failed!!!!!!");
 			return true;
 		}
 	}
@@ -53,10 +55,11 @@ public class InvitationStorage extends ServerStorage{
 			sql = "DELETE FROM invitation WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
-			System.out.println("Database: Invitation deleted by id");
+			System.out.println("Database: Invitation deleted");
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Database: Invitation deleted by id failed!!!!!!");
+			System.out
+					.println("FAIL: Database: Invitation deleted by id failed!!!!!!");
 			return false;
 		}
 	}
@@ -69,10 +72,11 @@ public class InvitationStorage extends ServerStorage{
 			while (rs.next()) {
 				list.add(this.setInvitation(rs));
 			}
-			System.out.println("Database: Invitation all gotten");
+			System.out.println("Database: Invitation gotten done");
 			return list;
 		} catch (SQLException e) {
-			System.out.println("Database: Invitation all gotten falied!!!!!!");
+			System.out
+					.println("FAIL: Database: Invitation gotten falied!!!!!!");
 			return null;
 		}
 	}
@@ -82,13 +86,32 @@ public class InvitationStorage extends ServerStorage{
 			sql = "SELECT * FROM Invitation WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				System.out.println("Database: Invitation gotten by id");
+				System.out.println("Database: Invitation gotten done");
 				return this.setInvitation(rs);
-			} else
-				System.out.println("Database: Invitation gotten by id failed!!!!!!");
+			} else {
+				System.out
+						.println("FAIL: Database: Invitation gotten falied!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			System.out.println("Database: Invitation gotten by id failed!!!!!!");
+			System.out
+					.println("Database: Invitation gotten by id failed!!!!!!");
+			return null;
+		}
+	}
+
+	public ArrayList<Invitation> getByRecipient(Person p) {
+		try {
+			sql = "SELECT * FROM invitation WHERE recipientid = " + p.getId();
+			rs = stmt.executeQuery(sql);
+			ArrayList<Invitation> list = new ArrayList<Invitation>();
+			while (rs.next()) {
+				list.add(this.setInvitation(rs));
+			}
+			System.out.println("Database: Invitation gotten done");
+			return list;
+		} catch (SQLException e) {
+			System.out.println("FAIL: Database: Invitation gotten fail!!!!!!");
 			return null;
 		}
 	}

@@ -37,9 +37,10 @@ public class RoomStorage extends ServerStorage {
 			pstmt.setString(2, r.getRoomname());
 			pstmt.executeUpdate();
 			con.commit();
+			System.out.println("Database: Room updated done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Invitation updated failed!!!!!!");
 			return true;
 		}
 	}
@@ -49,9 +50,10 @@ public class RoomStorage extends ServerStorage {
 			sql = "DELETE FROM meetinggroup WHERE id = " + id;
 			stmt.execute(sql);
 			con.commit();
+			System.out.println("Database: Room deleted done");
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Room deleted failed!!!!!!");
 			return false;
 		}
 	}
@@ -64,9 +66,10 @@ public class RoomStorage extends ServerStorage {
 			while (rs.next()) {
 				list.add(this.setRoom(rs));
 			}
+			System.out.println("Database: Room gotten done");
 			return list;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Room deleted failed!!!!!!");
 			return null;
 		}
 	}
@@ -76,11 +79,14 @@ public class RoomStorage extends ServerStorage {
 			sql = "SELECT * FROM meetingroom WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
+				System.out.println("Database: Room gotten done");
 				return this.setRoom(rs);
-			} else
+			} else {
+				System.out.println("FAIL: Database: Room deleted failed!!!!!!");
 				return null;
+			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("FAIL: Database: Room deleted failed!!!!!!");
 			return null;
 		}
 	}

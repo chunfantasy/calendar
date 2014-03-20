@@ -121,7 +121,7 @@ public class StorageTest {
 		
 		Invitation invitation = new Invitation(p1, p2, a);
 		invitationStorage.insertInvitation(invitation);
-		System.out.println(invitationStorage.getAll().get(0).getSender().getEmail());
+		//System.out.println(invitationStorage.getByRecipient(p2).get(0).getSender().getEmail());
 
 	}
 }
