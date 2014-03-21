@@ -380,10 +380,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         return model;
     }
 
-    public static void setModel(Appointment appointment){
-        model = appointment;
-    }
-
     public void updateModel(){
         ArrayList<Person> array = model.getParticipants();
         for (Participant p : array){
@@ -399,21 +395,28 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             descField.setText(model.getDescription());
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(model.getStartTime());
-        startDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
-        startMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
-        startYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
-        startHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
-        startMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
-
-        cal.setTime(model.getEndTime());
-        endDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
-        endMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
-        endYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
-        endHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
-        endMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
-
+        if (model.getStartTime() != null){
+            cal.setTime(model.getStartTime());
+            startDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
+            startMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
+            startYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
+            startHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
+            startMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
         }
+        if (model.getEndTime() != null){
+            cal.setTime(model.getEndTime());
+            endDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
+            endMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
+            endYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
+            endHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
+            endMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
+        }
+
+    }
+
+    public static void setModel(Appointment appointment){
+        model = appointment;
+    }
 
 
     public void actionPerformed(ActionEvent e) {
