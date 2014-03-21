@@ -82,12 +82,7 @@ public class WeekView extends CalenderView {
 
 
         for(int i = 0; i<24; i++){
-            if(i < 10){
-                calendarTableModel.setValueAt("0" + String.valueOf(i) + ":00", i, 0);
-            }
-            else{
-                calendarTableModel.setValueAt(String.valueOf(i) + ":00", i, 0);
-            }
+            calendarTableModel.setValueAt((i < 10)? "0" + String.valueOf(i) + ":00" : String.valueOf(i) + ":00", i, 0);
         }
 
         calendarTable.setAutoCreateColumnsFromModel(false);
@@ -105,13 +100,8 @@ public class WeekView extends CalenderView {
         numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 
         for(int i = 0; i < 7; i++){
-            if(currentDay + i > numberOfDays){
-                midweekChange = true;
-            }
-            else{
-                midweekChange = false;
-            }
-
+            midweekChange = (currentDay + i > numberOfDays ? true : false);
+            if(midweekChange) break;
         }
 
         previousButton.setEnabled(!(week == 1 && year <= realYear - 10));
@@ -156,6 +146,11 @@ public class WeekView extends CalenderView {
     }
 
     private void refreshCells() {
+        for(int j = 1; j<8; j++) {
+            for(int i = 0; i < 24; i++){
+                calendarTableModel.setValueAt(null, i, j);
+            }
+        }
         appointments = CalendarControl.getModel().getAppointments();
         if(appointments != null && appointments.size()>0){
             for(Appointment appointment : appointments){
@@ -172,29 +167,23 @@ public class WeekView extends CalenderView {
                 int monthEnd = cal.get(GregorianCalendar.MONTH);
                 int hourEnd = cal.get(GregorianCalendar.HOUR_OF_DAY);
                 int yearEnd = cal.get(GregorianCalendar.YEAR);
-
-                int appointmentDateStart = Integer.valueOf(""+String.valueOf(dayStart)+String.valueOf(monthStart+1));
-                int appointmentDateEnd = Integer.valueOf(""+String.valueOf(dayEnd)+String.valueOf(monthEnd+1));
+                while(hourEnd <= hourStart){
+                    hourEnd += 1;
+                }
 
                 for(int j = 1; j<8; j++) {
-                    String[] headerDate = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
-                    headerDate[1].trim();
-                    int headerDateInt = Integer.valueOf(headerDate[1].split("\\.")[0] + headerDate[1].split("\\.")[1]);
+                    int appointmentDateStart = Integer.valueOf(""+String.valueOf(yearStart)+String.valueOf(monthStart+1)+String.valueOf(dayStart));
+                    int appointmentDateEnd = Integer.valueOf(""+String.valueOf(yearEnd)+String.valueOf(monthEnd+1)+String.valueOf(dayEnd));
+                    String[] header = cttcm.getColumn(j).getHeaderValue().toString().split("      ");
+                    String headerDate = header[1];
+                    String[] headerDateList = headerDate.split("\\.");
+                    String currentYearStr = String.valueOf(currentYear);
+                    int headerDateInt = Integer.valueOf(currentYearStr + headerDateList[1] + headerDateList[0]);
                     for(int i = hourStart; i < hourEnd; i++) {
                         if(appointmentDateEnd >= headerDateInt && appointmentDateStart <= headerDateInt && yearStart <= currentYear && yearEnd >= currentYear){
                             calendarTableModel.setValueAt(appointment, i, j);
                         }
-                        else{
-                            calendarTableModel.setValueAt(null, i, j);
-                        }
                     }
-                }
-            }
-        }
-        else{
-            for(int i = 1; i < 8; i++){
-                for(int j = 0; j < 24; j++){
-                   calendarTableModel.setValueAt(null, j, i);
                 }
             }
         }
