@@ -26,13 +26,5 @@ public class StorageTest {
 		AppointmentStorage appointmentStorage = new AppointmentStorage();
 
 
-        Appointment a = new Appointment();
-        a.setCreator(personStorage.getPersonByEmail("anders@email.com"));
-        //a.getTitle("Sjokolade");
-        a.setId(23);
-
-        //a.
-		//alarmStorage.insertAlarm(new Alarm())
-
 	}
 }

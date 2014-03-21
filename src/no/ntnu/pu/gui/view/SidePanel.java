@@ -1,7 +1,10 @@
 package no.ntnu.pu.gui.view;
 
+import no.ntnu.pu.control.CalendarControl;
+import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.gui.panel.MeetingPanel;
 import no.ntnu.pu.model.Appointment;
+import no.ntnu.pu.model.ChangeNotification;
 import no.ntnu.pu.model.Notification;
 
 import javax.swing.*;
@@ -61,6 +64,9 @@ public abstract class SidePanel extends JPanel implements PropertyChangeListener
                         new AppointmentView((Appointment) o);
                     }else{
                         new AppointmentView(((Notification) o).getAppointment());
+                    }if(o instanceof ChangeNotification){
+                        NotificationControl.removeNotification((Notification)o);
+                        CalendarControl.refresh();
                     }
                 }
             }
