@@ -461,7 +461,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             Date endTime = cal.getTime();
             model.setStartTime(startTime);
             model.setEndTime(endTime);
-            CalendarControl.addAppointment(model);
+            CalendarControl.updateAppointment(model);
             System.out.println(model.getTitle());
             System.out.println(model.getParticipants());
             if(isEdited){
@@ -476,7 +476,6 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
 
         }
         if (e.getSource()== cancelButton){
-            CalendarControl.refresh();
             frame.dispose();
         }
         if (e.getSource() == endDayCB){
