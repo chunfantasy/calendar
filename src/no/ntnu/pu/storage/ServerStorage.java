@@ -39,12 +39,12 @@ public class ServerStorage {
         try {
             // mysql -h mysql.stud.ntnu.no/chunf_calendar
             // -u chunf_calender -pgroup12
-//            Connection con = DriverManager.getConnection(
-//                    "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
-//                    "chunf_calendar", "group12");
-			Connection con = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/calendar",
-					"root", "123");
+            Connection con = DriverManager.getConnection(
+                    "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
+                    "chunf_calendar", "group12");
+//			Connection con = DriverManager.getConnection(
+//					"jdbc:mysql://localhost:3306/calendar",
+//					"root", "123");
             con.setAutoCommit(false);
             return con;
         } catch (SQLException e) {
