@@ -151,7 +151,7 @@ public class GroupStorage extends ServerStorage {
 			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
                 System.out.println(11111);
-				list.add(this.setGroup(rs));
+				list.add(this.setGroup(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Group gotten done");
@@ -170,7 +170,7 @@ public class GroupStorage extends ServerStorage {
 			sql = "SELECT * FROM meetinggroup WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Group group = this.setGroup(rs);
+				Group group = this.setGroup(con, rs);
 				con.close();
 				System.out.println("Database: Group gotten done");
 				return group;
@@ -192,7 +192,7 @@ public class GroupStorage extends ServerStorage {
 			sql = "SELECT * FROM meetinggroup WHERE email = " + email;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Group group = this.setGroup(rs);
+				Group group = this.setGroup(con, rs);
 				con.close();
 				System.out.println("Database: Group gotten done");
 				return group;
@@ -215,7 +215,7 @@ public class GroupStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Group> list = new ArrayList<Group>();
 			while (rs.next()) {
-				list.add(this.setGroup(rs));
+				list.add(this.setGroup(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Group gotten done");

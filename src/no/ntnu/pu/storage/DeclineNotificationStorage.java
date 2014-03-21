@@ -84,7 +84,7 @@ public class DeclineNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<DeclineNotification> list = new ArrayList<DeclineNotification>();
 			while (rs.next()) {
-				list.add(this.setDeclineNotification(rs));
+				list.add(this.setDeclineNotification(con, rs));
 			}
 			con.close();
 			System.out.println("Database: DeclineNotification gotten done");
@@ -105,7 +105,7 @@ public class DeclineNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				DeclineNotification declineNotification = this
-						.setDeclineNotification(rs);
+						.setDeclineNotification(con, rs);
 				con.close();
 				System.out.println("Database: DeclineNotification gotten done");
 				return declineNotification;
@@ -133,7 +133,7 @@ public class DeclineNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<DeclineNotification> list = new ArrayList<DeclineNotification>();
 			while (rs.next()) {
-				list.add(this.setDeclineNotification(rs));
+				list.add(this.setDeclineNotification(con, rs));
 			}
 			con.close();
 			System.out.println("Database: DeclineNotification gotten");

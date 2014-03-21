@@ -28,7 +28,6 @@ public class PersonStorage extends ServerStorage {
 			p.setId(this.getLastId());
 			con.commit();
 			con.close();
-			this.con = null;
 			System.out.println("Database: Person inserted done");
 			return p;
 		} catch (SQLException e) {
@@ -101,7 +100,7 @@ public class PersonStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Person> list = new ArrayList<Person>();
 			while (rs.next()) {
-				list.add(this.setPerson(rs));
+				list.add(this.setPerson(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Person gotten done");
@@ -119,7 +118,7 @@ public class PersonStorage extends ServerStorage {
 			sql = "SELECT * FROM person WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Person person = this.setPerson(rs);
+				Person person = this.setPerson(con, rs);
 				con.close();
 				System.out.println("Database: Person gotten done");
 				return person;
@@ -142,7 +141,7 @@ public class PersonStorage extends ServerStorage {
 			sql = "SELECT * FROM person WHERE email = '" + email + "'";
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Person person = this.setPerson(rs);
+				Person person = this.setPerson(con, rs);
 				con.close();
 				System.out.println("Database: Person gotten done");
 				return person;
@@ -166,7 +165,7 @@ public class PersonStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Person> list = new ArrayList<Person>();
 			while (rs.next()) {
-				list.add(this.setPerson(rs));
+				list.add(this.setPerson(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Person gotten done");

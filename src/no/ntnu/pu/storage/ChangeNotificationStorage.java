@@ -84,7 +84,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<ChangeNotification> list = new ArrayList<ChangeNotification>();
 			while (rs.next()) {
-				list.add(this.setChangeNotification(rs));
+				list.add(this.setChangeNotification(con, rs));
 			}
 			con.close();
 			System.out.println("Database: ChangeNotification gotten done");
@@ -103,7 +103,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				ChangeNotification changeNotification = this
-						.setChangeNotification(rs);
+						.setChangeNotification(con, rs);
 				con.close();
 				System.out.println("Database: ChangeNotification gotten done");
 				return changeNotification;
@@ -130,7 +130,7 @@ public class ChangeNotificationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<ChangeNotification> list = new ArrayList<ChangeNotification>();
 			while (rs.next()) {
-				list.add(this.setChangeNotification(rs));
+				list.add(this.setChangeNotification(con, rs));
 			}
 			con.close();
 			System.out.println("Database: ChangeNotification gotten");

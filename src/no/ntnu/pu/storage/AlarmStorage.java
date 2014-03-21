@@ -82,7 +82,7 @@ public class AlarmStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Alarm> list = new ArrayList<Alarm>();
 			while (rs.next()) {
-				list.add(this.setAlarm(rs));
+				list.add(this.setAlarm(con, rs));
 			}
 			System.out.println("Database: Alarm gotten done");
 			con.close();
@@ -100,7 +100,7 @@ public class AlarmStorage extends ServerStorage {
 			sql = "SELECT * FROM alarm WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Alarm alarm = this.setAlarm(rs);
+				Alarm alarm = this.setAlarm(con, rs);
 				con.close();
 				System.out.println("Database: Alarm gotten done");
 				return alarm;
@@ -122,7 +122,7 @@ public class AlarmStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Alarm> list = new ArrayList<Alarm>();
 			while (rs.next()) {
-				list.add(this.setAlarm(rs));
+				list.add(this.setAlarm(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Alarm gotten done");

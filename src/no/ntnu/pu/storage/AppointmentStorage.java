@@ -200,7 +200,7 @@ public class AppointmentStorage extends ServerStorage {
             rs = stmt.executeQuery(sql);
             ArrayList<Appointment> list = new ArrayList<Appointment>();
             while (rs.next()) {
-                list.add(this.setAppointment(rs));
+                list.add(this.setAppointment(con, rs));
             }
             con.close();
             System.out.println("Database: Appointment gotten done");
@@ -219,7 +219,7 @@ public class AppointmentStorage extends ServerStorage {
             sql = "SELECT * FROM appointment WHERE id = " + id;
             rs = stmt.executeQuery(sql);
             if (rs.next()) {
-                Appointment appointment = this.setAppointment(rs);
+                Appointment appointment = this.setAppointment(con, rs);
                 con.close();
                 System.out.println("Database: Appointment gotten done");
                 return appointment;
@@ -246,7 +246,7 @@ public class AppointmentStorage extends ServerStorage {
             rs = stmt.executeQuery(sql);
             ArrayList<Appointment> list = new ArrayList<Appointment>();
             while (rs.next()) {
-                list.add(this.setAppointment(rs));
+                list.add(this.setAppointment(con, rs));
             }
             con.close();
             System.out.println("Database: Appointment gotten done");
@@ -283,7 +283,7 @@ public class AppointmentStorage extends ServerStorage {
                 sql = "SELECT * FROM appointment WHERE id = " + id;
                 rs = stmt.executeQuery(sql);
                 if (rs.next())
-                    listAppointment.add(this.setAppointment(rs));
+                    listAppointment.add(this.setAppointment(con, rs));
             }
             con.close();
             System.out.println("Database: Appointment gotten done");

@@ -20,7 +20,6 @@ import no.ntnu.pu.model.Person;
 import no.ntnu.pu.model.Room;
 
 public class ServerStorage {
-    protected Connection con;
     protected Statement stmt;
     protected PreparedStatement pstmt;
     protected ResultSet rs;
@@ -40,12 +39,12 @@ public class ServerStorage {
         try {
             // mysql -h mysql.stud.ntnu.no/chunf_calendar
             // -u chunf_calender -pgroup12
-            Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
-                    "chunf_calendar", "group12");
-//			con = DriverManager.getConnection(
-//					"jdbc:mysql://localhost:3306/calendar",
-//					"root", "123");
+//            Connection con = DriverManager.getConnection(
+//                    "jdbc:mysql://mysql.stud.ntnu.no/chunf_calendar",
+//                    "chunf_calendar", "group12");
+			Connection con = DriverManager.getConnection(
+					"jdbc:mysql://localhost:3306/calendar",
+					"root", "123");
             con.setAutoCommit(false);
             return con;
         } catch (SQLException e) {
@@ -276,7 +275,7 @@ public class ServerStorage {
 
     }
 
-    protected Person setPerson(ResultSet rs) {
+    protected Person setPerson(Connection con, ResultSet rs) {
         try {
             Person p = new Person("");
             p.setId(rs.getInt("id"));
@@ -298,9 +297,8 @@ public class ServerStorage {
         }
     }
 
-    protected Group setGroup(ResultSet rs) {
+    protected Group setGroup(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Group g = new Group("");
             g.setId(rs.getInt("id"));
@@ -319,7 +317,7 @@ public class ServerStorage {
                 sql = "SELECT * FROM person WHERE id = " + id;
                 rs = stmt.executeQuery(sql);
                 if (rs.next()) {
-                    list.add(setPerson(rs));
+                    list.add(setPerson(con, rs));
                 }
             }
             g.setPersons(list);
@@ -331,7 +329,7 @@ public class ServerStorage {
 
     }
 
-    protected Room setRoom(ResultSet rs) {
+    protected Room setRoom(Connection con, ResultSet rs) {
         try {
             Room r = new Room("");
             r.setId(rs.getInt("id"));
@@ -344,9 +342,8 @@ public class ServerStorage {
         }
     }
 
-    protected Appointment setAppointment(ResultSet rs) {
+    protected Appointment setAppointment(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Appointment a = new Appointment();
             a.setId(rs.getInt("id"));
@@ -362,13 +359,13 @@ public class ServerStorage {
             sql = "SELECT * FROM meetingroom WHERE id = " + meetingroomId;
             rs = stmt.executeQuery(sql);
             if (rs.next()) {
-                a.setMeetingRoom(this.setRoom(rs));
+                a.setMeetingRoom(this.setRoom(con, rs));
             }
 
             sql = "SELECT * FROM person WHERE id = " + creatorId;
             rs = stmt.executeQuery(sql);
             if (rs.next()) {
-                a.setCreator(this.setPerson(rs));
+                a.setCreator(this.setPerson(con, rs));
                 ;
             }
 
@@ -390,7 +387,7 @@ public class ServerStorage {
                 sql = "SELECT * FROM person WHERE id = " + id;
                 rs = stmt.executeQuery(sql);
                 if (rs.next()) {
-                    a.addParticipant(this.setPerson(rs));
+                    a.addParticipant(this.setPerson(con, rs));
                 }
             }
             return a;
@@ -400,9 +397,8 @@ public class ServerStorage {
         }
     }
 
-    protected Alarm setAlarm(ResultSet rs) {
+    protected Alarm setAlarm(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
@@ -415,12 +411,12 @@ public class ServerStorage {
             sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                a.setAppointment(this.setAppointment(rs));
+                a.setAppointment(this.setAppointment(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + recipientId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                a.setRecipient(this.setPerson(rs));
+                a.setRecipient(this.setPerson(con, rs));
             return a;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -428,9 +424,8 @@ public class ServerStorage {
         }
     }
 
-    protected ChangeNotification setChangeNotification(ResultSet rs) {
+    protected ChangeNotification setChangeNotification(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
@@ -454,12 +449,12 @@ public class ServerStorage {
             sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                c.setAppointment(this.setAppointment(rs));
+                c.setAppointment(this.setAppointment(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + recipientId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                c.setRecipient(this.setPerson(rs));
+                c.setRecipient(this.setPerson(con, rs));
             return c;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -467,9 +462,8 @@ public class ServerStorage {
         }
     }
 
-    protected DeclineNotification setDeclineNotification(ResultSet rs) {
+    protected DeclineNotification setDeclineNotification(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
@@ -483,17 +477,17 @@ public class ServerStorage {
             sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                d.setAppointment(this.setAppointment(rs));
+                d.setAppointment(this.setAppointment(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + recipientId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                d.setRecipient(this.setPerson(rs));
+                d.setRecipient(this.setPerson(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + declinerId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                d.setDecliner(this.setPerson(rs));
+                d.setDecliner(this.setPerson(con, rs));
             return d;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -501,9 +495,8 @@ public class ServerStorage {
         }
     }
 
-    protected Invitation setInvitation(ResultSet rs) {
+    protected Invitation setInvitation(Connection con, ResultSet rs) {
         try {
-            Connection con = this.connect();
             stmt = con.createStatement();
             Person person = new Person("");
             Appointment appointment = new Appointment();
@@ -516,17 +509,17 @@ public class ServerStorage {
             sql = "SELECT * FROM appointment WHERE id = " + appointmentId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                i.setAppointment(this.setAppointment(rs));
+                i.setAppointment(this.setAppointment(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + recipientId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                i.setRecipient(this.setPerson(rs));
+                i.setRecipient(this.setPerson(con, rs));
 
             sql = "SELECT * FROM person WHERE id = " + senderId;
             rs = stmt.executeQuery(sql);
             if (rs.next())
-                i.setSender(this.setPerson(rs));
+                i.setSender(this.setPerson(con, rs));
             return i;
         } catch (SQLException e) {
             e.printStackTrace();

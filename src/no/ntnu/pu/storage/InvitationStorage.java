@@ -84,7 +84,7 @@ public class InvitationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Invitation> list = new ArrayList<Invitation>();
 			while (rs.next()) {
-				list.add(this.setInvitation(rs));
+				list.add(this.setInvitation(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Invitation gotten done");
@@ -103,7 +103,7 @@ public class InvitationStorage extends ServerStorage {
 			sql = "SELECT * FROM Invitation WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Invitation invitation = this.setInvitation(rs);
+				Invitation invitation = this.setInvitation(con, rs);
 				con.close();
 				System.out.println("Database: Invitation gotten done");
 				return invitation;
@@ -128,7 +128,7 @@ public class InvitationStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Invitation> list = new ArrayList<Invitation>();
 			while (rs.next()) {
-				list.add(this.setInvitation(rs));
+				list.add(this.setInvitation(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Invitation gotten done");

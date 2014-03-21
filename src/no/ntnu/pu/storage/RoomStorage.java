@@ -78,7 +78,7 @@ public class RoomStorage extends ServerStorage {
 			rs = stmt.executeQuery(sql);
 			ArrayList<Room> list = new ArrayList<Room>();
 			while (rs.next()) {
-				list.add(this.setRoom(rs));
+				list.add(this.setRoom(con, rs));
 			}
 			con.close();
 			System.out.println("Database: Room gotten done");
@@ -96,7 +96,7 @@ public class RoomStorage extends ServerStorage {
 			sql = "SELECT * FROM meetingroom WHERE id = " + id;
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
-				Room room = this.setRoom(rs);
+				Room room = this.setRoom(con, rs);
 				con.close();
 				System.out.println("Database: Room gotten done");
 				return room;
