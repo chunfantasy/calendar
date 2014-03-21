@@ -82,7 +82,7 @@ public class MainView {
         c.gridheight = 2;
         container.add(calendarView, c);
 
-        dropdown.setSelectedItem(PersonControl.getModel().toString());
+        dropdown.setSelectedIndex(PersonControl.getModel().getId()-1);
 
         frame.getContentPane().add(container);
         frame.setSize(1024, 768);

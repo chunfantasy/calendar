@@ -22,10 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class AppointmentView extends JPanel implements ListSelectionListener, ActionListener, FocusListener{
 
@@ -44,18 +41,19 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
     private ArrayList<String> minutes, months;
     private AddParticipant addParticipant;
     private AddRoom addRoom;
-    private boolean addPersSel, addRoomSel;
+    private boolean addPersSel, addRoomSel, isEdited;
 
     public AppointmentView(Appointment appointment){
 
         frame = new JFrame("Endre avtale");
-        participantListModel = new DefaultListModel<Participant>();
+         participantListModel = new DefaultListModel<Participant>();
         setModel(appointment);
-        model = appointment;
-        updateModel();
         makeAndShowGUI(true);
-//        if (model.getCreator() == CalendarControl.getModel());
-        checkCreator();
+        updateModel();
+        if (model.getCreator().getId() != PersonControl.getModel().getId()){
+            checkCreator();
+        }
+        isEdited = true;
     }
 
     public AppointmentView(){
@@ -63,6 +61,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         participantListModel = new DefaultListModel<Participant>();
         setModel(new Appointment());
         makeAndShowGUI(false);
+        isEdited = false;
     }
 
     public void makeAndShowGUI(boolean editing){
@@ -392,7 +391,29 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 participantListModel.addElement(p);
             }
         }
-    }
+        if(model.getTitle()!=null)
+            appointmentField.setText(model.getTitle());
+        if(model.getAddress()!=null)
+            placeField.setText(model.getAddress());
+        if(model.getDescription()!=null)
+            descField.setText(model.getDescription());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(model.getStartTime());
+        startDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
+        startMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
+        startYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
+        startHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
+        startMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
+
+        cal.setTime(model.getEndTime());
+        endDayCB.setSelectedIndex(cal.get(GregorianCalendar.DAY_OF_MONTH)-1);
+        endMonthCB.setSelectedIndex(cal.get(GregorianCalendar.MONTH));
+        endYearCB.setSelectedIndex(cal.get(GregorianCalendar.YEAR)-2014);
+        endHourCB.setSelectedIndex(cal.get(GregorianCalendar.HOUR_OF_DAY));
+        endMinCB.setSelectedIndex(cal.get(GregorianCalendar.MINUTE)/15);
+
+        }
 
 
     public void actionPerformed(ActionEvent e) {
@@ -426,8 +447,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             model.setDescription(descField.getText());
             model.setAddress(placeField.getText());
             model.setTitle(appointmentField.getText());
-            // personControl.getModel();
-            model.setCreator(PersonControl.getPersonById(1));
+            model.setCreator(PersonControl.getModel());
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.HOUR_OF_DAY, (Integer)startHourCB.getSelectedItem());
             cal.set(Calendar.DAY_OF_MONTH, (Integer)startDayCB.getSelectedItem());
@@ -441,12 +461,15 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
             Date endTime = cal.getTime();
             model.setStartTime(startTime);
             model.setEndTime(endTime);
-            CalendarControl.addAppointment(model);
+            CalendarControl.updateAppointment(model);
             System.out.println(model.getTitle());
             System.out.println(model.getParticipants());
-            NotificationControl.sendInvitation(model);
+            if(isEdited){
+                NotificationControl.sendChangeNotification(model,model.getParticipants());
+            }else{
+                NotificationControl.sendInvitation(model);}
+            CalendarControl.refresh();
             frame.dispose();
-
 //            model.setStartTime(startField.getText());
 //            model.setEndTime(endField.getText());
             // setParticipants
@@ -533,6 +556,7 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
         }
         if (e.getSource() == deleteButton){
             CalendarControl.deleteAppointment(model);
+            CalendarControl.refresh();
             frame.dispose();
         }
     }
