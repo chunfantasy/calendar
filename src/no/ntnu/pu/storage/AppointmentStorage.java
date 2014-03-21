@@ -23,18 +23,23 @@ public class AppointmentStorage extends ServerStorage {
         try {
             Connection con = this.connect();
             stmt = con.createStatement();
-            sql = "INSERT INTO appointment(title, starttime, endtime, address, description, meetingroomid, creatorid) "
-                    + "VALUES(?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO appointment(title, starttime, endtime, address, description, creatorid) "
+                    + "VALUES(?, ?, ?, ?, ?, ?)";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, a.getTitle());
             pstmt.setTimestamp(2, new Timestamp(a.getStartTime().getTime()));
             pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
             pstmt.setString(4, a.getAddress());
             pstmt.setString(5, a.getDescription());
-            pstmt.setInt(6, a.getMeetingRoom().getId());
-            pstmt.setInt(7, a.getCreator().getId());
+            pstmt.setInt(6, a.getCreator().getId());
             pstmt.executeUpdate();
             a.setId(this.getLastId());
+
+            if (a.getMeetingRoom()!= null){
+                sql = "UPDATE appointment SET meetingroomid = ? WHERE id = " + a.getId();
+                pstmt.setInt(1, a.getMeetingRoom().getId());
+                pstmt.executeUpdate();
+            }
 
             if (!a.getParticipants().isEmpty()) {
                 for (Participant participant : a.getParticipants()) {
@@ -75,7 +80,7 @@ public class AppointmentStorage extends ServerStorage {
         try {
             Connection con = this.connect();
             stmt = con.createStatement();
-            sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ?, meetingroomid = ? "
+            sql = "UPDATE appointment SET title = ?, starttime = ?, endtime = ?, address = ?, description = ? "
                     + "WHERE id = " + a.getId();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, a.getTitle());
@@ -83,9 +88,14 @@ public class AppointmentStorage extends ServerStorage {
             pstmt.setTimestamp(3, new Timestamp(a.getEndTime().getTime()));
             pstmt.setString(4, a.getAddress());
             pstmt.setString(5, a.getDescription());
-            pstmt.setInt(6, a.getMeetingRoom().getId());
             pstmt.executeUpdate();
 
+            if (a.getMeetingRoom() != null){
+                sql = "UPDATE appointment SET meetingroomid = ? "
+                        + "WHERE id = " + a.getId();
+                pstmt = con.prepareStatement(sql);
+                pstmt.setInt(1, a.getMeetingRoom().getId());
+            }
             try {
                 sql = "SELECT * FROM appointment_participant WHERE appointmentid = "
                         + a.getId();
