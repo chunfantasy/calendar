@@ -102,9 +102,14 @@ public class LoginView extends JPanel {
                     CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
                     new MainView();
                 }
+                else {
+                    lblError.setText("Feil passord");
+                    userField.setText("");
+                    passField.setText("");
+                }
             }
             else{
-                lblError.setText("Feil brukernavn og/eller passord");
+                lblError.setText("Brukeren eksisterer ikke");
                 userField.setText("");
                 passField.setText("");
             }
@@ -114,7 +119,7 @@ public class LoginView extends JPanel {
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             if(userField.getText().length() == 0){
-                lblError.setText("Feil brukernavn og/eller passord");
+                lblError.setText("Fyll inn brukernavn");
                 userField.setText("");
                 passField.setText("");
             }
