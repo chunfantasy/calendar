@@ -26,8 +26,10 @@ public class NotificationControl{
     public static void sendInvitation(Appointment a){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
-            Invitation in = new Invitation(a.getCreator(), p, a);
-            invitationStorage.insertInvitation(in);
+            if(!p.getCalendar().getAppointments().contains(a)){
+                Invitation in = new Invitation(a.getCreator(), p, a);
+                invitationStorage.insertInvitation(in);
+            }
         }
     }
 

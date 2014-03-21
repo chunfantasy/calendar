@@ -470,7 +470,8 @@ public class AppointmentView extends JPanel implements ListSelectionListener, Ac
                 NotificationControl.sendChangeNotification(model,model.getParticipants());
             }else{
                 CalendarControl.addAppointment(model);
-                NotificationControl.sendInvitation(model);}
+            }
+            NotificationControl.sendInvitation(model);
             CalendarControl.refresh();
             frame.dispose();
 
