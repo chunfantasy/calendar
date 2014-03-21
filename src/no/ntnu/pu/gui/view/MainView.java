@@ -139,6 +139,7 @@ public class MainView {
                 System.out.print(((Person) e.getItem()).getId());
                 PersonControl.setModel((Person) e.getItem());
                 CalendarControl.refresh();
+                weekView.refreshCalendar(weekView.currentWeek, weekView.currentMonth, weekView.currentYear);
             }
         }
     }
