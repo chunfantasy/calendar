@@ -16,18 +16,17 @@ public class LoginView extends JPanel {
     private JPasswordField passField;
     private JButton btnLogin, btnForgottenPassword;
     private String usernameInput, passwordInput;
-    private static JLabel lblUsername, lblPassword, lblError;
-    private static Container pane;
+    private static JLabel lblError;
     private static JFrame frmMain;
 
     public LoginView(){
 
         /**Set look and feel, catch exceptions**/
         try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
-        catch (ClassNotFoundException e) {}
-        catch (InstantiationException e) {}
-        catch (IllegalAccessException e) {}
-        catch (UnsupportedLookAndFeelException e) {}
+        catch (ClassNotFoundException ignored) {}
+        catch (InstantiationException ignored) {}
+        catch (IllegalAccessException ignored) {}
+        catch (UnsupportedLookAndFeelException ignored) {}
 
         JPanel panel = new JPanel();
         add(panel);
@@ -35,8 +34,8 @@ public class LoginView extends JPanel {
         GridBagConstraints constraints = new GridBagConstraints();
 
         /**Labels**/
-        lblUsername = new JLabel("E-post: ", JLabel.LEFT);
-        lblPassword = new JLabel("Passord: ", JLabel.LEFT);
+        JLabel lblUsername = new JLabel("E-post: ", JLabel.LEFT);
+        JLabel lblPassword = new JLabel("Passord: ", JLabel.LEFT);
         lblError = new JLabel("", JLabel.CENTER);
 
         /**Textfields (with listeners)**/
@@ -71,16 +70,8 @@ public class LoginView extends JPanel {
         panel.add(comp, c);
     }
 
-    public String getUsernameInput() {
-        return usernameInput;
-    }
-
     public void setUsernameInput(String usernameInput) {
         this.usernameInput = usernameInput;
-    }
-
-    public String getPasswordInput() {
-        return passwordInput;
     }
 
     public void setPasswordInput(String passwordInput) {
@@ -111,9 +102,14 @@ public class LoginView extends JPanel {
                     CalendarControl.setModel(CalendarControl.getCalendarByPerson(loggedIn));
                     new MainView();
                 }
+                else {
+                    lblError.setText("Feil passord");
+                    userField.setText("");
+                    passField.setText("");
+                }
             }
             else{
-                lblError.setText("Feil brukernavn og/eller passord");
+                lblError.setText("Brukeren eksisterer ikke");
                 userField.setText("");
                 passField.setText("");
             }
@@ -123,7 +119,7 @@ public class LoginView extends JPanel {
     class myForgottenAction implements ActionListener{
         public void actionPerformed(ActionEvent e) {
             if(userField.getText().length() == 0){
-                lblError.setText("Feil brukernavn og/eller passord");
+                lblError.setText("Fyll inn brukernavn");
                 userField.setText("");
                 passField.setText("");
             }
@@ -135,7 +131,7 @@ public class LoginView extends JPanel {
 
     public static void main(String args[]){
         frmMain = new JFrame("Logg inn");
-        pane = frmMain.getContentPane();
+        Container pane = frmMain.getContentPane();
         frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pane.add(new LoginView());
         frmMain.pack();
