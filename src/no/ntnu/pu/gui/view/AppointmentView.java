@@ -1,7 +1,6 @@
 package no.ntnu.pu.gui.view;
 
 
-import com.sun.swing.internal.plaf.synth.resources.synth_sv;
 import no.ntnu.pu.control.CalendarControl;
 import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;

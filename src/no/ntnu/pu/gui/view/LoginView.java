@@ -1,11 +1,9 @@
 package no.ntnu.pu.gui.view;
 
 import no.ntnu.pu.control.CalendarControl;
-import no.ntnu.pu.control.NotificationControl;
 import no.ntnu.pu.control.PersonControl;
 import no.ntnu.pu.model.*;
 import no.ntnu.pu.net.SendMail;
-import no.ntnu.pu.storage.AppointmentStorage;
 
 import javax.swing.*;
 import java.awt.*;
