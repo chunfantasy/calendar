@@ -21,11 +21,6 @@ public class WeekView extends CalenderView {
     private JLabel  weekLabel, dateSpanLabel;
     private TableColumnModel cttcm;
     private String[] headers = {"Tid","Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"};
-    private int numberOfDays,
-            firstDayOfWeek,
-            lastDayOfWeek,
-            firstMonth,
-            lastMonth;
     private List<Appointment> appointments;
 
     public WeekView(){
@@ -47,11 +42,11 @@ public class WeekView extends CalenderView {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && calendarTable.getSelectedColumn() != 0) {
                     if(calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn()) == null){
-                        AppointmentView appointmentView = new AppointmentView();
+                        new AppointmentView();
                     }
                     else{
                         Appointment appointment = (Appointment)calendarTable.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
-                        AppointmentView appointmentView = new AppointmentView(appointment);
+                        new AppointmentView(appointment);
                     }
                     refreshCells();
                 }
@@ -97,10 +92,10 @@ public class WeekView extends CalenderView {
         }
 
         currentDay = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
-        numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
+        int numberOfDays = gregCal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 
         for(int i = 0; i < 7; i++){
-            midweekChange = (currentDay + i > numberOfDays ? true : false);
+            midweekChange = (currentDay + i > numberOfDays);
             if(midweekChange) break;
         }
 
@@ -109,23 +104,23 @@ public class WeekView extends CalenderView {
         weekLabel.setText("Uke " + week);
         yearComboBox.setSelectedItem(String.valueOf(year));
 
-        firstDayOfWeek = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
-        firstMonth = gregCal.get(GregorianCalendar.MONTH);
+        int firstDayOfWeek = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
+        int firstMonth = gregCal.get(GregorianCalendar.MONTH);
 
         while(gregCal.get(GregorianCalendar.DAY_OF_WEEK) != GregorianCalendar.SUNDAY){
             gregCal.add(GregorianCalendar.DATE, 1);
         }
 
-        lastDayOfWeek = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
-        lastMonth = gregCal.get(GregorianCalendar.MONTH);
+        int lastDayOfWeek = gregCal.get(GregorianCalendar.DAY_OF_MONTH);
+        int lastMonth = gregCal.get(GregorianCalendar.MONTH);
 
-        dateSpanLabel.setText("(" + firstDayOfWeek + "." + (firstMonth + 1) + " - " + lastDayOfWeek + "." + (lastMonth+1) + ")");
+        dateSpanLabel.setText("(" + firstDayOfWeek + "." + (firstMonth + 1) + " - " + lastDayOfWeek + "." + (lastMonth +1) + ")");
         monthLabel.setText((firstMonth == lastMonth) ? months[month] : months[firstMonth] + "/" + months[lastMonth]);
         if(midweekChange){
             int j = 1;
             for(int i = 1; i < 8; i++){
-                if(((firstDayOfWeek+(i-1))) <= numberOfDays){
-                    cttcm.getColumn(i).setHeaderValue(headers[i] + "      " + (firstDayOfWeek+i-1)+ "." + (firstMonth+1));
+                if(((firstDayOfWeek +(i-1))) <= numberOfDays){
+                    cttcm.getColumn(i).setHeaderValue(headers[i] + "      " + (firstDayOfWeek +i-1)+ "." + (firstMonth +1));
                 }
                 else{
                     cttcm.getColumn(i).setHeaderValue(headers[i] + "      " + (j)+ "." + (lastMonth + 1));
@@ -136,7 +131,7 @@ public class WeekView extends CalenderView {
         }
         else{
             for(int i = 1; i < 8; i++){
-                cttcm.getColumn(i).setHeaderValue(headers[i] + "      " + (firstDayOfWeek+i-1)+ "." + (month+1));
+                cttcm.getColumn(i).setHeaderValue(headers[i] + "      " + (firstDayOfWeek +i-1)+ "." + (month+1));
                 calendarTableHeader.repaint();
             }
         }
