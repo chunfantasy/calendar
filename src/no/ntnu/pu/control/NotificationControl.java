@@ -36,7 +36,7 @@ public class NotificationControl{
 	public static void sendChangeNotification(Appointment a, ArrayList changedProp){
         for(Participant participant : a.getParticipants()){
             Person p = (Person) participant;
-            changeNotificationStorage.insertChangeNotification(new ChangeNotification(changedProp,p, a));
+            changeNotificationStorage.insertChangeNotification(new ChangeNotification(changedProp, p, a));
         }
 	}
 
@@ -62,6 +62,17 @@ public class NotificationControl{
             notifications.add(invitation);
         }
         return notifications;
+    } 
+    public static void removeNotification(Notification n){
+        if(n instanceof ChangeNotification)
+            changeNotificationStorage.deleteChangeNotificationById(n.getId());
+        if(n instanceof Alarm)
+            alarmStorage.deleteAlarmById(n.getId());
+        if(n instanceof Invitation){
+            invitationStorage.deleteInvitationById(n.getId());
+        if(n instanceof DeclineNotification)
+            declineNotificationStorage.deleteDeclineNotificationById(n.getId());
     }
+}
 
 }
